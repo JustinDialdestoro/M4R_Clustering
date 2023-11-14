@@ -1,3 +1,7 @@
+import numpy as np
+import CF
+import CF_clust1
+
 def dis_fac(cat, n, catsizes, normfactor=2, qfactor=1/2):
     """Computes the factor to standardise categorical dummy variable data"""
     
@@ -34,17 +38,17 @@ def cluster_cross_val(df, t, metric, krange, cluster):
     R2_k = [[] for t in range(t)]
     
     # generate fold indexes
-    cval_f_i = t_fold_index(df, t)
+    cval_f_i = CF.t_fold_index(df, t)
     # splits data into t training-test folds
-    cval_f = t_fold(df, cval_f_i)    
+    cval_f = CF.t_fold(df, cval_f_i)    
     
     # loop over each fold
     for i in range(t):
         # generate UI and similarity matrix for this fold
-        UI = gen_ui_matrix(cval_f[i])
+        UI = CF.gen_ui_matrix(cval_f[i], df)
         sim = metric(UI, True)
 
-        RMSE, MAE, R2 = cluster_vary_k(df, UI, sim, cval_f_i[i], k_range, cluster)
+        RMSE, MAE, R2 = CF_clust1.cluster_vary_k(df, UI, sim, cval_f_i[i], krange, cluster)
             
         # compute evaluation metrics for each k when testing on this fold
         RMSE_k[i] += RMSE

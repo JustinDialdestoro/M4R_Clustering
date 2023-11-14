@@ -36,9 +36,9 @@ def t_fold(df, indexes):
     
     return folds
 
-def gen_ui_matrix(df):
+def gen_ui_matrix(df, df_o):
     """Generates a user-item matrix based of given data"""
-    UI = np.zeros((max(np.unique(df['userID'])),max(np.unique(df['filmID']))))
+    UI = np.zeros((max(np.unique(df_o['userID'])),max(np.unique(df_o['filmID']))))
     # UI[:] = np.nan
     
     # set entries in the matrix to corresponding ratings
@@ -127,7 +127,7 @@ def cross_val(df, t, metric, krange, user=True):
     # loop over each fold
     for i in range(t):
         # generate UI and similarity matrix for this fold
-        UI = gen_ui_matrix(cval_f[i])
+        UI = gen_ui_matrix(cval_f[i], df)
         sim = metric(UI, user)
         
         # compute evaluation metrics for each k when testing on this fold
@@ -137,3 +137,17 @@ def cross_val(df, t, metric, krange, user=True):
         R2_k[i] += R2
     
     return np.mean(RMSE_k,axis=0), np.mean(MAE_k,axis=0), np.mean(R2_k,axis=0)
+
+def find_best_k(scores, krange):
+    """Given evaluation scores, find the best number k of neighbours and corresponding score"""
+    best_k = {}
+    
+    rmse_ind = np.argmin(scores[0])
+    mae_ind = np.argmin(scores[1])
+    r2_ind = np.argmax(scores[2])
+    
+    best_k['RMSE'] = [krange[rmse_ind], scores[0][rmse_ind]]
+    best_k['MAE'] = [krange[mae_ind], scores[1][mae_ind]]
+    best_k['R^2'] = [krange[r2_ind], scores[2][r2_ind]]
+
+    return best_k

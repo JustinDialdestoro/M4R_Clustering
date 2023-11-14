@@ -28,8 +28,10 @@ def cluster_knn(UI, sim, k, userid, filmid, cluster):
     ind, = np.where((UI[:, filmid]>0)&(cluster[:,0]==cluster[userid][0]))
     neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-1:-1]]
 
+    nclusters = np.shape(cluster)[1]
     i=1
-    while len(neighbours) < k:
+
+    while (len(neighbours) < k)&(i < nclusters):
         ind, = np.where((UI[:, filmid]>0)&(cluster[:,i]==cluster[userid][i]))
         neighbours = np.append(neighbours, ind[np.argsort(sim[:,userid][ind])[:-k-1:-1]])
         i+=1

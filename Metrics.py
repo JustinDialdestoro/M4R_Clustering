@@ -69,10 +69,10 @@ def cheb(vec1, vec2):
     else:
         return 5
     
-def gen_cheb_tree(UI, user, df):
+def gen_cheb_tree(UI, user):
     """Generates user similarity matrix based on Chebyshev distance"""
     if user:
-        nusers = max(np.unique(df['userID']))
+        nusers = np.shape(UI)[0]
         sim = np.zeros((nusers, nusers))
         tree = BallTree(UI, metric=cheb)
         for i in range(nusers):
@@ -81,10 +81,10 @@ def gen_cheb_tree(UI, user, df):
     
     return 1/(1+sim)
 
-def gen_ktau_tree(UI, user, df):
+def gen_ktau_tree(UI, user):
     """Generates user similarity matrix based on Kendall's tau"""
     if user:
-        nusers = max(np.unique(df['userID']))
+        nusers = np.shape(UI)[0]
         sim = np.zeros((nusers, nusers))
         tree = BallTree(UI, metric=ktau, leaf_size=40)
         for i in range(nusers):
@@ -93,10 +93,10 @@ def gen_ktau_tree(UI, user, df):
     
     return sim
 
-def gen_jacc_tree(UI, user, df):
+def gen_jacc_tree(UI, user):
     """Generates user similarity matrix based on Jaccard index"""
     if user:
-        nusers = max(np.unique(df['userID']))
+        nusers = np.shape(UI)[0]
         sim = np.zeros((nusers, nusers))
         tree = BallTree(UI, metric=jacc)
         for i in range(nusers):

@@ -25,9 +25,9 @@ def cluster_knn(UI, sim, k, userid, filmid, cluster):
     # ignoring the nearest neighbours (which is itself) add the index of each neighbour to list
     ind, = np.where((UI[:, filmid]>0)&(cluster==cluster[userid]))
         
-    neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-2:-1]]
+    neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-1:-1]]
     
-    return [neighbours[1:]]
+    return neighbours
 
 def cluster_cross_val(df, t, metric, krange, cluster):
     """Computes average evaluation metrics for a CF algorithm for varying 

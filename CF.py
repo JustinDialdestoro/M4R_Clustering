@@ -131,7 +131,7 @@ def cross_val(df, t, metric, krange, user=True):
         sim = metric(UI, user)
         
         # compute evaluation metrics for each k when testing on this fold
-        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], k_range, user)
+        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)
         RMSE_k[i] += RMSE
         MAE_k[i] += MAE
         R2_k[i] += R2

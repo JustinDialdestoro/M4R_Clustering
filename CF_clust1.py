@@ -26,7 +26,7 @@ def user_cluster(UI, sim):
 
 def cluster_knn(UI, sim, k, userid, filmid, cluster):
     """Finds the k nearest neighbours who have rated a given film for a given user"""
-    # ignoring the nearest neighbours (which is itself) add the index of each neighbour to list
+    
     if cluster[userid]==0:
         ind, = np.where((UI[:, filmid]>0)&(cluster!=2))
     elif cluster[userid]==2:

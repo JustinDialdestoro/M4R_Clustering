@@ -36,7 +36,7 @@ def cluster_knn(UI, sim, k, userid, filmid, cluster):
         
     neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-1:-1]]
     
-    return neighbours
+    return [neighbours]
 
 def cluster_pred_rating(df, predid, UI, sim, k, cluster):
     """Predicts the rating a user will give a film based on their k nearest neighbours"""

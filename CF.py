@@ -57,7 +57,7 @@ def find_knn(UI, sim, k, userid, filmid, user):
         ind, = np.where(UI[userid,:]>0)
         neighbours = ind[np.argsort(sim[:,filmid][ind])[:-k-1:-1]]
     
-    return neighbours
+    return [neighbours]
 
 def pred_rating(df, predid, UI, sim, k, user):
     """Predicts the rating a user will give a film based on their k nearest neighbours"""

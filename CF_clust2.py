@@ -1,7 +1,6 @@
 import numpy as np
 import sklearn.metrics as skm
 import CF
-import CF_clust1
 
 def dis_fac(cat, n, catsizes, normfactor=2, qfactor=1/2):
     """Computes the factor to standardise categorical dummy variable data"""

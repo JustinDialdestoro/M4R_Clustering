@@ -40,7 +40,7 @@ t_fold <- function(df, indexes) {
   folds <- replicate(t, c())
 
   for (i in 1:t) {
-    folds[[i]] <- df[-indexes[i], ]
+    folds[[i]] <- df[-indexes[[i]], ]
   }
   return(folds)
 }

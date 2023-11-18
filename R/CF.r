@@ -54,3 +54,9 @@ gen_ui_matrix <- function(df, df_o) {
   }
   return(ui)
 }
+
+find_knn <- function(ui, sim, k, userid, filmid, user) {
+  ind <- which(ui[, filmid] > 0)
+  neighbours <- ind[order(-sim[userid][ind])[2: (k + 1)]]
+  return(neighbours)
+}

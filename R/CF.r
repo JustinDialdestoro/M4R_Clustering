@@ -44,3 +44,13 @@ t_fold <- function(df, indexes) {
   }
   return(folds)
 }
+
+gen_ui_matrix <- function(df, df_o) {
+  ui <- matrix(NA, nrow = max(unique(df_o$userID)),
+               ncol = max(unique(df_o$filmID)))
+  for (i in 1:nrow(df)) {
+    row <- df[i, 1:3]
+    ui[row$userID, row$filmID] <- row$rating
+  }
+  return(ui)
+}

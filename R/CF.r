@@ -1,8 +1,8 @@
 data <- read.table("M4R_Clustering/Data/u.data",
                    col.names = c("userID", "filmID", "rating", "timestamp"))
 
-data2 <- read.csv("M4R_Clustering/Data/ratings.dat", sep=":", 
-                  colClasses = c(NA, "NULL"), header=FALSE)
+data2 <- read.csv("M4R_Clustering/Data/ratings.dat", sep=":",
+                  colClasses = c(NA, "NULL"), header = FALSE)
 colnames(data2) <- c("userID", "filmID", "rating", "timestamp")
 
 t_fold_index <- function(df, t) {
@@ -14,7 +14,9 @@ t_fold_index <- function(df, t) {
     i_perm <- sample(which(df$userID == i))
 
     # number of ratings in each fold
-    k <- length(i_perm) %/% t
+    n <- length(i_perm)
+    k <- n %/% t
+    r <- n %% t
 
     # add the partitioned indices into each fold
     for (j in 1:t) {
@@ -22,9 +24,10 @@ t_fold_index <- function(df, t) {
     }
 
     # randomly assign remaining indices (from division) to a fold
-    f <- sample(1:t, 1)
-    fold_ind[[f]] <- c(fold_ind[[f]], i_perm[(t * k + 1):length(i_perm)])
-
+    if (r > 0) {
+      f <- sample(1:t, 1)
+      fold_ind[[f]] <- c(fold_ind[[f]], i_perm[(t * k + 1):length(i_perm)])
+    }
   }
   return(fold_ind)
 }

@@ -142,7 +142,7 @@ def cross_val(df, t, metric, krange, user=True):
         # generate UI and similarity matrix for this fold
         UI = gen_ui_matrix(cval_f[i], df)
         UI_std = normalise(UI)
-        sim = metric(UI, user)
+        sim = metric(UI_std, user)
         
         # compute evaluation metrics for each k when testing on this fold
         RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)

@@ -47,17 +47,6 @@ def gen_ui_matrix(df, df_o):
     
     return UI
 
-def normalising_mat(UI):
-    """Normalises a user item matrix"""
-    # count number of ratings in each row
-    n_ratings = np.count_nonzero(UI, axis=1)
-    
-    # find average ratings for each user
-    row_means = np.sum(UI, axis=1)/n_ratings
-
-    u_mean = np.where(UI >0, row_means.reshape(-1,1), 0)
-    return u_mean
-
 def find_knn(UI, sim, k, userid, filmid, user):
     """Finds the k nearest neighbours who have rated a given film for a given user"""
     # ignoring the nearest neighbours (which is itself) add the index of each neighbour to list
@@ -70,7 +59,7 @@ def find_knn(UI, sim, k, userid, filmid, user):
     
     return [neighbours]
 
-def pred_rating(df, predid, UI, UI_mean, sim, k, user):
+def pred_rating(df, predid, UI, sim, k, user):
     """Predicts the rating a user will give a film based on their k nearest neighbours"""
     ratings = []
     
@@ -90,19 +79,19 @@ def pred_rating(df, predid, UI, UI_mean, sim, k, user):
         denom = sum(abs(sim[filmid][tuple(neighbours)])) + 1e-9
     ratings.append(num/denom)
     
-    return ratings + UI_mean[userid, filmid]
+    return ratings
 
-def pred(df, df_ind, UI, UI_mean, sim, k, user):
+def pred(df, df_ind, UI, sim, k, user):
     """Predicts the ratings of all user-item pairs given user indexes"""
     pred = []
     
     # predict the rating for each user
     for predid in df_ind:
-        pred.append(pred_rating(df, predid, UI, UI_mean, sim, k, user))
+        pred.append(pred_rating(df, predid, UI, sim, k, user))
     
     return np.array(pred)
 
-def vary_k(df, UI, UI_mean, sim, test_ind, k_range, user):
+def vary_k(df, UI, sim, test_ind, k_range, user):
     """Performs T-fold cross validation using CF algorithm with specified 
     k nearest neighbours and similarity metric
     """
@@ -113,7 +102,7 @@ def vary_k(df, UI, UI_mean, sim, test_ind, k_range, user):
     # loop over each value of k
     for k in k_range:
         # obtain true ratings and predicted ratings
-        r_pred = pred(df, test_ind, UI, UI_mean, sim, k, user)
+        r_pred = pred(df, test_ind, UI, sim, k, user)
         r_true = df['rating'][test_ind]
         
         # compute evaluation metrics
@@ -139,12 +128,10 @@ def cross_val(df, t, metric, krange, user=True):
     for i in range(t):
         # generate UI and similarity matrix for this fold
         UI = gen_ui_matrix(cval_f[i], df)
-        UI_mean = normalising_mat(UI)
-        UI_norm = UI-UI_mean
-        sim = metric(UI_norm, user)
+        sim = metric(UI, user)
         
         # compute evaluation metrics for each k when testing on this fold
-        RMSE, MAE, R2 = vary_k(df, UI_norm, UI_mean, sim, cval_f_i[i], krange, user)
+        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)
         RMSE_k[i] += RMSE
         MAE_k[i] += MAE
         R2_k[i] += R2

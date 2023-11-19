@@ -47,18 +47,16 @@ def gen_ui_matrix(df, df_o):
     
     return UI
 
-def normalise(UI):
+def normalising_mat(UI):
     """Normalises a user item matrix"""
     # count number of ratings in each row
     n_ratings = np.count_nonzero(UI, axis=1)
     
     # find average ratings for each user
-    u_mean = np.sum(UI, axis=1)/n_ratings
+    row_means = np.sum(UI, axis=1)/n_ratings
 
-    ui = np.copy(UI)
-    ui[ui==0]=np.nan
-    UI_std = ui - u_mean.reshape(-1,1)
-    return np.nan_to_num(UI_std)
+    u_mean = np.where(UI >0, row_means.reshape(-1,1), 0)
+    return u_mean
 
 def find_knn(UI, sim, k, userid, filmid, user):
     """Finds the k nearest neighbours who have rated a given film for a given user"""
@@ -141,8 +139,8 @@ def cross_val(df, t, metric, krange, user=True):
     for i in range(t):
         # generate UI and similarity matrix for this fold
         UI = gen_ui_matrix(cval_f[i], df)
-        UI_std = normalise(UI)
-        sim = metric(UI_std, user)
+        UI_mean = normalising_mat(UI)
+        sim = metric(UI-UI_mean, user)
         
         # compute evaluation metrics for each k when testing on this fold
         RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)

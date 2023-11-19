@@ -70,7 +70,7 @@ def find_knn(UI, sim, k, userid, filmid, user):
     
     return [neighbours]
 
-def pred_rating(df, predid, UI, sim, k, user):
+def pred_rating(df, predid, UI, UI_mean, sim, k, user):
     """Predicts the rating a user will give a film based on their k nearest neighbours"""
     ratings = []
     
@@ -90,19 +90,19 @@ def pred_rating(df, predid, UI, sim, k, user):
         denom = sum(abs(sim[filmid][tuple(neighbours)])) + 1e-9
     ratings.append(num/denom)
     
-    return ratings
+    return ratings + UI_mean[userid, filmid]
 
-def pred(df, df_ind, UI, sim, k, user):
+def pred(df, df_ind, UI, UI_mean, sim, k, user):
     """Predicts the ratings of all user-item pairs given user indexes"""
     pred = []
     
     # predict the rating for each user
     for predid in df_ind:
-        pred.append(pred_rating(df, predid, UI, sim, k, user))
+        pred.append(pred_rating(df, predid, UI, UI_mean, sim, k, user))
     
     return np.array(pred)
 
-def vary_k(df, UI, sim, test_ind, k_range, user):
+def vary_k(df, UI, UI_mean, sim, test_ind, k_range, user):
     """Performs T-fold cross validation using CF algorithm with specified 
     k nearest neighbours and similarity metric
     """
@@ -113,7 +113,7 @@ def vary_k(df, UI, sim, test_ind, k_range, user):
     # loop over each value of k
     for k in k_range:
         # obtain true ratings and predicted ratings
-        r_pred = pred(df, test_ind, UI, sim, k, user)
+        r_pred = pred(df, test_ind, UI, UI_mean, sim, k, user)
         r_true = df['rating'][test_ind]
         
         # compute evaluation metrics
@@ -140,10 +140,11 @@ def cross_val(df, t, metric, krange, user=True):
         # generate UI and similarity matrix for this fold
         UI = gen_ui_matrix(cval_f[i], df)
         UI_mean = normalising_mat(UI)
-        sim = metric(UI-UI_mean, user)
+        UI_norm = UI-UI_mean
+        sim = metric(UI_norm, user)
         
         # compute evaluation metrics for each k when testing on this fold
-        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)
+        RMSE, MAE, R2 = vary_k(df, UI_norm, UI_mean, sim, cval_f_i[i], krange, user)
         RMSE_k[i] += RMSE
         MAE_k[i] += MAE
         R2_k[i] += R2

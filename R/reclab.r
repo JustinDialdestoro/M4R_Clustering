@@ -10,7 +10,7 @@ rmse <- c()
 ## create a user-based CF recommender using training data
 for (k in seq(from = 10, to = 300, by = 10)) {
   r <- Recommender(getData(e, "train"), "UBCF",
-                   parameter = c(nn = k, method = "cosine", weighted = TRUE))
+                   parameter = c(nn = k, method = "pearson", weighted = TRUE))
   p <- predict(r, getData(e, "known"), type = "ratings")
   t <- calcPredictionAccuracy(p, getData(e, "unknown"))
   rmse <- c(rmse, t[1])

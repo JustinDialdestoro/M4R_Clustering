@@ -80,3 +80,11 @@ pred_ratings <- function(df, predid, ui, sim, k) {
 
   return(num/denom)
 }
+
+pred <- function(df, df_ind, ui, sim, k) {
+  preds <- c()
+  for (p in df_ind) {
+    preds <- c(preds, pred_ratings(df, p, ui, sim, k))
+  }
+  return(preds)
+}

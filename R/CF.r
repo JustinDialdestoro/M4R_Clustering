@@ -69,6 +69,12 @@ gen_cos_sim <- function(ui) {
   return(as(sim, "matrix"))
 }
 
+gen_pcc_sim <- function(ui) {
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
+                    which = "users")
+  return(as(sim, "matrix"))
+}
+
 pred_ratings <- function(df, predid, ui, sim, k) {
   userid <- df$userID[predid]
   filmid <- df$userID[predid]
@@ -96,30 +102,24 @@ rmse <- function(pred, true) {
   return(sqrt(sum(r**2)/n))
 }
 
-fold_inds <- t_fold_index(data, 10)
-folds <- t_fold(data, fold_inds)
+k_range <- seq(from = 10, to = 300, by = 10)
 
-rmses  <- replicate(10, c())
+cross_val <- function(df, t, metric, k_range) {
+  cval_f_i <- t_fold_index(df, t)
+  cval_f <- t_fold(df, cval_f_i)
 
-for (i in 1:10) {
-  rmse_l <- c()
+  rmse_l  <- replicate(30, c(0))
 
-  ui <- gen_ui_matrix(folds[[i]], data)
-  sim <- 1 - gen_cos_sim(ui)
-
-  for (k in seq(from = 10, to = 300, by = 10)) {
-    p <- pred_fold(folds[[i]], fold_inds[[i]], ui, sim, k)
-    t <- data$rating[fold_inds[[i]]]
-
-    rmse_l <- c(rmse_l, rmse(p, t))
-  }
-  rmses[[i]] <- c(rmses[[i]], rmse_l)
-}
-
-totals <- replicate(30, 0)
-
-for (j in 1:30) {
   for (i in 1:10) {
-    totals[[j]] <- totals[[j]] + rmses[[i]][j]
+    ui <- gen_ui_matrix(cval_f[[i]], data)
+    sim <- 1 - metric(ui)
+
+    for (k in seq_along(k_range)) {
+      p <- pred_fold(cval_f[[i]], cval_f_i[[i]], ui, sim, k_range[k])
+      t <- data$rating[cval_f_i[[i]]]
+
+      rmse_l[[k]] <- rmse_l[[k]] + rmse(p, t)
+    }
   }
+  return(rmse_l)
 }

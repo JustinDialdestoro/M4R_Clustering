@@ -76,7 +76,7 @@ pred_ratings <- function(df, predid, ui, sim, k) {
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
   num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
-  denom <- sum(abs(sim[neighbours, userid]))
+  denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
   return(num/denom)
 }
@@ -88,3 +88,12 @@ pred <- function(df, df_ind, ui, sim, k) {
   }
   return(preds)
 }
+
+fold_inds <- t_fold_index(data, 10)
+folds <- t_fold(data, fold_inds)
+
+ui1 <- gen_ui_matrix(folds[[1]], data)
+sim1 <- 1 - gen_cos_sim((ui1))
+
+p1 <- pred(folds[[1]], fold_inds[[1]], ui1, sim1, 10)
+t1 <- data$rating[fold_inds[[1]]]

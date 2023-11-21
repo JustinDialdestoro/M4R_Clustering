@@ -102,7 +102,7 @@ rmse <- function(pred, true) {
   return(sqrt(sum(r**2)/n))
 }
 
-k_range <- seq(from = 10, to = 300, by = 10)
+krange <- seq(from = 10, to = 300, by = 10)
 
 cross_val <- function(df, t, metric, k_range) {
   cval_f_i <- t_fold_index(df, t)

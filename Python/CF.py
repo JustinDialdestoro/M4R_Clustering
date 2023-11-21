@@ -81,17 +81,17 @@ def pred_rating(df, predid, UI, sim, k, user):
     
     return ratings
 
-def pred(df, df_ind, UI, sim, k, user, me):
+def pred(df, df_ind, UI, sim, k, user):
     """Predicts the ratings of all user-item pairs given user indexes"""
     pred = []
     
     # predict the rating for each user
     for predid in df_ind:
-        pred.append(pred_rating(df, predid, UI, sim, k, user)+me[df['userID'][predid]-1])
+        pred.append(pred_rating(df, predid, UI, sim, k, user))
     
     return np.array(pred)
 
-def vary_k(df, UI, sim, test_ind, k_range, user, me):
+def vary_k(df, UI, sim, test_ind, k_range, user):
     """Performs T-fold cross validation using CF algorithm with specified 
     k nearest neighbours and similarity metric
     """
@@ -102,7 +102,7 @@ def vary_k(df, UI, sim, test_ind, k_range, user, me):
     # loop over each value of k
     for k in k_range:
         # obtain true ratings and predicted ratings
-        r_pred = pred(df, test_ind, UI, sim, k, user, me)
+        r_pred = pred(df, test_ind, UI, sim, k, user)
         r_true = df['rating'][test_ind]
         
         # compute evaluation metrics
@@ -110,17 +110,6 @@ def vary_k(df, UI, sim, test_ind, k_range, user, me):
         MAE.append(skm.mean_absolute_error(r_true,r_pred))
         R2.append(skm.r2_score(r_true,r_pred))
     return RMSE, MAE, R2
-
-def normalising_mat(UI):
-    """Normalises a user item matrix"""
-    # count number of ratings in each row
-    n_ratings = np.count_nonzero(UI, axis=1)
-
-    # find average ratings for each user
-    row_means = np.sum(UI, axis=1)/n_ratings
-
-    u_mean = np.where(UI >0, row_means.reshape(-1,1), 0)
-    return u_mean, row_means
 
 def cross_val(df, t, metric, krange, user=True):
     """Computes average evaluation metrics for a CF algorithm for varying 
@@ -139,11 +128,10 @@ def cross_val(df, t, metric, krange, user=True):
     for i in range(t):
         # generate UI and similarity matrix for this fold
         UI = gen_ui_matrix(cval_f[i], df)
-        UI_mean, means = normalising_mat(UI)
-        sim = metric(UI-UI_mean, user)
+        sim = metric(UI, user)
         
         # compute evaluation metrics for each k when testing on this fold
-        RMSE, MAE, R2 = vary_k(df, UI-UI_mean, sim, cval_f_i[i], krange, user, means)
+        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)
         RMSE_k[i] += RMSE
         MAE_k[i] += MAE
         R2_k[i] += R2

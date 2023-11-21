@@ -99,14 +99,19 @@ rmse <- function(pred, true) {
 fold_inds <- t_fold_index(data, 10)
 folds <- t_fold(data, fold_inds)
 
-rmse_l <- c()
+rmses  <- replicate(10, c())
 
 for (i in 1:10) {
+  rmse_l <- c()
+
   ui <- gen_ui_matrix(folds[[i]], data)
   sim <- 1 - gen_cos_sim(ui)
 
-  p <- pred_fold(folds[[i]], fold_inds[[i]], ui, sim, 10)
-  t <- data$rating[fold_inds[[i]]]
+  for (k in seq(from = 10, to = 300, by = 10)) {
+    p <- pred_fold(folds[[i]], fold_inds[[i]], ui, sim, k)
+    t <- data$rating[fold_inds[[i]]]
 
-  rmse_l <- c(rmse_l, rmse(p, 1))
+    rmse_l <- c(rmse_l, rmse(p, t))
+  }
+  rmses[[i]] <- c(rmses[[i]], rmse_l)
 }

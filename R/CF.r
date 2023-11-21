@@ -81,7 +81,7 @@ pred_ratings <- function(df, predid, ui, sim, k) {
   return(num/denom)
 }
 
-pred <- function(df, df_ind, ui, sim, k) {
+pred_fold <- function(df, df_ind, ui, sim, k) {
   preds <- c()
   for (p in df_ind) {
     preds <- c(preds, pred_ratings(df, p, ui, sim, k))
@@ -89,11 +89,24 @@ pred <- function(df, df_ind, ui, sim, k) {
   return(preds)
 }
 
+rmse <- function(pred, true) {
+  ind <- !is.na(pred)
+  r <- pred[ind] - true[ind]
+  n <- length(pred[ind])
+  return(sqrt(sum(r**2)/n))
+}
+
 fold_inds <- t_fold_index(data, 10)
 folds <- t_fold(data, fold_inds)
 
-ui1 <- gen_ui_matrix(folds[[1]], data)
-sim1 <- 1 - gen_cos_sim((ui1))
+rmse_l <- c()
 
-p1 <- pred(folds[[1]], fold_inds[[1]], ui1, sim1, 10)
-t1 <- data$rating[fold_inds[[1]]]
+for (i in 1:10) {
+  ui <- gen_ui_matrix(folds[[i]], data)
+  sim <- 1 - gen_cos_sim(ui)
+
+  p <- pred_fold(folds[[i]], fold_inds[[i]], ui, sim, 10)
+  t <- data$rating[fold_inds[[i]]]
+
+  rmse_l <- c(rmse_l, rmse(p, 1))
+}

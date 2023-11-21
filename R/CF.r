@@ -115,3 +115,11 @@ for (i in 1:10) {
   }
   rmses[[i]] <- c(rmses[[i]], rmse_l)
 }
+
+totals <- replicate(30, 0)
+
+for (j in 1:30) {
+  for (i in 1:10) {
+    totals[[j]] <- totals[[j]] + rmses[[i]][j]
+  }
+}

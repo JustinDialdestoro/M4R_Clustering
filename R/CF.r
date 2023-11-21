@@ -55,9 +55,16 @@ gen_ui_matrix <- function(df, df_o) {
   return(ui)
 }
 
-find_knn <- function(ui, sim, k, userid, filmid, user) {
+find_knn <- function(ui, sim, k, userid, filmid) {
   ind <- which(ui[, filmid] > 0)
-  neighbours <- ind[order(-sim[userid][ind])[2: (k + 1)]]
+  neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
   return(neighbours)
 }
 
+library("recommenderlab")
+
+gen_cos_sim <- function(ui) {
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
+                    which = "users")
+  return(as(sim, "matrix"))
+}

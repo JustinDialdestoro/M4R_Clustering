@@ -68,3 +68,15 @@ gen_cos_sim <- function(ui) {
                     which = "users")
   return(as(sim, "matrix"))
 }
+
+pred_ratings <- function(df, predid, ui, sim, k) {
+  userid <- df$userID[predid]
+  filmid <- df$userID[predid]
+
+  neighbours <- find_knn(ui, sim, k, userid, filmid)
+
+  num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
+  denom <- sum(abs(sim[neighbours, userid]))
+
+  return(num/denom)
+}

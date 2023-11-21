@@ -111,7 +111,7 @@ def vary_k(df, UI, sim, test_ind, k_range, user):
         R2.append(skm.r2_score(r_true,r_pred))
     return RMSE, MAE, R2
 
-def cross_val(df, t, metric, krange, user=True):
+def cross_val(df, t, metric, k_range, user=True):
     """Computes average evaluation metrics for a CF algorithm for varying 
     choices of k neighbours with specified similarity metric
     """
@@ -131,7 +131,7 @@ def cross_val(df, t, metric, krange, user=True):
         sim = metric(UI, user)
         
         # compute evaluation metrics for each k when testing on this fold
-        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], krange, user)
+        RMSE, MAE, R2 = vary_k(df, UI, sim, cval_f_i[i], k_range, user)
         RMSE_k[i] += RMSE
         MAE_k[i] += MAE
         R2_k[i] += R2

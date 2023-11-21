@@ -61,28 +61,3 @@ find_knn <- function(ui, sim, k, userid, filmid, user) {
   return(neighbours)
 }
 
-fold_inds <- t_fold_index(data, 10)
-folds <- t_fold(data, fold_inds)
-
-rmse <- replicate(10, c())
-
-library("recommenderlab")
-
-for (i in 1:10) {
-  test_mat <- matrix(NA, max(unique(data$userID)), max(unique(data$filmID)))
-  test_df <- data[fold_inds[[i]], 1:3]
-  test_mat[cbind(test_df$userID, test_df$filmID)] <- test_df$rating
-  test <- as(test_mat, "realRatingMatrix")
-
-  ui <- gen_ui_matrix(folds[[i]], data)
-  train <- as(ui, "realRatingMatrix")
-
-  for (k in seq(from = 10, to = 300, by = 10)) {
-    r <- Recommender(train, "UBCF", parameter =
-                       c(nn = k, method = "cosine", 
-                         weighted = TRUE, normalize = NULL))
-    p <- predict(r, train, type = "ratings")
-    acc <- calcPredictionAccuracy(p, test)
-    rmse[[i]] <- c(rmse[[i]], acc[1])
-  }
-}

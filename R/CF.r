@@ -63,10 +63,18 @@ find_knn <- function(ui, sim, k, userid, filmid) {
 
 library("recommenderlab")
 
+#gen_cos_sim <- function(ui) {
+ # sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
+  #                  which = "users")
+  #return(as(sim, "matrix"))
+#}
+
 gen_cos_sim <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
-                    which = "users")
-  return(as(sim, "matrix"))
+  ui0 <- ui
+  ui0[is.na(ui0)] <- 0
+  sim <- ui0 %*% t(ui0)
+  denom <- sqrt(diag(sim))
+  return(t(sim/denom)/denom)
 }
 
 gen_pcc_sim <- function(ui) {

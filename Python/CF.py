@@ -52,12 +52,12 @@ def find_knn(UI, sim, k, userid, filmid, user):
     # ignoring the nearest neighbours (which is itself) add the index of each neighbour to list
     if user:
         ind, = np.where(UI[:, filmid]>0)
-        neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-1:-1]]
+        neighbours = ind[np.argsort(sim[:,userid][ind])[:-k-2:-1]]
     else:
         ind, = np.where(UI[userid,:]>0)
-        neighbours = ind[np.argsort(sim[:,filmid][ind])[:-k-1:-1]]
+        neighbours = ind[np.argsort(sim[:,filmid][ind])[:-k-2:-1]]
     
-    return [neighbours]
+    return [neighbours[1:]]
 
 def pred_rating(df, predid, UI, sim, k, user):
     """Predicts the rating a user will give a film based on their k nearest neighbours"""
@@ -72,8 +72,8 @@ def pred_rating(df, predid, UI, sim, k, user):
     
     # compute the prediction
     if user:
-        num = sim[userid][tuple(neighbours)].dot(UI[:,filmid][tuple(neighbours)])
-        denom = sum(abs(sim[userid][tuple(neighbours)])) + 1e-9
+        num = sim[userid, neighbours[0]].dot(UI[neighbours[0],filmid])
+        denom = sum(abs(sim[userid,neighbours[0]])) + 1e-9
     else:
         num = sim[filmid][tuple(neighbours)].dot(UI[userid,:][tuple(neighbours)])
         denom = sum(abs(sim[filmid][tuple(neighbours)])) + 1e-9

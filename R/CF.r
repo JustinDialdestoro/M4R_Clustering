@@ -58,16 +58,11 @@ gen_ui_matrix <- function(df, df_o) {
 find_knn <- function(ui, sim, k, userid, filmid) {
   ind <- which(ui[, filmid] > 0)
   neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
+
   return(neighbours)
 }
 
 library("recommenderlab")
-
-#gen_cos_sim <- function(ui) {
- # sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
-  #                  which = "users")
-  #return(as(sim, "matrix"))
-#}
 
 gen_cos_sim <- function(ui) {
   ui0 <- ui
@@ -83,9 +78,15 @@ gen_pcc_sim <- function(ui) {
   return(as(sim, "matrix"))
 }
 
+gen_jacc_sim <- function(ui) {
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "jaccard",
+                    which = "users")
+  return(as(sim, "matrix"))
+}
+
 pred_ratings <- function(df, predid, ui, sim, k) {
   userid <- df$userID[predid]
-  filmid <- df$userID[predid]
+  filmid <- df$filmID[predid]
 
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 

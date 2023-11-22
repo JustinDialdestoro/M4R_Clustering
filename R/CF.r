@@ -72,6 +72,12 @@ gen_cos_sim <- function(ui) {
   return(t(sim/denom)/denom)
 }
 
+gen_cos_sim_2 <- function(ui) {
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
+                    which = "users")
+  return(1 - as(sim, "matrix"))
+}
+
 gen_pcc_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
                     which = "users")
@@ -121,10 +127,10 @@ cross_val <- function(df, t, metric, k_range) {
 
   for (i in 1:10) {
     ui <- gen_ui_matrix(cval_f[[i]], data)
-    sim <- 1 - metric(ui)
+    sim <- metric(ui)
 
     for (k in seq_along(k_range)) {
-      p <- pred_fold(cval_f[[i]], cval_f_i[[i]], ui, sim, k_range[k])
+      p <- pred_fold(data, cval_f_i[[i]], ui, sim, k_range[k])
       t <- data$rating[cval_f_i[[i]]]
 
       rmse_l[[k]] <- rmse_l[[k]] + rmse(p, t)
@@ -132,3 +138,6 @@ cross_val <- function(df, t, metric, k_range) {
   }
   return(rmse_l)
 }
+
+# this works!
+#plot(krange, rmse_cos/10, type="l", col="red", lwd=2)

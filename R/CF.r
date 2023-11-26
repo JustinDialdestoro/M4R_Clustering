@@ -55,13 +55,6 @@ gen_ui_matrix <- function(df, df_o) {
   return(ui)
 }
 
-find_knn <- function(ui, sim, k, userid, filmid) {
-  ind <- which(ui[, filmid] > 0)
-  neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
-
-  return(neighbours)
-}
-
 library("recommenderlab")
 
 gen_cos_sim <- function(ui) {
@@ -81,13 +74,20 @@ gen_cos_sim_2 <- function(ui) {
 gen_pcc_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
                     which = "users")
-  return(as(sim, "matrix"))
+  return(1-as(sim, "matrix"))
 }
 
 gen_jacc_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "jaccard",
                     which = "users")
   return(as(sim, "matrix"))
+}
+
+find_knn <- function(ui, sim, k, userid, filmid) {
+  ind <- which(ui[, filmid] > 0)
+  neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
+  
+  return(na.omit(neighbours))
 }
 
 pred_ratings <- function(df, predid, ui, sim, k) {
@@ -140,4 +140,7 @@ cross_val <- function(df, t, metric, k_range) {
 }
 
 # this works!
-#plot(krange, rmse_cos/10, type="l", col="red", lwd=2)
+# rmse_cos_2 <- cross_val(data, 10, gen_cos_sim_2, krange)
+# rmse_pcc <- cross_val(data, 10, gen_pcc_sim, krange)
+#plot(krange, rmse_cos_2/10, type="l", col="red", lwd=2, ylim=c(1.03,1.3))
+#lines(krange, rmse_pcc/10, type="l", col="blue", lwd=2)

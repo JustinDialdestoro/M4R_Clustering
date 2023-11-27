@@ -25,3 +25,7 @@ gen_jacc_sim <- function(ui) {
                     which = "users")
   return(as(sim, "matrix"))
 }
+
+r2 <- function(true, pred) {
+  return(cor(true, pred)^2)
+}

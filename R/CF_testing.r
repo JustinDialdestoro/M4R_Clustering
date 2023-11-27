@@ -14,6 +14,6 @@ krange <- seq(from = 10, to = 300, by = 10)
 rmse_cos <- cross_val(data, 10, gen_cos_sim, krange)
 rmse_pcc <- cross_val(data, 10, gen_pcc_sim, krange)
 
-plot(krange, rmse_cos_2 / 10, type = "l", col = "red", lwd = 2,
+plot(krange, rmse_cos / 10, type = "l", col = "red", lwd = 2,
      ylim = c(1.03, 1.3))
 lines(krange, rmse_pcc / 10, type = "l", col = "blue", lwd = 2)

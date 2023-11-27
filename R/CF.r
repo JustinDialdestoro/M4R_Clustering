@@ -1,3 +1,6 @@
+library("Metrics")
+source("M4R_Clustering/R/Metrics.r")
+
 t_fold_index <- function(df, t) {
   # empty vector to contain each fold
   fold_ind <- replicate(t, c())
@@ -75,29 +78,29 @@ pred_fold <- function(df, df_ind, ui, sim, k) {
   return(preds)
 }
 
-rmse <- function(pred, true) {
-  ind <- !is.na(pred)
-  r <- pred[ind] - true[ind]
-  n <- length(pred[ind])
-  return(sqrt(sum(r**2)/n))
+vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
+  for (k in seq_along(k_range)) {
+
+    r_pred <- pred_fold(df, test_ind, ui, sim, k_range[k])
+    r_true <- df$rating[test_ind]
+
+    scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true)
+    scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true)
+    scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true)
+  }
+  return(scores)
 }
 
 cross_val <- function(df, t, metric, k_range) {
+  scores <- data.frame(rmse = rep(0, t), mae = rep(0, t), r2 = rep(0, t))
   cval_f_i <- t_fold_index(df, t)
   cval_f <- t_fold(df, cval_f_i)
 
-  rmse_l  <- replicate(30, c(0))
+  for (i in 1:t) {
+    ui <- gen_ui_matrix(cval_f[[i]], df)
+    sim <- gen_cos_sim(ui)
 
-  for (i in 1:10) {
-    ui <- gen_ui_matrix(cval_f[[i]], data)
-    sim <- metric(ui)
-
-    for (k in seq_along(k_range)) {
-      p <- pred_fold(data, cval_f_i[[i]], ui, sim, k_range[k])
-      t <- data$rating[cval_f_i[[i]]]
-
-      rmse_l[[k]] <- rmse_l[[k]] + rmse(p, t)
-    }
+    scores <- scores + vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)
   }
-  return(rmse_l)
+  return(scores)
 }

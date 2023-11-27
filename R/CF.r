@@ -1,10 +1,3 @@
-data <- read.table("M4R_Clustering/Data/u.data",
-                   col.names = c("userID", "filmID", "rating", "timestamp"))
-
-data2 <- read.csv("M4R_Clustering/Data/ratings.dat", sep=":",
-                  colClasses = c(NA, "NULL"), header = FALSE)
-colnames(data2) <- c("userID", "filmID", "rating", "timestamp")
-
 t_fold_index <- function(df, t) {
   # empty vector to contain each fold
   fold_ind <- replicate(t, c())
@@ -55,38 +48,10 @@ gen_ui_matrix <- function(df, df_o) {
   return(ui)
 }
 
-library("recommenderlab")
-
-gen_cos_sim <- function(ui) {
-  ui0 <- ui
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
-  denom <- sqrt(diag(sim))
-  return(t(sim/denom)/denom)
-}
-
-gen_cos_sim_2 <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
-                    which = "users")
-  return(1 - as(sim, "matrix"))
-}
-
-gen_pcc_sim <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
-                    which = "users")
-  return(1-as(sim, "matrix"))
-}
-
-gen_jacc_sim <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "jaccard",
-                    which = "users")
-  return(as(sim, "matrix"))
-}
-
 find_knn <- function(ui, sim, k, userid, filmid) {
   ind <- which(ui[, filmid] > 0)
   neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
-  
+
   return(na.omit(neighbours))
 }
 
@@ -117,8 +82,6 @@ rmse <- function(pred, true) {
   return(sqrt(sum(r**2)/n))
 }
 
-krange <- seq(from = 10, to = 300, by = 10)
-
 cross_val <- function(df, t, metric, k_range) {
   cval_f_i <- t_fold_index(df, t)
   cval_f <- t_fold(df, cval_f_i)
@@ -138,9 +101,3 @@ cross_val <- function(df, t, metric, k_range) {
   }
   return(rmse_l)
 }
-
-# this works!
-# rmse_cos_2 <- cross_val(data, 10, gen_cos_sim_2, krange)
-# rmse_pcc <- cross_val(data, 10, gen_pcc_sim, krange)
-#plot(krange, rmse_cos_2/10, type="l", col="red", lwd=2, ylim=c(1.03,1.3))
-#lines(krange, rmse_pcc/10, type="l", col="blue", lwd=2)

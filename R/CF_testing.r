@@ -13,5 +13,6 @@ krange <- seq(from = 10, to = 300, by = 10)
 
 cos_scores <- cross_val(data, 10, gen_cos_sim, krange)
 
-plot(krange, cos_scores$rmse, type = "l", col = "red", lwd = 2,
-     ylim = c(1.03, 1.3))
+plot(krange, cos_scores$rmse, type = "l", col = "red", lwd = 2)
+plot(krange, cos_scores$mae, type = "l", col = "red", lwd = 2)
+plot(krange, cos_scores$r2, type = "l", col = "red", lwd = 2)

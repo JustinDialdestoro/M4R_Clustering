@@ -26,14 +26,21 @@ gen_jacc_sim <- function(ui) {
   return(as(sim, "matrix"))
 }
 
-rmse <- function(true, pred) {
-  return(sqrt(sum((true-pred)^2) / length(true)))
+rmse <- function(pred, true) {
+  ind <- !is.na(pred)
+  r <- pred[ind] - true[ind]
+  n <- length(pred[ind])
+  return(sqrt(sum(r**2) / n))
 }
 
-mae <- function(true, pred) {
-  return(sum(abs(true-pred)) / length(true))
+mae <- function(pred, true) {
+  ind <- !is.na(pred)
+  r <- abs(pred[ind] - true[ind])
+  n <- length(pred[ind])
+  return(sum(r) / n)
 }
 
-r2 <- function(true, pred) {
-  return(cor(true, pred)^2)
+rmse <- function(pred, true) {
+  ind <- !is.na(pred)
+  return(cor(pred[ind], true[ind])**2)
 }

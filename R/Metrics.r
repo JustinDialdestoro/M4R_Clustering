@@ -26,6 +26,14 @@ gen_jacc_sim <- function(ui) {
   return(as(sim, "matrix"))
 }
 
+rmse <- function(true, pred) {
+  return(sqrt(sum((true-pred)^2) / length(true)))
+}
+
+mae <- function(true, pred) {
+  return(sum(abs(true-pred)) / length(true))
+}
+
 r2 <- function(true, pred) {
   return(cor(true, pred)^2)
 }

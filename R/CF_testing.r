@@ -1,7 +1,7 @@
 data <- read.table("M4R_Clustering/Data/u.data",
                    col.names = c("userID", "filmID", "rating", "timestamp"))
 
-data2 <- read.csv("M4R_Clustering/Data/ratings.dat", sep=":",
+data2 <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
                   colClasses = c(NA, "NULL"), header = FALSE)
 
 colnames(data2) <- c("userID", "filmID", "rating", "timestamp")

@@ -83,9 +83,9 @@ vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
     r_pred <- pred_fold(df, test_ind, ui, sim, k_range[k])
     r_true <- df$rating[test_ind]
 
-    scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true)
-    scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true)
-    scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true)
+    scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
+    scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
+    scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
   }
   return(scores)
 }

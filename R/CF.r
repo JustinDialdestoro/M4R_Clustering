@@ -1,5 +1,5 @@
-library("Metrics")
 source("M4R_Clustering/R/Metrics.r")
+library("Metrics")
 
 t_fold_index <- function(df, t) {
   # empty vector to contain each fold
@@ -92,7 +92,8 @@ vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
 }
 
 cross_val <- function(df, t, metric, k_range) {
-  scores <- data.frame(rmse = rep(0, t), mae = rep(0, t), r2 = rep(0, t))
+  n <- length(k_range)
+  scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t)
   cval_f <- t_fold(df, cval_f_i)
 
@@ -100,7 +101,8 @@ cross_val <- function(df, t, metric, k_range) {
     ui <- gen_ui_matrix(cval_f[[i]], df)
     sim <- gen_cos_sim(ui)
 
-    scores <- scores + vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)
+    scores <- vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)
+    print(scores)
   }
-  return(scores)
+  return(scores / t)
 }

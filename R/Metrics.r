@@ -1,13 +1,5 @@
 library("recommenderlab")
 
-#gen_cos_sim <- function(ui) {
-#  ui0 <- ui
-#  ui0[is.na(ui0)] <- 0
-#  sim <- ui0 %*% t(ui0)
-#  denom <- sqrt(diag(sim))
-#  return(t(sim / denom) / denom)
-#}
-
 gen_cos_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
                     which = "users")
@@ -40,7 +32,7 @@ mae <- function(pred, true) {
   return(sum(r) / n)
 }
 
-rmse <- function(pred, true) {
+r2 <- function(pred, true) {
   ind <- !is.na(pred)
   return(cor(pred[ind], true[ind])**2)
 }

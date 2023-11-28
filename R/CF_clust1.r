@@ -30,9 +30,9 @@ cluster_knn <- function(ui, sim, k, userid, filmid, clusters) {
     ind <- which((ui[, filmid] > 0) & (clusters == 2))
   }
 
-  neighbours <- ind[order(-sim[userid,][ind])[2: (k + 1)]]
+  neighbours <- ind[order(-sim[userid, ][ind])[2: (k + 1)]]
 
-  return(neighbours)
+  return(na.omit(neighbours))
 }
 
 pred_ratings_cluster <- function(df, predid, ui, sim, k, clusters) {

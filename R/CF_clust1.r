@@ -21,7 +21,7 @@ user_cluster <- function(ui, sim) {
   return(cluster)
 }
 
-cluster_knn <- function(ui, sim, k, userid, filmid, clusters) {
+knn_c1 <- function(ui, sim, k, userid, filmid, clusters) {
   if (clusters[userid] == 1) {
     ind <- which((ui[, filmid] > 0) & (clusters != 3))
   } else if (clusters[userid] == 3) {
@@ -35,11 +35,11 @@ cluster_knn <- function(ui, sim, k, userid, filmid, clusters) {
   return(na.omit(neighbours))
 }
 
-pred_ratings_cluster <- function(df, predid, ui, sim, k, clusters) {
+pred_ratings_c1 <- function(df, predid, ui, sim, k, clusters) {
   userid <- df$userID[predid]
   filmid <- df$filmID[predid]
 
-  neighbours <- cluster_knn(ui, sim, k, userid, filmid, clusters)
+  neighbours <- knn_c1(ui, sim, k, userid, filmid, clusters)
 
   num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
@@ -47,18 +47,18 @@ pred_ratings_cluster <- function(df, predid, ui, sim, k, clusters) {
   return(num / denom)
 }
 
-pred_fold_cluster <- function(df, df_ind, ui, sim, k, clusters) {
+pred_fold_c1 <- function(df, df_ind, ui, sim, k, clusters) {
   preds <- c()
   for (p in df_ind) {
-    preds <- c(preds, pred_ratings_cluster(df, p, ui, sim, k, clusters))
+    preds <- c(preds, pred_ratings_c1(df, p, ui, sim, k, clusters))
   }
   return(preds)
 }
 
-vary_k_cluster <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
+vary_k_c1 <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
   for (k in seq_along(k_range)) {
 
-    r_pred <- pred_fold_cluster(df, test_ind, ui, sim, k_range[k], clusters)
+    r_pred <- pred_fold_c1(df, test_ind, ui, sim, k_range[k], clusters)
     r_true <- df$rating[test_ind]
 
     scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
@@ -68,7 +68,7 @@ vary_k_cluster <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
   return(scores)
 }
 
-cross_val_cluster <- function(df, t, metric, k_range) {
+cross_val_c1 <- function(df, t, metric, k_range) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t) # nolint
@@ -82,7 +82,7 @@ cross_val_cluster <- function(df, t, metric, k_range) {
 
     c <- user_cluster(ui, metric(rbind(ui, c_n)))
 
-    scores <- vary_k_cluster(df, ui, sim, cval_f_i[[i]], k_range, scores, c)
+    scores <- vary_k_c1(df, ui, sim, cval_f_i[[i]], k_range, scores, c)
   }
   return(scores / t)
 }

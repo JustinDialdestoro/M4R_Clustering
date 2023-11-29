@@ -1,6 +1,7 @@
 source("M4R_Clustering/R/Metrics.r")
 
 t_fold_index <- function(df, t) {
+  set.seed(1)
   # empty vector to contain each fold
   fold_ind <- replicate(t, c())
   # iterate through each unique user id to partition each users rating evenly

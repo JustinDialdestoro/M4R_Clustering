@@ -9,7 +9,7 @@ gen_cos_sim <- function(ui) {
 gen_pcc_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
                     which = "users")
-  return(1-as(sim, "matrix"))
+  return(1 - as(sim, "matrix"))
 }
 
 gen_jacc_sim <- function(ui) {

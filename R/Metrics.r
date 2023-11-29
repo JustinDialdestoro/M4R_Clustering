@@ -3,7 +3,7 @@ library("recommenderlab")
 gen_cos_sim <- function(ui) {
   sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
                     which = "users")
-  return(as(sim, "matrix"))
+  return(1 - as(sim, "matrix"))
 }
 
 gen_pcc_sim <- function(ui) {

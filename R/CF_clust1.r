@@ -44,7 +44,7 @@ pred_ratings_cluster <- function(df, predid, ui, sim, k, clusters) {
   num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
-  return(num/denom)
+  return(num / denom)
 }
 
 pred_fold_cluster <- function(df, df_ind, ui, sim, k, clusters) {

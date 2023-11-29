@@ -11,6 +11,23 @@ def gen_cos(UI, user):
         return skm.pairwise.cosine_similarity(UI)
     else:
         return skm.pairwise.cosine_similarity(UI.T)
+
+def cosine(vec1, vec2):
+    ind = np.where((vec1 >0) & (vec2 > 0))
+    denom = np.sqrt(sum(vec1[ind]**2)*sum(vec2[ind]**2))+1e-9
+    return vec1.dot(vec2)/denom
+
+def gen_cos_tree(UI, user):
+    """Generates user similarity matrix based on Jaccard index"""
+    if user:
+        nusers = np.shape(UI)[0]
+        sim = np.zeros((nusers, nusers))
+        tree = BallTree(UI, metric=cosine)
+        for i in range(nusers):
+            dist, ind = tree.query([UI[i]], nusers)
+            sim[i] = np.array([i for _, i in sorted(zip(ind[0], dist[0]))])
+    
+    return sim
     
 def gen_pcc(UI, user):
     """Generates user similarity matrix based on Pearson's Correlation Coefficient"""

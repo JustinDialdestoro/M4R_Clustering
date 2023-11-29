@@ -1,14 +1,7 @@
 source("M4R_Clustering/R/CF.r")
 
 knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
-  if (clusters[userid] == 1) {
-    ind <- which((ui[, filmid] > 0) & (clusters != 3))
-  } else if (clusters[userid] == 3) {
-    ind <- which((ui[, filmid] > 0) & (clusters != 1))
-  } else {
-    ind <- which((ui[, filmid] > 0) & (clusters == 2))
-  }
-
+  ind <- which((ui[, filmid] > 0) & (clusters == clusters[userid]))
   neighbours <- ind[order(-sim[userid, ][ind])[2: (k + 1)]]
 
   return(na.omit(neighbours))
@@ -47,7 +40,7 @@ vary_k_c2 <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
   return(scores)
 }
 
-cross_val_c2 <- function(df, t, metric, k_range) {
+cross_val_c2 <- function(df, t, metric, k_range, clusters) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t) # nolint
@@ -57,11 +50,7 @@ cross_val_c2 <- function(df, t, metric, k_range) {
     ui <- gen_ui_matrix(cval_f[[i]], df) # nolint
     sim <- metric(ui)
 
-    c_n <- colMeans(ui, na.rm = TRUE)
-
-    c <- user_cluster(ui, metric(rbind(ui, c_n)))
-
-    scores <- vary_k_c2(df, ui, sim, cval_f_i[[i]], k_range, scores, c)
+    scores <- vary_k_c2(df, ui, sim, cval_f_i[[i]], k_range, scores, clusters)
   }
   return(scores / t)
 }

@@ -40,7 +40,7 @@ vary_k_c2 <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
   return(scores)
 }
 
-cross_val_c2 <- function(df, t, metric, k_range, clusters) {
+cross_val_c2 <- function(df, t, metric, k_range, clust_method, features, k) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t) # nolint
@@ -50,7 +50,9 @@ cross_val_c2 <- function(df, t, metric, k_range, clusters) {
     ui <- gen_ui_matrix(cval_f[[i]], df) # nolint
     sim <- metric(ui)
 
-    scores <- vary_k_c2(df, ui, sim, cval_f_i[[i]], k_range, scores, clusters)
+    c <- clust_method(features, k)
+
+    scores <- vary_k_c2(df, ui, sim, cval_f_i[[i]], k_range, scores, c)
   }
   return(scores / t)
 }

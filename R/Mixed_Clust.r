@@ -5,6 +5,7 @@ library("clustMixType")
 library("kmed")
 library("kamila")
 library("FactoMineR")
+library("clustrd")
 
 range_normalise <- function(x) {
   # normalise variable to a [0,1] range
@@ -70,7 +71,7 @@ mixed_k <- function(df, k) {
   df$zip <- NULL
   # binarise gender variable
   df$gender <- as.numeric(df$gender == "M")
-  # dummy code occupation variable
+  # factorise occupation variable
   df$occupation <- as.factor(df$occupation)
 
   d <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
@@ -101,4 +102,32 @@ famd <- function(df, k) {
   pca <- FAMD(df, k, graph = FALSE)$ind$coord
 
   return(kmeans(pca, k)$cluster)
+}
+
+mrkmeans <- function(df, k) {
+  # remove id and zip variable
+  df$userID <- NULL
+  df$zip <- NULL
+
+  # dummy code gender and occupation variable
+  df <- dummy_cols(df, select_columns = "gender")
+  df$gender <- NULL
+
+  df <- dummy_cols(df, select_columns = "occupation")
+  df$occupation <- NULL
+
+  return(cluspca(df, k)$cluster)
+}
+
+kamila_clust <- function(df, k) {
+  # remove id and zip variable
+  df$userID <- NULL
+  df$zip <- NULL
+
+  # binarise gender variable
+  df$gender <- as.factor(df$gender)
+  # factorise occupation variable
+  df$occupation <- as.factor(df$occupation)
+
+  return(kamila(df[1], df[2:3], k, 10)$finalMemb)
 }

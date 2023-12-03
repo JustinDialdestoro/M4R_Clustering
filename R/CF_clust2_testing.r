@@ -26,7 +26,6 @@ cos_scores_c2_5 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
 cos_scores_c2_6 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
                                 gow_pam, udem, 6)
 
-
 plot(krange, cos_scores$rmse, type = "l", col = "red", lwd = 2,
      ylim = c(1.03, 1.25))
 lines(krange, cos_scores_c2_2$rmse, type = "l", col = "#020294", lwd = 2)
@@ -48,7 +47,6 @@ lines(krange, cos_scores_c2_6$mae, type = "l", col = "#00fff7", lwd = 2)
 legend("topright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
        col = c("red", "#020294", "blue", "#006eff", "#00aaff", "#00fff7"),
        lwd = 2)
-
 
 plot(krange, cos_scores$r2, type = "l", col = "red", lwd = 2,
      ylim = c(0.04, 0.15))

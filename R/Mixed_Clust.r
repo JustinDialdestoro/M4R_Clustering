@@ -4,6 +4,7 @@ library("fpc")
 library("clustMixType")
 library("kmed")
 library("kamila")
+library("FactoMineR")
 
 range_normalise <- function(x) {
   # normalise variable to a [0,1] range
@@ -90,4 +91,14 @@ mskmeans <- function(df, k) {
   df$userID <- df$age
 
   return(gmsClust(df[1:2], df[3:25], k)$results[1])
+}
+
+famd <- function(df, k) {
+  # remove id and zip variable
+  df$userID <- NULL
+  df$zip <- NULL
+
+  pca <- FAMD(df, k, graph = FALSE)$ind$coord
+
+  return(kmeans(pca, k)$cluster)
 }

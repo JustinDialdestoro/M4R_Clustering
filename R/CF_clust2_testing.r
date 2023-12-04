@@ -55,6 +55,6 @@ lines(krange, cos_scores_c2_3$r2, type = "l", col = "blue", lwd = 2)
 lines(krange, cos_scores_c2_4$r2, type = "l", col = "#006eff", lwd = 2)
 lines(krange, cos_scores_c2_5$r2, type = "l", col = "#00aaff", lwd = 2)
 lines(krange, cos_scores_c2_6$r2, type = "l", col = "#00fff7", lwd = 2)
-legend("topright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
+legend("bottomright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
        col = c("red", "#020294", "blue", "#006eff", "#00aaff", "#00fff7"),
        lwd = 2)

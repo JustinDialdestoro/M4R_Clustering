@@ -27,13 +27,13 @@ gow_pam <- function(df, k) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "gower")
 
-  p <- pam(dsim, k = k)
-  m <- p$medoids
+  clusts <- pam(dsim, k = k)
+  med <- clusts$medoids
 
   # similarity matrix to each medoid
-  d <- as(dsim, "matrix")[m, ]
+  dist <- as(dsim, "matrix")[med, ]
 
-  return(apply(d, 2, order))
+  return(apply(dist, 2, order))
 }
 
 hl_pam <- function(df, k) {
@@ -57,13 +57,13 @@ hl_pam <- function(df, k) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")
 
-  p <- pam(dsim, k = k)
-  m <- p$medoids
+  clusts <- pam(dsim, k = k)
+  med <- clusts$medoids
 
   # similarity matrix to each medoid
-  d <- as(dsim, "matrix")[m, ]
+  dist <- as(dsim, "matrix")[med, ]
 
-  return(apply(d, 2, order))
+  return(apply(dist, 2, order))
 }
 
 kprototypes <- function(df, k) {
@@ -74,7 +74,10 @@ kprototypes <- function(df, k) {
   df$gender <- as.numeric(df$gender == "M")
   # dummy code occupation variable
   df$occupation <- as.factor(df$occupation)
-  return(kproto(df, k)$cluster)
+
+  clusts <- kproto(df, k)
+
+  return(apply(-clusts$dist, 1, order))
 }
 
 mixed_k <- function(df, k) {

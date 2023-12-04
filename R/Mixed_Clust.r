@@ -32,6 +32,7 @@ gow_pam <- function(df, k) {
 
   # similarity matrix to each medoid
   d <- as(dsim, "matrix")[m, ]
+
   return(apply(d, 2, order))
 }
 
@@ -56,7 +57,13 @@ hl_pam <- function(df, k) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")
 
-  return(pam(dsim, k = k)$clustering)
+  p <- pam(dsim, k = k)
+  m <- p$medoids
+
+  # similarity matrix to each medoid
+  d <- as(dsim, "matrix")[m, ]
+
+  return(apply(d, 2, order))
 }
 
 kprototypes <- function(df, k) {

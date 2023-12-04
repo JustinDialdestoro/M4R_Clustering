@@ -1,10 +1,22 @@
 source("M4R_Clustering/R/CF.r")
 
 knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
-  ind <- which((ui[, filmid] > 0) & (clusters == clusters[userid]))
-  neighbours <- ind[order(-sim[userid, ][ind])[2: (k + 1)]]
+  ind <- which((ui[, filmid] > 0) & (clusters[1, ] == clusters[1, userid]))
+  neighbours <- na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]])
 
-  return(na.omit(neighbours))
+  print(ind)
+  i <- 2
+  while (length(neighbours) < k) {
+    if (i > k) {
+      break
+    }
+    ind <- which((ui[, filmid] > 0) & (clusters[i, ] == clusters[i, userid]))
+    neighbours <- c(neighbours,
+                    na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]]))
+    i <- i + 1
+  }
+
+  return(neighbours)
 }
 
 pred_ratings_c2 <- function(df, predid, ui, sim, k, clusters) {

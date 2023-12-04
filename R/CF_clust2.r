@@ -10,6 +10,7 @@ knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
     if (i > nclust) {
       break
     }
+
     ind <- which((ui[, filmid] > 0) & (clusters[i, ] == clusters[i, userid]))
     neighbours <- c(neighbours,
                     na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]]))
@@ -59,7 +60,7 @@ cross_val_c2 <- function(df, t, metric, k_range, clust_method, features, k) {
   cval_f <- t_fold(df, cval_f_i) # nolint
 
   for (i in 1:t) {
-    ui <- gen_ui_matrix(cval_f[[i]], df) # nolint
+    ui <- gen_ui_matrix(df, cval_f_i[[i]]) # nolint
     sim <- metric(ui)
 
     c <- clust_method(features, k)

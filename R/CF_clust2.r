@@ -4,10 +4,10 @@ knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
   ind <- which((ui[, filmid] > 0) & (clusters[1, ] == clusters[1, userid]))
   neighbours <- na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]])
 
-  print(ind)
+  nclust <- dim(clusters)[1]
   i <- 2
   while (length(neighbours) < k) {
-    if (i > k) {
+    if (i > nclust) {
       break
     }
     ind <- which((ui[, filmid] > 0) & (clusters[i, ] == clusters[i, userid]))

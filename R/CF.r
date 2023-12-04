@@ -95,10 +95,8 @@ cross_val <- function(df, t, metric, k_range) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t)
-  cval_f <- t_fold(df, cval_f_i)
-
   for (i in 1:t) {
-    ui <- gen_ui_matrix(cval_f[[i]], df)
+    ui <- gen_ui_matrix(df, cval_f_i[[i]])
     sim <- metric(ui)
 
     scores <- vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)

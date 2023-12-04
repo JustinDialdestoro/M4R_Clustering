@@ -72,10 +72,9 @@ cross_val_c1 <- function(df, t, metric, k_range) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t) # nolint
-  cval_f <- t_fold(df, cval_f_i) # nolint
 
   for (i in 1:t) {
-    ui <- gen_ui_matrix(cval_f[[i]], df) # nolint
+    ui <- gen_ui_matrix(df, cval_f_i[[i]]) # nolint
     sim <- metric(ui)
 
     c_n <- colMeans(ui, na.rm = TRUE)

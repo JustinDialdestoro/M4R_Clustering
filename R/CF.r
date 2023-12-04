@@ -1,4 +1,5 @@
 source("M4R_Clustering/R/Metrics.r")
+library("recommenderlab")
 
 t_fold_index <- function(df, t) {
   set.seed(1)
@@ -47,6 +48,15 @@ gen_ui_matrix <- function(df, df_o) {
   for (i in seq_along(df$userID)) {
     row <- df[i, 1:3]
     ui[row$userID, row$filmID] <- row$rating
+  }
+  return(ui)
+}
+
+gen_ui_matrix <- function(df_o, f_ind) {
+  ui <- as(as(df_o, "realRatingMatrix"), "matrix")
+  for (i in f_ind) {
+    row <- df_o[i, 1:2]
+    ui[row$userID, row$filmID] <- NA
   }
   return(ui)
 }

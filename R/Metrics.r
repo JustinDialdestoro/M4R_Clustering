@@ -18,6 +18,14 @@ gen_jacc_sim <- function(ui) {
   return(as(sim, "matrix"))
 }
 
+gen_cos_sim_2 <- function(ui) {
+  ui0 <- ui
+  ui0[is.na(ui0)] <- 0
+  sim <- ui0 %*% t(ui0)
+  denom <- sqrt(diag(sim))
+  return(t(sim / denom) / denom)
+}
+
 rmse <- function(pred, true) {
   ind <- !is.na(pred)
   r <- pred[ind] - true[ind]

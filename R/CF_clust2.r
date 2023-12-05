@@ -2,7 +2,7 @@ source("M4R_Clustering/R/CF.r")
 
 knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
   ind <- which((ui[, filmid] > 0) & (clusters[1, ] == clusters[1, userid]))
-  neighbours <- na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]])
+  neighbours <- na.omit(ind[order(-sim[userid, ][ind])[1:k]])
 
   nclust <- dim(clusters)[1]
   i <- 2
@@ -13,7 +13,7 @@ knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
 
     ind <- which((ui[, filmid] > 0) & (clusters[i, ] == clusters[i, userid]))
     neighbours <- c(neighbours,
-                    na.omit(ind[order(-sim[userid, ][ind])[2: (k + 1)]]))
+                    na.omit(ind[order(-sim[userid, ][ind])[1:k]]))
     i <- i + 1
   }
 

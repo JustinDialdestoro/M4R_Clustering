@@ -17,7 +17,7 @@ krange <- seq(from = 10, to = 300, by = 10)
 
 cos_scores <- cross_val(u100k, 10, gen_cos_sim_2, krange)
 
-cos_scores_gow_2 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
+cos_scores_gow_2 <- cross_val_c2(u100k, 10, gen_cos_sim_2, krange,
                                 gow_pam, udem, 2)
 cos_scores_gow_3 <- cross_val_c2(u100k, 10, gen_cos_sim_2, krange,
                                 gow_pam, udem, 3)

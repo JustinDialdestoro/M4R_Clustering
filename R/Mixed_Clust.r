@@ -109,7 +109,7 @@ mskmeans <- function(df, k) {
 
   df$userID <- df$age
 
-  return(gmsClust(df[1:2], df[3:25], k)$results[1])
+  return(gmsClust(df[1:2], df[3:25], k)$results$cluster)
 }
 
 famd <- function(df, k) {

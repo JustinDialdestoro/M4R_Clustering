@@ -89,8 +89,11 @@ mixed_k <- function(df, k) {
   # factorise occupation variable
   df$occupation <- as.factor(df$occupation)
 
-  d <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
-  return(fastkmed(d, k)$cluster)
+  dist <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
+  clusts <- fastkmed(dist, k)
+  med <- clusts$medoid
+
+  return(apply(dist[, med], 1, order))
 }
 
 mskmeans <- function(df, k) {

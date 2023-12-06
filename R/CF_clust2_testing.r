@@ -18,15 +18,15 @@ krange <- seq(from = 10, to = 300, by = 10)
 cos_scores <- cross_val(u100k, 10, gen_cos_sim, krange)
 
 cos_scores_gow_2 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
-                                gow_pam, udem, 2)
+                                 gow_pam, udem, 2)
 cos_scores_gow_3 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
-                                gow_pam, udem, 3)
+                                 gow_pam, udem, 3)
 cos_scores_gow_4 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
-                                gow_pam, udem, 4)
+                                 gow_pam, udem, 4)
 cos_scores_gow_5 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
-                                gow_pam, udem, 5)
+                                 gow_pam, udem, 5)
 cos_scores_gow_6 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
-                                gow_pam, udem, 6)
+                                 gow_pam, udem, 6)
 
 plot(krange, cos_scores$rmse, type = "l", col = "red", lwd = 2,
      ylim = c(1.005, 1.08))

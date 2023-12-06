@@ -29,7 +29,7 @@ cos_scores_gow_6 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
                                  gow_pam, udem, 6)
 
 plot(krange, cos_scores$rmse, type = "l", col = "red", lwd = 2,
-     ylim = c(1.005, 1.08))
+     ylim = c(1.01, 1.065))
 lines(krange, cos_scores_gow_2$rmse, type = "l", col = "#020294", lwd = 2)
 lines(krange, cos_scores_gow_3$rmse, type = "l", col = "blue", lwd = 2)
 lines(krange, cos_scores_gow_4$rmse, type = "l", col = "#006eff", lwd = 2)
@@ -37,10 +37,10 @@ lines(krange, cos_scores_gow_5$rmse, type = "l", col = "#00aaff", lwd = 2)
 lines(krange, cos_scores_gow_6$rmse, type = "l", col = "#00fff7", lwd = 2)
 legend("topright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
        col = c("red", "#020294", "blue", "#006eff", "#00aaff", "#00fff7"),
-       lwd = 2)
+       lwd = 2, cex = 0.8)
 
 plot(krange, cos_scores$mae, type = "l", col = "red", lwd = 2,
-     ylim = c(0.8, 0.85))
+     ylim = c(0.8, 0.835))
 lines(krange, cos_scores_gow_2$mae, type = "l", col = "#020294", lwd = 2)
 lines(krange, cos_scores_gow_3$mae, type = "l", col = "blue", lwd = 2)
 lines(krange, cos_scores_gow_4$mae, type = "l", col = "#006eff", lwd = 2)
@@ -48,10 +48,10 @@ lines(krange, cos_scores_gow_5$mae, type = "l", col = "#00aaff", lwd = 2)
 lines(krange, cos_scores_gow_6$mae, type = "l", col = "#00fff7", lwd = 2)
 legend("topright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
        col = c("red", "#020294", "blue", "#006eff", "#00aaff", "#00fff7"),
-       lwd = 2)
+       lwd = 2, cex = 0.8)
 
 plot(krange, cos_scores$r2, type = "l", col = "red", lwd = 2,
-     ylim = c(0.14, 0.21))
+     ylim = c(0.15, 0.205))
 lines(krange, cos_scores_gow_2$r2, type = "l", col = "#020294", lwd = 2)
 lines(krange, cos_scores_gow_3$r2, type = "l", col = "blue", lwd = 2)
 lines(krange, cos_scores_gow_4$r2, type = "l", col = "#006eff", lwd = 2)
@@ -59,7 +59,7 @@ lines(krange, cos_scores_gow_5$r2, type = "l", col = "#00aaff", lwd = 2)
 lines(krange, cos_scores_gow_6$r2, type = "l", col = "#00fff7", lwd = 2)
 legend("topright", c("No clustering", "k=2", "k=3", "k=4", "k=5", "k=6"),
        col = c("red", "#020294", "blue", "#006eff", "#00aaff", "#00fff7"),
-       lwd = 2)
+       lwd = 2, cex = 0.8)
 
 # cos_scores_hl_2 <- cross_val_c2(u100k, 10, gen_cos_sim, krange,
 #                                 hl_pam, udem, 2)

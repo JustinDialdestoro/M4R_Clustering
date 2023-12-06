@@ -21,8 +21,8 @@ def t_fold_index(df, t):
             fold_ind[j] = np.append(fold_ind[j], i_perm[j*k:(j+1)*k])
         
         # randomly assign remaining indices (from division) to a fold
-        f = np.random.randint(0,10)
-        fold_ind[f] = np.append(fold_ind[f], i_perm[10*k:])
+        f = np.random.randint(0,t)
+        fold_ind[f] = np.append(fold_ind[f], i_perm[t*k:])
     
     return fold_ind
 

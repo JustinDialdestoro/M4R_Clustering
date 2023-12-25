@@ -49,7 +49,7 @@ gen_ui_matrix <- function(df_o, df) {
   ncols <- max(df_o$filmID)
 
   # skeleton matrix of NA
-  ui <- matrix(NA, nrow = nrows, ncol = ncols)
+  ui <- matrix(0, nrow = nrows, ncol = ncols)
 
   # input ratings
   ui[cbind(df$userID, df$filmID)] <- df$rating

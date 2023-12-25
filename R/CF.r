@@ -42,18 +42,20 @@ t_fold <- function(df, indexes) {
   return(folds)
 }
 
-gen_ui_matrix <- function(df_o, f_ind) {
-  ui <- as(as(df_o, "realRatingMatrix"), "matrix")
-  for (i in f_ind) {
-    row <- df_o[i, 1:2]
-    ui[row$userID, row$filmID] <- NA
-  }
+gen_ui_matrix <- function(df_o, df) {
+  nrows <- max(df_o$userID)
+  ncols <- max(df_o$filmID)
+
+  ui <- matrix(NA, nrow = nrows, ncol = ncols)
+
+  ui[cbind(df$userID, df$filmID)] <- df$rating
+
   return(ui)
 }
 
 find_knn <- function(ui, sim, k, userid, filmid) {
   ind <- which(ui[, filmid] > 0)
-  neighbours <- ind[order(-sim[userid,][ind])[1:k]]
+  neighbours <- ind[order(-sim[userid, ][ind])[1:k]]
 
   return(na.omit(neighbours))
 }
@@ -67,7 +69,7 @@ pred_ratings <- function(df, predid, ui, sim, k) {
   num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
-  return(num/denom)
+  return(num / denom)
 }
 
 pred_fold <- function(df, df_ind, ui, sim, k) {
@@ -95,6 +97,7 @@ cross_val <- function(df, t, metric, k_range) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t)
+
   for (i in 1:t) {
     ui <- gen_ui_matrix(df, cval_f_i[[i]])
     sim <- metric(ui)

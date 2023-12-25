@@ -1,5 +1,4 @@
 source("M4R_Clustering/R/Metrics.r")
-library("recommenderlab")
 
 t_fold_index <- function(df, t) {
   set.seed(1)

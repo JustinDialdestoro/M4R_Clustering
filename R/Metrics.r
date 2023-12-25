@@ -1,9 +1,31 @@
+library("lsa")
+
 gen_cos_sim <- function(ui) {
-  ui0 <- ui
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
+  # ui0 <- ui
+  # ui0[is.na(ui0)] <- 0
+  sim <- ui %*% t(ui)
   denom <- sqrt(diag(sim))
   return(t(sim / denom) / denom)
+}
+
+cosine <- function(x, y) {
+  ind <- which(x > 0 & y > 0)
+  if (length(ind) == 0) {
+    return(0)
+  }
+  return((x %*% y) / (norm(x[ind], type = "2") * norm(y[ind], type = "2")))
+}
+
+gen_cos_sim_2 <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      sim[i, j] <- cosine(ui[i, ], ui[j, ])
+    }
+    print(i)
+  }
 }
 
 rmse <- function(pred, true) {

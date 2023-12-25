@@ -26,6 +26,7 @@ gen_cos_sim_2 <- function(ui) {
     }
     print(i)
   }
+  return(sim)
 }
 
 rmse <- function(pred, true) {

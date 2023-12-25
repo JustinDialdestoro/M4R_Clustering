@@ -1,8 +1,8 @@
 library("lsa")
 
 gen_cos_sim <- function(ui) {
-  # ui0 <- ui
-  # ui0[is.na(ui0)] <- 0
+  ui0 <- ui
+  ui0[is.na(ui0)] <- 0
   sim <- ui %*% t(ui)
   denom <- sqrt(diag(sim))
   return(t(sim / denom) / denom)
@@ -13,7 +13,8 @@ cosine <- function(x, y) {
   if (length(ind) == 0) {
     return(0)
   }
-  return((x %*% y) / (norm(x[ind], type = "2") * norm(y[ind], type = "2")))
+  return((x[ind] %*% y[ind]) /
+           (norm(x[ind], type = "2") * norm(y[ind], type = "2")))
 }
 
 gen_cos_sim_2 <- function(ui) {
@@ -27,6 +28,20 @@ gen_cos_sim_2 <- function(ui) {
   }
   sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
   return(sim)
+}
+
+gen_acos_sim <- function(ui) {
+  mean <- colMeans(ui, na.rm = TRUE)
+  sim <- (ui - mean) %*% t(ui - mean)
+  denom <- sqrt(diag(sim))
+  return(t(sim / denom) / denom)
+}
+
+gen_pcc_sim <- function(ui) {
+  mean <- rowMeans(ui, na.rm = TRUE)
+  sim <- (ui - mean) %*% t(ui - mean)
+  denom <- sqrt(diag(sim))
+  return(t(sim / denom) / denom)
 }
 
 rmse <- function(pred, true) {

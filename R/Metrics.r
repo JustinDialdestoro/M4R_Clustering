@@ -1,5 +1,3 @@
-library("lsa")
-
 gen_cos_sim <- function(ui) {
   ui0 <- ui
   ui0[is.na(ui0)] <- 0

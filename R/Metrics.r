@@ -1,5 +1,14 @@
-gen_cos_sim <- function(ui) {
+gen_cos_sim_test <- function(ui) {
   ui0 <- ui
+  ui0[is.na(ui0)] <- 0
+  sim <- ui0 %*% t(ui0)
+  denom <- sqrt(diag(sim))
+  return(t(sim / denom) / denom)
+}
+
+gen_pcc_sim_test <- function(ui) {
+  mean <- rowMeans(ui, na.rm = TRUE)
+  ui0 <- ui - mean
   ui0[is.na(ui0)] <- 0
   sim <- ui0 %*% t(ui0)
   denom <- sqrt(diag(sim))
@@ -15,7 +24,7 @@ cosine <- function(x, y) {
            (norm(x[ind], type = "2") * norm(y[ind], type = "2")))
 }
 
-gen_cos_sim_2 <- function(ui) {
+gen_cos_sim <- function(ui) {
   n <- nrow(ui)
   sim <- matrix(NA, nrow = n, ncol = n)
 

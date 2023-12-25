@@ -1,7 +1,7 @@
 gen_cos_sim <- function(ui) {
   ui0 <- ui
   ui0[is.na(ui0)] <- 0
-  sim <- ui %*% t(ui)
+  sim <- ui0 %*% t(ui0)
   denom <- sqrt(diag(sim))
   return(t(sim / denom) / denom)
 }
@@ -30,14 +30,18 @@ gen_cos_sim_2 <- function(ui) {
 
 gen_acos_sim <- function(ui) {
   mean <- colMeans(ui, na.rm = TRUE)
-  sim <- (ui - mean) %*% t(ui - mean)
+  ui0 <- ui - mean
+  ui0[is.na(ui0)] <- 0
+  sim <- ui0 %*% t(ui0)
   denom <- sqrt(diag(sim))
   return(t(sim / denom) / denom)
 }
 
 gen_pcc_sim <- function(ui) {
   mean <- rowMeans(ui, na.rm = TRUE)
-  sim <- (ui - mean) %*% t(ui - mean)
+  ui0 <- ui - mean
+  ui0[is.na(ui0)] <- 0
+  sim <- ui0 %*% t(ui0)
   denom <- sqrt(diag(sim))
   return(t(sim / denom) / denom)
 }

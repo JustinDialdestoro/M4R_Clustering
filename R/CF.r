@@ -36,6 +36,7 @@ t_fold <- function(df, indexes) {
   # list to contain each training set dataframe
   folds <- replicate(t, c())
 
+  # generate folds by removing test folds
   for (i in 1:t) {
     folds[[i]] <- df[-indexes[[i]], ]
   }
@@ -43,17 +44,21 @@ t_fold <- function(df, indexes) {
 }
 
 gen_ui_matrix <- function(df_o, df) {
+  # size of ui matrix
   nrows <- max(df_o$userID)
   ncols <- max(df_o$filmID)
 
+  # skeleton matrix of NA
   ui <- matrix(NA, nrow = nrows, ncol = ncols)
 
+  # input ratings
   ui[cbind(df$userID, df$filmID)] <- df$rating
 
   return(ui)
 }
 
 find_knn <- function(ui, sim, k, userid, filmid) {
+  # 
   ind <- which(ui[, filmid] > 0)
   neighbours <- ind[order(-sim[userid, ][ind])[1:k]]
 
@@ -97,9 +102,10 @@ cross_val <- function(df, t, metric, k_range) {
   n <- length(k_range)
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
   cval_f_i <- t_fold_index(df, t)
+  cval_f <- t_fold(df, cval_f_i)
 
   for (i in 1:t) {
-    ui <- gen_ui_matrix(df, cval_f_i[[i]])
+    ui <- gen_ui_matrix(df, cval_f[[i]])
     sim <- metric(ui)
 
     scores <- vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)

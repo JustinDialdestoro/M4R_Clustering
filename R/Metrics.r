@@ -25,6 +25,7 @@ gen_cos_sim_2 <- function(ui) {
       sim[i, j] <- cosine(ui[i, ], ui[j, ])
     }
   }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
   return(sim)
 }
 

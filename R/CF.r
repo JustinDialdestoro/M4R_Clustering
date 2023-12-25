@@ -58,19 +58,24 @@ gen_ui_matrix <- function(df_o, df) {
 }
 
 find_knn <- function(ui, sim, k, userid, filmid) {
-  # 
+  # indices of users who have rated the film
   ind <- which(ui[, filmid] > 0)
+  # nearest neighbours
   neighbours <- ind[order(-sim[userid, ][ind])[1:k]]
 
+  # omit NA when not enough neighbours found
   return(na.omit(neighbours))
 }
 
 pred_ratings <- function(df, predid, ui, sim, k) {
+  # id of target prediction
   userid <- df$userID[predid]
   filmid <- df$filmID[predid]
 
+  # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
+  # compute rating prediction
   num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
@@ -79,6 +84,8 @@ pred_ratings <- function(df, predid, ui, sim, k) {
 
 pred_fold <- function(df, df_ind, ui, sim, k) {
   preds <- c()
+
+  # compute rating prediction for every test case
   for (p in df_ind) {
     preds <- c(preds, pred_ratings(df, p, ui, sim, k))
   }
@@ -86,11 +93,13 @@ pred_fold <- function(df, df_ind, ui, sim, k) {
 }
 
 vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
+  # loop over every k
   for (k in seq_along(k_range)) {
-
+    # predicte on test fold ratings
     r_pred <- pred_fold(df, test_ind, ui, sim, k_range[k])
     r_true <- df$rating[test_ind]
 
+    # error metrics
     scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
     scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
     scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
@@ -100,14 +109,20 @@ vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
 
 cross_val <- function(df, t, metric, k_range) {
   n <- length(k_range)
+  # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
+
+  # t-fold creation
   cval_f_i <- t_fold_index(df, t)
   cval_f <- t_fold(df, cval_f_i)
 
+  # loop over each fold
   for (i in 1:t) {
+    # ui and similarity matrix
     ui <- gen_ui_matrix(df, cval_f[[i]])
     sim <- metric(ui)
 
+    # error metrics
     scores <- vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)
   }
   return(scores / t)

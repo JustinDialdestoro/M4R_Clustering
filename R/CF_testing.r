@@ -15,14 +15,14 @@ source("M4R_Clustering/R/Metrics.r")
 krange <- seq(from = 10, to = 300, by = 10)
 
 # evaluate cosines
-cos_scores <- cross_val(u100k, 10, gen_cos_sim, krange)
-# cos2_scores <- cross_val(u100k, 10, gen_cos_sim_2, krange)
-# acos_scores <- cross_val(u100k, 10, gen_acos_sim, krange)
+# cos_scores <- cross_val(u100k, 10, gen_cos_sim, krange)
+cos_scores <- cross_val(u100k, 10, gen_cos_sim_2, krange)
+acos_scores <- cross_val(u100k, 10, gen_acos_sim, krange)
 pcc_scores <- cross_val(u100k, 10, gen_pcc_sim, krange)
 
 library("viridis")
 
-plot(krange, pcc_scores$rmse, type = "l", col = viridis(3)[1], lwd = 2,
+plot(krange, cos_scores$rmse, type = "l", col = viridis(3)[1], lwd = 2,
      ylim = c(1.005, 1.05))
 lines(krange, acos_scores$rmse, type = "l", col = viridis(3)[2], lwd = 2)
 lines(krange, pcc_scores$rmse, type = "l", col = viridis(3)[3], lwd = 2)

@@ -1,3 +1,5 @@
+library("recommenderlab")
+
 gen_cos_sim_test <- function(ui) {
   ui0 <- ui
   ui0[is.na(ui0)] <- 0
@@ -7,12 +9,9 @@ gen_cos_sim_test <- function(ui) {
 }
 
 gen_pcc_sim_test <- function(ui) {
-  mean <- rowMeans(ui, na.rm = TRUE)
-  ui0 <- ui - mean
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
-  denom <- sqrt(diag(sim))
-  return(t(sim / denom) / denom)
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
+                    which = "users")
+  return(as(sim, "matrix"))
 }
 
 cosine <- function(x, y) {

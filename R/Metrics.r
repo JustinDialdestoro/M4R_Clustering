@@ -7,7 +7,7 @@ gen_cos_sim <- function(ui) {
 }
 
 cosine <- function(x, y) {
-  ind <- which(x > 0 & y > 0)
+  ind <- which(!is.na(x) & !is.na(y))
   if (length(ind) == 0) {
     return(0)
   }
@@ -29,21 +29,35 @@ gen_cos_sim_2 <- function(ui) {
 }
 
 gen_acos_sim <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
   mean <- rowMeans(t(ui), na.rm = TRUE)
   ui0 <- t(t(ui) - mean)
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
-  denom <- sqrt(diag(sim))
-  return(t(sim / denom) / denom)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      sim[i, j] <- cosine(ui0[i, ], ui0[j, ])
+    }
+  }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
+  return(sim)
 }
 
 gen_pcc_sim <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
   mean <- rowMeans(ui, na.rm = TRUE)
   ui0 <- ui - mean
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
-  denom <- sqrt(diag(sim))
-  return(t(sim / denom) / denom)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      sim[i, j] <- cosine(ui0[i, ], ui0[j, ])
+    }
+  }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
+  return(sim)
 }
 
 rmse <- function(pred, true) {

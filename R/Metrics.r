@@ -1,4 +1,4 @@
-library("recommenderlab")
+# library("recommenderlab")
 
 # gen_cos_sim <- function(ui) {
 #   sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",

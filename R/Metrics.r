@@ -24,7 +24,6 @@ gen_cos_sim_2 <- function(ui) {
     for (j in i:n) {
       sim[i, j] <- cosine(ui[i, ], ui[j, ])
     }
-    print(i)
   }
   return(sim)
 }

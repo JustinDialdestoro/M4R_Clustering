@@ -52,6 +52,16 @@ gen_pcc_sim <- function(ui) {
   return((1 + sim) / 2)
 }
 
+gen_euc_sim <- function(ui) {
+  sim <- as(dist(ui, "euclidean"), "matrix")
+  return(1 / (1 + sim))
+}
+
+gen_euc_sim <- function(ui) {
+  sim <- as(dist(ui, "manhattan"), "matrix")
+  return(1 / (1 + sim))
+}
+
 rmse <- function(pred, true) {
   ind <- !is.na(pred)
   r <- pred[ind] - true[ind]

@@ -1,3 +1,5 @@
+library("cluster")
+
 cosine <- function(x, y) {
   ind <- which(!is.na(x) & !is.na(y))
   if (length(ind) == 0) {

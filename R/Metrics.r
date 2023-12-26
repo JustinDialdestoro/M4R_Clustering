@@ -59,7 +59,7 @@ gen_euc_sim <- function(ui) {
   return(1 / (1 + sim))
 }
 
-gen_euc_sim <- function(ui) {
+gen_mhat_sim <- function(ui) {
   sim <- as(dist(ui, "manhattan"), "matrix")
   return(1 / (1 + sim))
 }

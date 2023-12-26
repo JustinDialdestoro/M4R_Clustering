@@ -30,7 +30,7 @@ lines(krange, pcc_scores$rmse, type = "l", col = viridis(5)[3], lwd = 2)
 lines(krange, euc_scores$rmse, type = "l", col = viridis(5)[4], lwd = 2)
 lines(krange, mhat_scores$rmse, type = "l", col = viridis(5)[5], lwd = 2)
 legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-                     "euclidean", "manhattan"),
+                        "euclidean", "manhattan"),
        col = viridis(5), lwd = 2, cex = 1)
 
 plot(krange, cos_scores$mae, type = "l", col = viridis(5)[1], lwd = 2,

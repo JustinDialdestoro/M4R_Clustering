@@ -65,7 +65,7 @@ gen_pcc_sim <- function(ui) {
     }
   }
   sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
-  return(sim)
+  return((1 + sim) / 2)
 }
 
 rmse <- function(pred, true) {

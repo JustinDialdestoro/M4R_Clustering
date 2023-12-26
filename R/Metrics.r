@@ -9,7 +9,7 @@ gen_cos_sim_test <- function(ui) {
 }
 
 gen_pcc_sim_test <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "cosine",
+  sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
                     which = "users")
   return(as(sim, "matrix"))
 }

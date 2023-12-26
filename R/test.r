@@ -13,16 +13,16 @@ t1 <- Sys.time()
 ui <- gen_ui_matrix(u100k, f[[1]])
 t2 <- Sys.time()
 
-t1 <- Sys.time()
-sim <- gen_cos_sim((ui))
-t2 <- Sys.time()
+# t1 <- Sys.time()
+# sim <- gen_cos_sim((ui))
+# t2 <- Sys.time()
+
+# t1 <- Sys.time()
+# sim <- gen_acos_sim((ui))
+# t2 <- Sys.time()
 
 t1 <- Sys.time()
-sim <- gen_acos_sim((ui))
-t2 <- Sys.time()
-
-t1 <- Sys.time()
-sim <- gen_pcc_sim((ui))
+sim <- gen_pcc_sim_test((ui))
 t2 <- Sys.time()
 
 m <- matrix(1, 5, 5)

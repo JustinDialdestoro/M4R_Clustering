@@ -1,19 +1,3 @@
-library("recommenderlab")
-
-gen_cos_sim_test <- function(ui) {
-  ui0 <- ui
-  ui0[is.na(ui0)] <- 0
-  sim <- ui0 %*% t(ui0)
-  denom <- sqrt(diag(sim))
-  return(t(sim / denom) / denom)
-}
-
-gen_pcc_sim_test <- function(ui) {
-  sim <- similarity(as(ui, "realRatingMatrix"), method = "pearson",
-                    which = "users")
-  return(as(sim, "matrix"))
-}
-
 cosine <- function(x, y) {
   ind <- which(!is.na(x) & !is.na(y))
   if (length(ind) == 0) {
@@ -49,7 +33,7 @@ gen_acos_sim <- function(ui) {
     }
   }
   sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
-  return(sim)
+  return((1 + sim) / 2)
 }
 
 gen_pcc_sim <- function(ui) {

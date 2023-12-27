@@ -54,6 +54,21 @@ gen_pcc_sim <- function(ui) {
   return((1 + sim) / 2)
 }
 
+gen_jacc_sim <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      num <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
+      denom <- which(!is.na(ui[i, ]) | !is.na(ui[j, ]))
+      sim[i, j] <- length(num) / length(denom)
+    }
+  }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
+  return(sim)
+}
+
 gen_euc_sim <- function(ui) {
   sim <- as(dist(ui, "euclidean"), "matrix")
   return(1 / (1 + sim))

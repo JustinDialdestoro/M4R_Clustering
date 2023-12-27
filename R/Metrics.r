@@ -64,6 +64,20 @@ gen_mhat_sim <- function(ui) {
   return(1 / (1 + sim))
 }
 
+gen_cheb_sim <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      ind <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
+      sim[i, j] <- max(abs(ui[i, ][ind] - ui[j, ][ind]))
+    }
+  }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
+  return(1 / (1 + sim))
+}
+
 rmse <- function(pred, true) {
   ind <- !is.na(pred)
   r <- pred[ind] - true[ind]

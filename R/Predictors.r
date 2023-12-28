@@ -31,13 +31,17 @@ mean_centered <- function(df, predid, ui, sim, k) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
-  # compute rating prediction
+  # compute target user rating mean
   mu_u <- mean(ui[userid, ], na.rm = TRUE)
-  if (nrow(ui[neighbours, ]) < 2) {
+
+  # compute neighbour users rating mean
+  if (length(neighbours) < 1) {
     mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
   } else {
     mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
   }
+
+  # compute rating prediction
   num <- sim[neighbours, userid] %*% (ui[neighbours, filmid] - mu_v)
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
@@ -52,16 +56,20 @@ z_score <- function(df, predid, ui, sim, k) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
-  # compute rating prediction
+  # compute target user rating mean and standard deviation
   mu_u <- mean(ui[userid, ], na.rm = TRUE)
   sig_u <- sd(ui[userid, ], na.rm = TRUE)
-  if (nrow(ui[neighbours, ]) < 2) {
+
+  # compute neighbour users rating mean and standard deviation
+  if (length(neighbours) < 1) {
     mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
     sig_v <- apply(ui[neighbours, ], 1, sd, na.rm = TRUE)
   } else {
     mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
     sig_v <- sd(ui[neighbours, ], na.rm = TRUE)
   }
+
+  # compute rating prediction
   num <- sim[neighbours, userid] %*% ((ui[neighbours, filmid] - mu_v) / sig_v)
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
@@ -76,10 +84,11 @@ discrete <- function(df, predid, ui, sim, k) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
-  # compute rating prediction
+  # count ratings of neighbours
   rating_count <- table(ui[neighbours, filmid])
+  # find most common rating
   top_count <- max(rating_count)
-
+  # compute rating prediction
   top_ratings <- as.numeric(names(rating_count[rating_count == top_count]))
 
   return(mean(top_ratings))

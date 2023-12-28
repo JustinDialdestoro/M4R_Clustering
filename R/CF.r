@@ -91,21 +91,6 @@ pred_fold <- function(df, df_ind, ui, sim, k) {
   return(preds)
 }
 
-vary_k <- function(df, ui, sim, test_ind, k_range, scores) {
-  # loop over every k
-  for (k in seq_along(k_range)) {
-    # predicte on test fold ratings
-    r_pred <- pred_fold(df, test_ind, ui, sim, k_range[k])
-    r_true <- df$rating[test_ind]
-
-    # error metrics
-    scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
-    scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
-    scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
-  }
-  return(scores)
-}
-
 cross_val <- function(df, t, metric, k_range) {
   n <- length(k_range)
   # initial scores table
@@ -121,8 +106,17 @@ cross_val <- function(df, t, metric, k_range) {
     ui <- gen_ui_matrix(df, cval_f[[i]])
     sim <- metric(ui)
 
-    # error metrics
-    scores <- vary_k(df, ui, sim, cval_f_i[[i]], k_range, scores)
+    # loop over every k
+    for (k in seq_along(k_range)) {
+      # predicte on test fold ratings
+      r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, k_range[k])
+      r_true <- df$rating[cval_f_i[[i]]]
+
+      # error metrics
+      scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
+      scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
+      scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+    }
   }
   return(scores / t)
 }

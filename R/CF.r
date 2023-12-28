@@ -1,5 +1,3 @@
-source("M4R_Clustering/R/Metrics.r")
-
 t_fold_index <- function(df, t) {
   set.seed(1)
   # empty vector to contain each fold
@@ -56,42 +54,36 @@ gen_ui_matrix <- function(df_o, df) {
   return(ui)
 }
 
-find_knn <- function(ui, sim, k, userid, filmid) {
-  # indices of users who have rated the film
-  ind <- which(ui[, filmid] > 0)
-  # nearest neighbours
-  neighbours <- ind[order(-sim[userid, ][ind])[1:k]]
-
-  # omit NA when not enough neighbours found
-  return(na.omit(neighbours))
-}
-
-pred_ratings <- function(df, predid, ui, sim, k) {
-  # id of target prediction
-  userid <- df$userID[predid]
-  filmid <- df$filmID[predid]
-
-  # find nearest neighbours
-  neighbours <- find_knn(ui, sim, k, userid, filmid)
-
-  # compute rating prediction
-  num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
-  denom <- sum(abs(sim[neighbours, userid])) + 1e-9
-
-  return(num / denom)
-}
-
-pred_fold <- function(df, df_ind, ui, sim, k) {
+pred_fold <- function(df, df_ind, ui, sim, pred_func, k) {
   preds <- c()
 
   # compute rating prediction for every test case
   for (p in df_ind) {
-    preds <- c(preds, pred_ratings(df, p, ui, sim, k))
+    preds <- c(preds, pred_func(df, p, ui, sim, k))
   }
   return(preds)
 }
 
-cross_val <- function(df, t, metric, k_range) {
+rmse <- function(pred, true) {
+  ind <- !is.na(pred)
+  r <- pred[ind] - true[ind]
+  n <- length(pred[ind])
+  return(sqrt(sum(r**2) / n))
+}
+
+mae <- function(pred, true) {
+  ind <- !is.na(pred)
+  r <- abs(pred[ind] - true[ind])
+  n <- length(pred[ind])
+  return(sum(r) / n)
+}
+
+r2 <- function(pred, true) {
+  ind <- !is.na(pred)
+  return(cor(pred[ind], true[ind])**2)
+}
+
+cross_val <- function(df, t, metric, pred_func, k_range) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
@@ -109,7 +101,7 @@ cross_val <- function(df, t, metric, k_range) {
     # loop over every k
     for (k in seq_along(k_range)) {
       # predicte on test fold ratings
-      r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, k_range[k])
+      r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, pred_func, k_range[k])
       r_true <- df$rating[cval_f_i[[i]]]
 
       # error metrics

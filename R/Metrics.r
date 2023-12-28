@@ -92,22 +92,3 @@ gen_cheb_sim <- function(ui) {
   sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
   return(1 / (1 + sim))
 }
-
-rmse <- function(pred, true) {
-  ind <- !is.na(pred)
-  r <- pred[ind] - true[ind]
-  n <- length(pred[ind])
-  return(sqrt(sum(r**2) / n))
-}
-
-mae <- function(pred, true) {
-  ind <- !is.na(pred)
-  r <- abs(pred[ind] - true[ind])
-  n <- length(pred[ind])
-  return(sum(r) / n)
-}
-
-r2 <- function(pred, true) {
-  ind <- !is.na(pred)
-  return(cor(pred[ind], true[ind])**2)
-}

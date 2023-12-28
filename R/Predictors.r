@@ -33,7 +33,11 @@ mean_centered <- function(df, predid, ui, sim, k) {
 
   # compute rating prediction
   mu_u <- mean(ui[userid, ], na.rm = TRUE)
-  mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
+  if (nrow(ui[neighbours, ]) < 2) {
+    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
+  } else {
+    mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
+  }
   num <- sim[neighbours, userid] %*% (ui[neighbours, filmid] - mu_v)
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 
@@ -50,9 +54,14 @@ z_score <- function(df, predid, ui, sim, k) {
 
   # compute rating prediction
   mu_u <- mean(ui[userid, ], na.rm = TRUE)
-  mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
   sig_u <- sd(ui[userid, ], na.rm = TRUE)
-  sig_v <- apply(ui[neighbours, ], 1, sd, na.rm = TRUE)
+  if (nrow(ui[neighbours, ]) < 2) {
+    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
+    sig_v <- apply(ui[neighbours, ], 1, sd, na.rm = TRUE)
+  } else {
+    mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
+    sig_v <- sd(ui[neighbours, ], na.rm = TRUE)
+  }
   num <- sim[neighbours, userid] %*% ((ui[neighbours, filmid] - mu_v) / sig_v)
   denom <- sum(abs(sim[neighbours, userid])) + 1e-9
 

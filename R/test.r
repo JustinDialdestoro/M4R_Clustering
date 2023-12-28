@@ -1,5 +1,6 @@
 source("M4R_Clustering/R/CF.r")
 source("M4R_Clustering/R/Metrics.r")
+source("M4R_Clustering/R/Predictors.r")
 
 u100k <- read.table("M4R_Clustering/Data/u.data",
                     col.names = c("userID", "filmID", "rating", "timestamp"))
@@ -22,7 +23,7 @@ t2 <- Sys.time()
 # t2 <- Sys.time()
 
 t1 <- Sys.time()
-sim <- gen_pcc_sim_test((ui))
+sim <- gen_euc_sim((ui))
 t2 <- Sys.time()
 
 m <- matrix(1, 5, 5)

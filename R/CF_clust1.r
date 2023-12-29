@@ -1,6 +1,4 @@
-source("M4R_Clustering/R/Metrics.r")
-
-user_cluster <- function(ui) {
+user_cluster <- function(ui, clust_metric) {
   # find number of rated items for each user
   n_ratings <- rowSums(!is.na(ui))
 
@@ -24,7 +22,7 @@ user_cluster <- function(ui) {
 
   cluster <- c()
 
-  clust_dist <- cos_clust(ui, centres)
+  clust_dist <- clust_metric(ui, centres)
 
   # assign each user to their closest clustering centre
   for (i in 1:nrow(ui)) { # nolint
@@ -41,7 +39,7 @@ knn_c1 <- function(ui, sim, k, userid, filmid, clusters) {
   } else if (clusters[userid] == 3) {
     ind <- which((ui[, filmid] > 0) & (clusters != 1))
   } else {
-    ind <- which((ui[, filmid] > 0) & (clusters == 2))
+    ind <- which((ui[, filmid] > 0) & (clusters  == 2))
   }
 
   neighbours <- ind[order(-sim[userid, ][ind])[2: (k + 1)]]

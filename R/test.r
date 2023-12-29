@@ -23,7 +23,7 @@ t2 <- Sys.time()
 # t2 <- Sys.time()
 
 t1 <- Sys.time()
-sim <- gen_euc_sim((ui))
+euc_scores_3 <- cross_val(u100k, 10, gen_euc_sim, z_score, seq(from = 10, to = 20, by = 10))
 t2 <- Sys.time()
 
 m <- matrix(1, 5, 5)

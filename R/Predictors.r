@@ -35,10 +35,10 @@ mean_centered <- function(df, predid, ui, sim, k) {
   mu_u <- mean(ui[userid, ], na.rm = TRUE)
 
   # compute neighbour users rating mean
-  if (length(neighbours) < 1) {
-    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
-  } else {
+  if (length(neighbours) < 2) {
     mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
+  } else {
+    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
   }
 
   # compute rating prediction
@@ -61,12 +61,12 @@ z_score <- function(df, predid, ui, sim, k) {
   sig_u <- sd(ui[userid, ], na.rm = TRUE)
 
   # compute neighbour users rating mean and standard deviation
-  if (length(neighbours) < 1) {
-    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
-    sig_v <- apply(ui[neighbours, ], 1, sd, na.rm = TRUE)
-  } else {
+  if (length(neighbours) < 2) {
     mu_v <- mean(ui[neighbours, ], na.rm = TRUE)
     sig_v <- sd(ui[neighbours, ], na.rm = TRUE)
+  } else {
+    mu_v <- rowMeans(ui[neighbours, ], na.rm = TRUE)
+    sig_v <- apply(ui[neighbours, ], 1, sd, na.rm = TRUE)
   }
 
   # compute rating prediction

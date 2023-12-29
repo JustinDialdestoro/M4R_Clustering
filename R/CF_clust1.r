@@ -1,27 +1,41 @@
-source("M4R_Clustering/R/CF.r")
+source("M4R_Clustering/R/Metrics.r")
 
-user_cluster <- function(ui, sim) {
+user_cluster <- function(ui) {
+  # find number of rated items for each user
   n_ratings <- rowSums(!is.na(ui))
 
+  # average user ratings
   u_mean <- rowMeans(ui, na.rm = TRUE)
 
+  # segment users by mean
   o_ind <- which(u_mean >= 4)
   p_ind <- which(u_mean <= 3)
 
-  c_o <- o_ind[which.max(n_ratings[o_ind])]
-  c_p <- p_ind[which.max(n_ratings[p_ind])]
+  # find cluster centres
+  c_o_ind <- o_ind[which.max(n_ratings[o_ind])]
+  c_p_ind <- p_ind[which.max(n_ratings[p_ind])]
 
-  last <- nrow(sim)
+  centres <- replicate(3, c())
+
+  centres[[1]] <- ui[c_o_ind, ]
+  centres[[2]] <- colMeans(ui, na.rm = TRUE)
+  centres[[2]][is.nan(centres[[2]])] <- NA
+  centres[[3]] <- ui[c_p_ind, ]
 
   cluster <- c()
 
+  clust_dist <- cos_clust(ui, centres)
+
+  # assign each user to their closest clustering centre
   for (i in 1:nrow(ui)) { # nolint
-    cluster <- c(cluster, which.max(sim[i, c(c_o, last, c_p)]))
+    cluster <- c(cluster, which.max(clust_dist[i, ]))
   }
+
   return(cluster)
 }
 
 knn_c1 <- function(ui, sim, k, userid, filmid, clusters) {
+  # find other users in their cluster
   if (clusters[userid] == 1) {
     ind <- which((ui[, filmid] > 0) & (clusters != 3))
   } else if (clusters[userid] == 3) {

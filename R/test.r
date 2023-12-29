@@ -23,7 +23,7 @@ t2 <- Sys.time()
 # t2 <- Sys.time()
 
 t1 <- Sys.time()
-euc_scores_3 <- cross_val(u100k, 10, gen_euc_sim, z_score, seq(from = 10, to = 20, by = 10))
+pred_fold(u100k, f_ind[[1]], ui, sim, z_score, 10)
 t2 <- Sys.time()
 
 m <- matrix(1, 5, 5)

@@ -32,68 +32,56 @@ user_cluster <- function(ui, clust_metric) {
   return(cluster)
 }
 
-knn_c1 <- function(ui, sim, k, userid, filmid, clusters) {
-  # find other users in their cluster
-  if (clusters[userid] == 1) {
-    ind <- which((ui[, filmid] > 0) & (clusters != 3))
-  } else if (clusters[userid] == 3) {
-    ind <- which((ui[, filmid] > 0) & (clusters != 1))
-  } else {
-    ind <- which((ui[, filmid] > 0) & (clusters  == 2))
-  }
-
-  neighbours <- ind[order(-sim[userid, ][ind])[2: (k + 1)]]
-
-  return(na.omit(neighbours))
-}
-
-pred_ratings_c1 <- function(df, predid, ui, sim, k, clusters) {
-  userid <- df$userID[predid]
-  filmid <- df$filmID[predid]
-
-  neighbours <- knn_c1(ui, sim, k, userid, filmid, clusters)
-
-  num <- sim[neighbours, userid] %*% ui[neighbours, filmid]
-  denom <- sum(abs(sim[neighbours, userid])) + 1e-9
-
-  return(num / denom)
-}
-
-pred_fold_c1 <- function(df, df_ind, ui, sim, k, clusters) {
+pred_fold_clust1 <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
   preds <- c()
+
+  # compute rating prediction for every test case
   for (p in df_ind) {
-    preds <- c(preds, pred_ratings_c1(df, p, ui, sim, k, clusters))
+    c <- clusters[p]
+    preds <- c(preds, pred_func(df, uis[[c]], sims[[c]], k,
+                                which(which(clusters == c) == p), df$filmID[p]))
   }
   return(preds)
 }
 
-vary_k_c1 <- function(df, ui, sim, test_ind, k_range, scores, clusters) {
-  for (k in seq_along(k_range)) {
-
-    r_pred <- pred_fold_c1(df, test_ind, ui, sim, k_range[k], clusters)
-    r_true <- df$rating[test_ind]
-
-    scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
-    scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
-    scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
-  }
-  return(scores)
-}
-
-cross_val_c1 <- function(df, t, metric, k_range) {
+cross_val_clust1 <- function(df, t, metric, pred_func, clust_metric, k_range) {
   n <- length(k_range)
+  # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
-  cval_f_i <- t_fold_index(df, t) # nolint
 
+  # t-fold creation
+  cval_f_i <- t_fold_index(df, t)
+  cval_f <- t_fold(df, cval_f_i)
+
+  # loop over each fold
   for (i in 1:t) {
-    ui <- gen_ui_matrix(df, cval_f_i[[i]]) # nolint
-    sim <- metric(ui)
+    # ui and similarity matrix
+    ui <- gen_ui_matrix(df, cval_f[[i]])
 
-    c_n <- colMeans(ui, na.rm = TRUE)
+    clusters <- user_cluster(ui, clust_metric)
 
-    c <- user_cluster(ui, metric(rbind(ui, c_n)))
+    uis <- replicate(3, c())
+    for (i in 1:3) {
+      uis[[i]] <- ui[which(clusters == i), ]
+    }
 
-    scores <- vary_k_c1(df, ui, sim, cval_f_i[[i]], k_range, scores, c)
+    sims <- replicate(3, c())
+    for (i in 1:3) {
+      sims[[i]] <- metric(uis[[i]])
+    }
+
+    # loop over every k
+    for (k in seq_along(k_range)) {
+      # predicte on test fold ratings
+      r_pred <- pred_fold_clust1(df, cval_f_i[[i]], uis, sims, pred_func,
+                                 k_range[k], clusters)
+      r_true <- df$rating[cval_f_i[[i]]]
+
+      # error metrics
+      scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
+      scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
+      scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+    }
   }
   return(scores / t)
 }

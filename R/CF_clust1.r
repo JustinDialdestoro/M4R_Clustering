@@ -66,13 +66,16 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
     # ui and similarity matrix
     ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
+    # create user clusters
     clusters <- user_cluster(ui, clust_metric)
 
+    # segment user ratings matrix into clusters
     uis <- replicate(3, c())
-    for (i in 1:3) {
-      uis[[i]] <- ui[which(clusters == i), ]
-    }
+    uis[[1]] <- ui[which(clusters == 1 | clusters == 2), ]
+    uis[[2]] <- ui[which(clusters == 2), ]
+    uis[[3]] <- ui[which(clusters == 3 | clusters == 2), ]
 
+    # similarity matrix for each segmented ui matrix
     sims <- replicate(3, c())
     for (i in 1:3) {
       sims[[i]] <- metric(uis[[i]])
@@ -80,6 +83,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
 
     # loop over every k
     for (k in seq_along(k_range)) {
+      print(k)
       # predicte on test fold ratings
       r_pred <- pred_fold_clust1(df, cval_f_i[[i]], uis, sims, pred_func,
                                  k_range[k], clusters)
@@ -89,6 +93,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
       scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+      print(scores)
     }
   }
   return(scores / t)

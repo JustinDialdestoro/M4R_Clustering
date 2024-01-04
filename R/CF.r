@@ -99,14 +99,20 @@ cross_val <- function(df, t, k_range, metric, pred_func) {
 
   # loop over each fold
   for (i in 1:t) {
+    print("Offline phase:")
+    t1 <- Sys.time()
+
     # ui and similarity matrix
     ui <- gen_ui_matrix(df, cval_f[[i]])
     sim <- metric(ui)
 
+    print(Sys.time() - t1)
+
     # loop over every k
     for (k in seq_along(k_range)) {
+      print("Online phase:")
       t1 <- Sys.time()
-      print(k)
+
       # predicte on test fold ratings
       r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, pred_func, k_range[k])
       r_true <- df$rating[cval_f_i[[i]]]
@@ -115,6 +121,7 @@ cross_val <- function(df, t, k_range, metric, pred_func) {
       scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+
       print(Sys.time() - t1)
     }
   }

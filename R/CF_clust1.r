@@ -44,19 +44,19 @@ pred_fold_clust1 <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
   return(preds)
 }
 
-cross_val_clust1 <- function(df, t, metric, pred_func, clust_metric, k_range) {
+cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
 
   # t-fold creation
-  cval_f_i <- t_fold_index(df, t)
-  cval_f <- t_fold(df, cval_f_i)
+  cval_f_i <- t_fold_index(df, t) # nolint
+  cval_f <- t_fold(df, cval_f_i) # nolint
 
   # loop over each fold
   for (i in 1:t) {
     # ui and similarity matrix
-    ui <- gen_ui_matrix(df, cval_f[[i]])
+    ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
     clusters <- user_cluster(ui, clust_metric)
 

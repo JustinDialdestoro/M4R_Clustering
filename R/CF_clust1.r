@@ -85,6 +85,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
 
     # loop over every k
     for (k in seq_along(k_range)) {
+      t1 <- Sys.time()
       print(k)
       # predict on test fold ratings
       r_pred <- pred_fold_clust1(df, cval_f_i[[i]], uis, sims, pred_func,
@@ -95,7 +96,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
       scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
-      print(scores)
+      print(Sys.time() - t1)
     }
   }
   return(scores / t)

@@ -105,6 +105,8 @@ cross_val <- function(df, t, metric, pred_func, k_range) {
 
     # loop over every k
     for (k in seq_along(k_range)) {
+      t1 <- Sys.time()
+      print(k)
       # predicte on test fold ratings
       r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, pred_func, k_range[k])
       r_true <- df$rating[cval_f_i[[i]]]
@@ -113,6 +115,7 @@ cross_val <- function(df, t, metric, pred_func, k_range) {
       scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+      print(Sys.time() - t1)
     }
   }
   return(scores / t)

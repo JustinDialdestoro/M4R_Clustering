@@ -22,9 +22,9 @@ t2 <- Sys.time()
 # sim <- gen_acos_sim((ui))
 # t2 <- Sys.time()
 
-t1 <- Sys.time()
-pred_fold(u100k, f_ind[[1]], ui, sim, z_score, 10)
-t2 <- Sys.time()
+# t1 <- Sys.time()
+# pred_fold(u100k, f_ind[[1]], ui, sim, z_score, 10)
+# t2 <- Sys.time()
 
 m <- matrix(1, 5, 5)
 m[1, ] <- c(5, 3, 4, 4, NA)

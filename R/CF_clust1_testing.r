@@ -11,26 +11,65 @@ source("M4R_Clustering/R/CF.r")
 source("M4R_Clustering/R/Metrics.r")
 source("M4R_Clustering/R/Predictors.r")
 
-krange <- seq(from = 10, to = 300, by = 10)
+krange <- seq(from = 10, to = 100, by = 10)
 
-ups_scores <- cross_val(u100k, 10, krange, gen_ups_sim, weighted_sum)
-# ups_scores_uclust <- cross_val_clust1(u100k, 10, krange,
-#                                       gen_ups_sim, weighted_sum, ups_clust)
+# ups_scores <- cross_val(u100k, 10, krange, gen_ups_sim, weighted_sum)
+# ups_scores_2 <- cross_val(u100k, 10, krange, gen_ups_sim, mean_centered)
+# ups_scores_3 <- cross_val(u100k, 10, krange, gen_ups_sim, z_score)
+# # ups_scores_uclust <- cross_val_clust1(u100k, 10, krange,
+# #                                       gen_ups_sim, weighted_sum, ups_clust)
 
-plot(krange, ups_scores$rmse, type = "l", col = "red", lwd = 2,
-     ylim = c(0.898, 0.99))
-lines(krange, ups_scores_uclust$rmse, type = "l", col = "blue", lwd = 2)
-legend("right", c("no clustering", "user rating clustering"),
-       col = c("red", "blue"), lwd = 2, cex = 1)
+library("viridis")
 
-plot(krange, ups_scores$mae, type = "l", col = "red", lwd = 2,
-     ylim = c(0.708, 0.787))
-lines(krange, ups_scores_uclust$mae, type = "l", col = "blue", lwd = 2)
-legend("right", c("no clustering", "user rating clustering"),
-       col = c("red", "blue"), lwd = 2, cex = 1)
+scores <- rbind(ups_scores, ups_scores_2, ups_scores_3, ups_scores_uclust)
 
-plot(krange, ups_scores$r2, type = "l", col = "red", lwd = 2,
-     ylim = c(0.225, 0.39))
-lines(krange, ups_scores_uclust$r2, type = "l", col = "blue", lwd = 2)
-legend("right", c("no clustering", "user rating clustering"),
-       col = c("red", "blue"), lwd = 2, cex = 1)
+ymax <- max(scores$rmse)
+ymin <- min(scores$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, ups_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = viridis(4)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, ups_scores_2$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[2])
+lines(krange, ups_scores_3$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[3])
+lines(krange, ups_scores_uclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[4])
+legend("bottomleft",
+       c("weighted sum", "mean centred", "z-score", "user rating clustering"),
+       col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 1)
+
+ymax <- max(scores$mae)
+ymin <- min(scores$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, ups_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = viridis(4)[1], xlab = "k neighbours", ylab = "MAE",
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, ups_scores_2$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[2])
+lines(krange, ups_scores_3$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[3])
+lines(krange, ups_scores_uclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[4])
+legend("bottomleft",
+       c("weighted sum", "mean centred", "z-score", "user rating clustering"),
+       col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 1)
+
+ymax <- max(scores$r2)
+ymin <- min(scores$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, ups_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = viridis(4)[1], xlab = "k neighbours", ylab = "R2",
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, ups_scores_2$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[2])
+lines(krange, ups_scores_3$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[3])
+lines(krange, ups_scores_uclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+      col = viridis(4)[4])
+legend("bottomleft",
+       c("weighted sum", "mean centred", "z-score", "user rating clustering"),
+       col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 1)

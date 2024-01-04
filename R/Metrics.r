@@ -220,3 +220,22 @@ cheb_clust <- function(ui, centres) {
   }
   return(1 / (1 + clust_dist))
 }
+
+ups_clust <- function(ui, centres) {
+  n <- nrow(ui)
+  clust_dist <- matrix(NA, nrow = n, ncol = 3)
+
+  mean <- rowMeans(ui, na.rm = TRUE)
+
+  for (i in 1:n) {
+    for (j in 1:3) {
+      ind <- which(!is.na(ui[i, ]) & !is.na(centres[[j]]))
+      denom <- which(!is.na(ui[i, ]) | !is.na(centres[[j]]))
+
+      num <- exp(-mean(abs(ui[i, ][ind] - centres[[j]][ind]))
+                 * abs(mean[i] - mean(centres[[j]], na.rm = TRUE)))
+      clust_dist[i, j] <- num * length(ind) / length(denom)
+    }
+  }
+  return(clust_dist)
+}

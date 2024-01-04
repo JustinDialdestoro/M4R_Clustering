@@ -93,6 +93,26 @@ gen_cheb_sim <- function(ui) {
   return(1 / (1 + sim))
 }
 
+gen_ups_sim <- function(ui) {
+  n <- nrow(ui)
+  sim <- matrix(NA, nrow = n, ncol = n)
+
+  mean <- rowMeans(ui, na.rm = TRUE)
+
+  for (i in 1:n) {
+    for (j in i:n) {
+      ind <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
+      denom <- which(!is.na(ui[i, ]) | !is.na(ui[j, ]))
+
+      num <- exp(-mean(abs(ui[i, ][ind] - ui[j, ][ind]))
+                 * abs(mean[i] - mean[j])) * length(ind)
+      sim[i, j] <- num / length(denom)
+    }
+  }
+  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
+  return(sim)
+}
+
 cos_clust <- function(ui, centres) {
   n <- nrow(ui)
   clust_dist <- matrix(NA, nrow = n, ncol = 3)

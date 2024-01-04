@@ -9,12 +9,13 @@ user_cluster <- function(ui, clust_metric) {
   o_ind <- which(u_mean >= 4)
   p_ind <- which(u_mean <= 3)
 
-  # find cluster centres
+  # find cluster centre indexes
   c_o_ind <- o_ind[which.max(n_ratings[o_ind])]
   c_p_ind <- p_ind[which.max(n_ratings[p_ind])]
 
   centres <- replicate(3, c())
 
+  # cluster centres
   centres[[1]] <- ui[c_o_ind, ]
   centres[[2]] <- colMeans(ui, na.rm = TRUE)
   centres[[2]][is.nan(centres[[2]])] <- NA
@@ -22,6 +23,7 @@ user_cluster <- function(ui, clust_metric) {
 
   cluster <- c()
 
+  # compute user distances to cluster centres
   clust_dist <- clust_metric(ui, centres)
 
   # assign each user to their closest clustering centre
@@ -84,7 +86,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
     # loop over every k
     for (k in seq_along(k_range)) {
       print(k)
-      # predicte on test fold ratings
+      # predict on test fold ratings
       r_pred <- pred_fold_clust1(df, cval_f_i[[i]], uis, sims, pred_func,
                                  k_range[k], clusters)
       r_true <- df$rating[cval_f_i[[i]]]

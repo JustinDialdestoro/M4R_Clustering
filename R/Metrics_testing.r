@@ -15,13 +15,13 @@ source("M4R_Clustering/R/Metrics.r")
 krange <- seq(from = 10, to = 300, by = 10)
 
 # evaluate cosine, adjusted cosine, and pcc
-cos_scores <- cross_val(u100k, 10, gen_cos_sim, krange)
-acos_scores <- cross_val(u100k, 10, gen_acos_sim, krange)
-pcc_scores <- cross_val(u100k, 10, gen_pcc_sim, krange)
-jacc_scores <- cross_val(u100k, 10, gen_jacc_sim, krange)
-euc_scores <- cross_val(u100k, 10, gen_euc_sim, krange)
-mhat_scores <- cross_val(u100k, 10, gen_mhat_sim, krange)
-cheb_scores <- cross_val(u100k, 10, gen_cheb_sim, krange)
+cos_scores <- cross_val(u100k, 10, krange, gen_cos_sim, weighted_sum)
+acos_scores <- cross_val(u100k, 10, krange, gen_acos_sim, weighted_sum)
+pcc_scores <- cross_val(u100k, 10, krange, gen_pcc_sim, weighted_sum)
+jacc_scores <- cross_val(u100k, 10, krange, gen_jacc_sim, weighted_sum)
+euc_scores <- cross_val(u100k, 10, krange, gen_euc_sim, weighted_sum)
+mhat_scores <- cross_val(u100k, 10, krange, gen_mhat_sim, weighted_sum)
+cheb_scores <- cross_val(u100k, 10, krange, gen_cheb_sim, weighted_sum)
 
 library("viridis")
 

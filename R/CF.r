@@ -59,8 +59,12 @@ pred_fold <- function(df, df_ind, ui, sim, pred_func, k) {
 
   # compute rating prediction for every test case
   for (p in df_ind) {
-    preds <- c(preds, pred_func(df, ui, sim, k, 
-                                df$userID[p], df$filmID[p]))
+    # target prediction id
+    userid <- df$userID[p]
+    filmid <- df$filmID[p]
+
+    # prediction
+    preds <- c(preds, pred_func(df, ui, sim, k, userid, filmid))
   }
   return(preds)
 }

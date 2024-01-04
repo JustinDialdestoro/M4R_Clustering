@@ -19,7 +19,7 @@ weighted_sum <- function(df, ui, sim, k, userid, filmid) {
   return(num / denom)
 }
 
-mean_centered <- function(df, predid, ui, sim, k, userid, filmid) {
+mean_centered <- function(df, ui, sim, k, userid, filmid) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
@@ -40,7 +40,7 @@ mean_centered <- function(df, predid, ui, sim, k, userid, filmid) {
   return(mu_u + num / denom)
 }
 
-z_score <- function(df, predid, ui, sim, k, userid, filmid) {
+z_score <- function(df, ui, sim, k, userid, filmid) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 
@@ -64,7 +64,7 @@ z_score <- function(df, predid, ui, sim, k, userid, filmid) {
   return(mu_u + sig_u * num / denom)
 }
 
-discrete <- function(df, predid, ui, sim, k, userid, filmid) {
+discrete <- function(df, ui, sim, k, userid, filmid) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid)
 

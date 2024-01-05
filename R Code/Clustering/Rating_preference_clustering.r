@@ -1,4 +1,4 @@
-user_cluster <- function(ui, clust_metric) {
+rating_preference_clusters <- function(ui, clust_metric) {
   # find number of rated items for each user
   n_ratings <- rowSums(!is.na(ui))
 

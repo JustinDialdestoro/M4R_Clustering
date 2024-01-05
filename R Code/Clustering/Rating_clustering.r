@@ -1,10 +1,11 @@
 library("cluster")
+source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
-rating_clust <- function(ui, metric, k) {
+rating_clust <- function(ui, k) {
   # create similarity matrix
-  sim <- metric(ui)
+  sim <- gen_euc_sim(ui)
   sim[is.na(sim)] <- 0
 
   # k-means clustering
@@ -34,7 +35,7 @@ cval_rating_clust <- function(df, t, k, n_range, metric, pred_func) {
       ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
       # create rating clusters
-      clusters <- rating_clust(ui, metric, n_range[n])
+      clusters <- rating_clust(ui, n_range[n])
 
       # segment user ratings matrix into the n clusters
       uis <- replicate(n_range[n], c())

@@ -17,16 +17,16 @@ nrange <- seq(from = 2, to = 10)
 #                                 gen_cos_sim, weighted_sum)
 # acos_scores <- cval_rating_clust(u100k, 10, 30, nrange,
 #                                  gen_acos_sim, weighted_sum)
-pcc_scores <- cval_rating_clust(u100k, 10, 40, nrange,
-                                gen_pcc_sim, weighted_sum)
-jacc_scores <- cval_rating_clust(u100k, 10, 30, nrange,
-                                 gen_jacc_sim, weighted_sum)
+# pcc_scores <- cval_rating_clust(u100k, 10, 40, nrange,
+#                                 gen_pcc_sim, weighted_sum)
+# jacc_scores <- cval_rating_clust(u100k, 10, 30, nrange,
+#                                  gen_jacc_sim, weighted_sum)
 # euc_scores <- cval_rating_clust(u100k, 10, 30, nrange,
 #                                 gen_euc_sim, weighted_sum)
-mhat_scores <- cval_rating_clust(u100k, 10, 20, nrange,
-                                 gen_mhat_sim, weighted_sum)
-cheb_scores <- cval_rating_clust(u100k, 10, 30, nrange,
-                                 gen_cheb_sim, weighted_sum)
+# mhat_scores <- cval_rating_clust(u100k, 10, 20, nrange,
+#                                  gen_mhat_sim, weighted_sum)
+# cheb_scores <- cval_rating_clust(u100k, 10, 30, nrange,
+#                                  gen_cheb_sim, weighted_sum)
 
 library("viridis")
 
@@ -54,7 +54,7 @@ lines(nrange, cheb_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
 legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1)
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
 
 ymax <- max(scores$mae)
 ymin <- min(scores$mae)
@@ -77,7 +77,7 @@ lines(nrange, cheb_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
 legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1)
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
 
 ymax <- max(scores$r2)
 ymin <- min(scores$r2)
@@ -98,6 +98,6 @@ lines(nrange, mhat_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[6])
 lines(nrange, cheb_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
-legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-                        "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1)
+legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
+                     "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)

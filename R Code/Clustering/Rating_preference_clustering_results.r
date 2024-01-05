@@ -13,11 +13,11 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
 krange <- seq(from = 10, to = 100, by = 10)
 
-# ups_scores <- cval(u100k, 10, krange, gen_ups_sim, weighted_sum)
-# ups_scores_2 <- cval(u100k, 10, krange, gen_ups_sim, mean_centered)
-# ups_scores_3 <- cval(u100k, 10, krange, gen_ups_sim, z_score)
-# # ups_scores_uclust <- cval_pref_clust(u100k, 10, krange,
-# #                                      gen_ups_sim, weighted_sum, ups_clust)
+ups_scores <- cval(u100k, 10, krange, gen_ups_sim, weighted_sum)
+ups_scores_2 <- cval(u100k, 10, krange, gen_ups_sim, mean_centered)
+ups_scores_3 <- cval(u100k, 10, krange, gen_ups_sim, z_score)
+ups_scores_uclust <- cval_pref_clust(u100k, 10, krange,
+                                     gen_ups_sim, weighted_sum, ups_clust)
 
 library("viridis")
 

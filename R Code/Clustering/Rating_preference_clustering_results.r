@@ -6,10 +6,10 @@ u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
 
 colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
 
-source("M4R_Clustering/R/CF_clust1.r")
-source("M4R_Clustering/R/CF.r")
-source("M4R_Clustering/R/Metrics.r")
-source("M4R_Clustering/R/Predictors.r")
+source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
 krange <- seq(from = 10, to = 100, by = 10)
 

@@ -8,8 +8,8 @@ u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
 colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
 
 # call functions
-source("M4R_Clustering/R/CF.r")
-source("M4R_Clustering/R/Metrics.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 
 # set range of k values to test over
 krange <- seq(from = 10, to = 300, by = 10)

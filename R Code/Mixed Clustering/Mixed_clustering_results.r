@@ -10,8 +10,8 @@ udem <- read.table("M4R_Clustering/Data/u.user", sep = "|",
                    col.names = c("userID", "age", "gender",
                                  "occupation", "zip"))
 
-source("M4R_Clustering/R/Mixed_Clust.r")
-source("M4R_Clustering/R/CF_clust2.r")
+source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
+source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering.r")
 
 krange <- seq(from = 10, to = 300, by = 10)
 

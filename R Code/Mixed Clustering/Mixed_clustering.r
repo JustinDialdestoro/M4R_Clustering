@@ -1,4 +1,4 @@
-source("M4R_Clustering/R/CF.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 
 knn_c2 <- function(ui, sim, k, userid, filmid, clusters) {
   ind <- which((ui[, filmid] > 0) & (clusters[1, ] == clusters[1, userid]))

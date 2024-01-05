@@ -1,4 +1,4 @@
-rating_preference_clusters <- function(ui, clust_metric) {
+pref_clust <- function(ui, clust_metric) {
   # find number of rated items for each user
   n_ratings <- rowSums(!is.na(ui))
 
@@ -34,7 +34,7 @@ rating_preference_clusters <- function(ui, clust_metric) {
   return(cluster)
 }
 
-pred_fold_clust1 <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
+pred_fold_clust <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
   preds <- c()
 
   # compute rating prediction for every test case
@@ -54,7 +54,7 @@ pred_fold_clust1 <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
   return(preds)
 }
 
-cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
+cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
@@ -72,7 +72,7 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
     ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
     # create user clusters
-    clusters <- user_cluster(ui, clust_metric)
+    clusters <- pref_clust(ui, clust_metric)
 
     # segment user ratings matrix into clusters
     uis <- replicate(3, c())
@@ -94,8 +94,8 @@ cross_val_clust1 <- function(df, t, k_range, metric, pred_func, clust_metric) {
       t1 <- Sys.time()
 
       # predict on test fold ratings
-      r_pred <- pred_fold_clust1(df, cval_f_i[[i]], uis, sims, pred_func,
-                                 k_range[k], clusters)
+      r_pred <- pred_fold_clust(df, cval_f_i[[i]], uis, sims, pred_func,
+                                k_range[k], clusters)
       r_true <- df$rating[cval_f_i[[i]]]
 
       # error metrics

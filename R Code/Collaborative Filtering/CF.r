@@ -88,7 +88,7 @@ r2 <- function(pred, true) {
   return(cor(pred[ind], true[ind])**2)
 }
 
-cross_val <- function(df, t, k_range, metric, pred_func) {
+cval <- function(df, t, k_range, metric, pred_func) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))

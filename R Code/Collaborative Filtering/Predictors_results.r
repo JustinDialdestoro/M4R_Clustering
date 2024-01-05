@@ -16,10 +16,10 @@ source("M4R_Clustering/R/Predictors.r")
 krange <- seq(from = 10, to = 100, by = 10)
 
 # evaluate cosine, adjusted cosine, and pcc
-euc_scores_1 <- cross_val(u100k, 10, gen_euc_sim, weighted_sum, krange)
-euc_scores_2 <- cross_val(u100k, 10, gen_euc_sim, mean_centered, krange)
-euc_scores_3 <- cross_val(u100k, 10, gen_euc_sim, z_score, krange)
-euc_scores_4 <- cross_val(u100k, 10, gen_euc_sim, discrete, krange)
+euc_scores_1 <- cval(u100k, 10, gen_euc_sim, weighted_sum, krange)
+euc_scores_2 <- cval(u100k, 10, gen_euc_sim, mean_centered, krange)
+euc_scores_3 <- cval(u100k, 10, gen_euc_sim, z_score, krange)
+euc_scores_4 <- cval(u100k, 10, gen_euc_sim, discrete, krange)
 
 library("viridis")
 

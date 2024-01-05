@@ -22,33 +22,34 @@ cval_rating_clust <- function(df, t, k, n_range, metric, pred_func) {
   cval_f_i <- t_fold_index(df, t) # nolint
   cval_f <- t_fold(df, cval_f_i) # nolint
 
-  # loop over each n
-  for (n in seq_along(n_range)) {
-    print("Offline phase:")
-    t1 <- Sys.time()
+  # loop over each fold
+  for (i in 1:t) {
 
-    # ui and similarity matrix
-    ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
+    # loop over every n
+    for (n in seq_along(n_range)) {
+      print(paste("Offline phase for n = ", n_range[n], ", fold", i, ":"))
+      t1 <- Sys.time()
 
-    # create rating clusters
-    clusters <- rating_clust(ui, metric, n_range[n])
+      # ui and similarity matrix
+      ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
-    # segment user ratings matrix into the n clusters
-    uis <- replicate(n_range[n], c())
-    for (i in 1:n) {
-      uis[[i]] <- ui[which(clusters == i), ]
-    }
+      # create rating clusters
+      clusters <- rating_clust(ui, metric, n_range[n])
 
-    # similarity matrix for each segmented ui matrix
-    sims <- replicate(n_range[n], c())
-    for (i in 1:3) {
-      sims[[i]] <- metric(uis[[i]])
-    }
+      # segment user ratings matrix into the n clusters
+      uis <- replicate(n_range[n], c())
+      for (j in 1:n_range[n]) {
+        uis[[j]] <- ui[which(clusters == j), ]
+      }
 
-    print(Sys.time() - t1)
+      # similarity matrix for each segmented ui matrix
+      sims <- replicate(n_range[n], c())
+      for (j in 1:n_range[n]) {
+        sims[[j]] <- metric(uis[[j]])
+      }
 
-    # loop over every t
-    for (i in 1:t) {
+      print(Sys.time() - t1)
+
       print("Online phase:")
       t1 <- Sys.time()
 

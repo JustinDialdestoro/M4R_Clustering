@@ -5,7 +5,7 @@ source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
 rating_clust <- function(ui, k) {
   # create similarity matrix
-  sim <- gen_euc_sim(ui)
+  sim <- gen_euc_sim(ui) # nolint
   sim[is.na(sim)] <- 0
 
   # k-means clustering

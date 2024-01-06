@@ -54,7 +54,7 @@ gen_ui_matrix <- function(df_o, df) {
   return(ui)
 }
 
-pred_fold <- function(df, df_ind, ui, sim, pred_func, k) {
+pred_fold <- function(df, df_ind, ui, sim, pred_func, k, user = TRUE) {
   preds <- c()
 
   # compute rating prediction for every test case
@@ -64,7 +64,7 @@ pred_fold <- function(df, df_ind, ui, sim, pred_func, k) {
     filmid <- df$filmID[p]
 
     # prediction
-    preds <- c(preds, pred_func(df, ui, sim, k, userid, filmid))
+    preds <- c(preds, pred_func(df, ui, sim, k, userid, filmid, user))
   }
   return(preds)
 }
@@ -88,7 +88,7 @@ r2 <- function(pred, true) {
   return(cor(pred[ind], true[ind])**2)
 }
 
-cval <- function(df, t, k_range, metric, pred_func) {
+cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
@@ -104,7 +104,7 @@ cval <- function(df, t, k_range, metric, pred_func) {
 
     # ui and similarity matrix
     ui <- gen_ui_matrix(df, cval_f[[i]])
-    sim <- metric(ui)
+    sim <- metric(ui, user)
 
     print(Sys.time() - t1)
 
@@ -114,7 +114,8 @@ cval <- function(df, t, k_range, metric, pred_func) {
       t1 <- Sys.time()
 
       # predicte on test fold ratings
-      r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim, pred_func, k_range[k])
+      r_pred <- pred_fold(df, cval_f_i[[i]], ui, sim,
+                          pred_func, k_range[k], user)
       r_true <- df$rating[cval_f_i[[i]]]
 
       # error metrics

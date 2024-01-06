@@ -1,8 +1,8 @@
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
-cval_rating_clust <- function(df, df_feat, t, k, n_range, metric,
-                              pred_func, clust_func) {
+cval_mixed_clust <- function(df, df_feat, t, k, n_range, metric,
+                             pred_func, clust_func) {
   m <- length(n_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, m), mae = rep(0, m), r2 = rep(0, m))

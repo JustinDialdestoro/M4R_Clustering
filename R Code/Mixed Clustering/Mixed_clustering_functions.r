@@ -16,10 +16,13 @@ gow_pam <- function(df, k) {
   # remove id and zip variable
   df$userID <- NULL
   df$zip <- NULL
+
   # range normalise age variable
   df$age <- range_normalise(df$age)
+
   # binarise gender variable
   df$gender <- as.numeric(df$gender == "M")
+
   # dummy code occupation variable
   df <- dummy_cols(df, select_columns = "occupation")
   df$occupation <- NULL
@@ -27,13 +30,7 @@ gow_pam <- function(df, k) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "gower")
 
-  clusts <- pam(dsim, k = k)
-  med <- clusts$medoids
-
-  # similarity matrix to each medoid
-  dist <- as(dsim, "matrix")[med, ]
-
-  return(apply(dist, 2, order))
+  return(pam(dsim, k = k)$clustering)
 }
 
 hl_pam <- function(df, k) {
@@ -41,10 +38,13 @@ hl_pam <- function(df, k) {
   n_u <- length(df$userID)
   df$userID <- NULL
   df$zip <- NULL
+
   # range normalise age variable
   df$age <- range_normalise(df$age)
+
   # binarise gender variable
   df$gender <- as.numeric(df$gender == "M")
+
   # dummy code occupation variable
   df <- dummy_cols(df, select_columns = "occupation")
   n_cat <- length(unique(df$occupation))
@@ -57,27 +57,21 @@ hl_pam <- function(df, k) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")
 
-  clusts <- pam(dsim, k = k)
-  med <- clusts$medoids
-
-  # similarity matrix to each medoid
-  dist <- as(dsim, "matrix")[med, ]
-
-  return(apply(dist, 2, order))
+  return(pam(dsim, k = k)$clustering)
 }
 
 kprototypes <- function(df, k) {
   # remove id and zip variable
   df$userID <- NULL
   df$zip <- NULL
+
   # binarise gender variable
   df$gender <- as.numeric(df$gender == "M")
+
   # dummy code occupation variable
   df$occupation <- as.factor(df$occupation)
 
-  clusts <- kproto(df, k)
-
-  return(apply(-clusts$dist, 1, order))
+  return(kproto(df, k)$cluster)
 }
 
 mixed_k <- function(df, k) {
@@ -90,10 +84,8 @@ mixed_k <- function(df, k) {
   df$occupation <- as.factor(df$occupation)
 
   dist <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
-  clusts <- fastkmed(dist, k)
-  med <- clusts$medoid
 
-  return(apply(dist[, med], 1, order))
+  return(fastkmed(dist, k)$cluster)
 }
 
 mskmeans <- function(df, k) {

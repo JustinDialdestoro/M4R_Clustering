@@ -86,7 +86,7 @@ gen_acos_sim <- function(ui, user = TRUE) {
   return((1 + sim) / 2)
 }
 
-gen_pcc_sim <- function(ui) {
+gen_pcc_sim <- function(ui, user =TRUE) {
   if (user == TRUE) {
     # construct similarity matrix skeleton
     n <- nrow(ui)

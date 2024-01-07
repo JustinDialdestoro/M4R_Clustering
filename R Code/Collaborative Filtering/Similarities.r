@@ -8,7 +8,7 @@ cosine <- function(x, y) {
   }
   # compute cosine similarity
   return((x[ind] %*% y[ind]) /
-           (norm(x[ind], type = "2") * norm(y[ind], type = "2")))
+           (norm(x[ind], type = "2") * norm(y[ind], type = "2") + 1e-9))
 }
 
 gen_cos_sim <- function(ui, user = TRUE) {
@@ -86,7 +86,7 @@ gen_acos_sim <- function(ui, user = TRUE) {
   return((1 + sim) / 2)
 }
 
-gen_pcc_sim <- function(ui, user =TRUE) {
+gen_pcc_sim <- function(ui, user = TRUE) {
   if (user == TRUE) {
     # construct similarity matrix skeleton
     n <- nrow(ui)

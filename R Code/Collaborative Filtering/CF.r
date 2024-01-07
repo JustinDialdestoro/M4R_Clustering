@@ -99,7 +99,7 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
 
   # loop over each fold
   for (i in 1:t) {
-    print("Offline phase:")
+    print(paste("Offline phase for fold", i, ":"))
     t1 <- Sys.time()
 
     # ui and similarity matrix
@@ -110,7 +110,7 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
 
     # loop over every k
     for (k in seq_along(k_range)) {
-      print("Online phase:")
+      print(paste("Online phase for k =", k_range[k]))
       t1 <- Sys.time()
 
       # predicte on test fold ratings

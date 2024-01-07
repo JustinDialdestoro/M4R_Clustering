@@ -106,7 +106,7 @@ z_score <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
       sig_j <- sd(ui[, neighbours], na.rm = TRUE)
     } else {
       mu_j <- colMeans(ui[, neighbours], na.rm = TRUE)
-      sig_j <- apply(ui[, neighbours], 1, sd, na.rm = TRUE)
+      sig_j <- apply(ui[, neighbours], 2, sd, na.rm = TRUE)
     }
 
     # compute rating prediction

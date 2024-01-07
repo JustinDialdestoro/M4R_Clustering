@@ -40,8 +40,15 @@ cval_rating_clust <- function(df, t, k, n_range,
 
       # segment user ratings matrix into the n clusters
       uis <- replicate(n_range[n], c())
-      for (j in 1:n_range[n]) {
-        uis[[j]] <- ui[, which(clusters == j)]
+
+      if (user == TRUE) {
+        for (j in 1:n_range[n]) {
+          uis[[j]] <- ui[which(clusters == j), ]
+        }
+      } else {
+        for (j in 1:n_range[n]) {
+          uis[[j]] <- ui[, which(clusters == j)]
+        }
       }
 
       # similarity matrix for each segmented ui matrix

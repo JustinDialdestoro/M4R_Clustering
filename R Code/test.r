@@ -14,9 +14,9 @@ t1 <- Sys.time()
 ui <- gen_ui_matrix(u100k, f[[1]])
 t2 <- Sys.time()
 
-t1 <- Sys.time()
-sim <- gen_cos_sim((ui))
-t2 <- Sys.time()
+# t1 <- Sys.time()
+# sim <- gen_cos_sim((ui))
+# t2 <- Sys.time()
 
 # t1 <- Sys.time()
 # sim <- gen_acos_sim((ui))

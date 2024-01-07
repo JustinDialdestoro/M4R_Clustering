@@ -6,6 +6,8 @@ u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
 
 colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
 
+# call functions
+library("viridis")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
@@ -18,8 +20,6 @@ ups_scores_2 <- cval(u100k, 10, krange, gen_ups_sim, mean_centered)
 ups_scores_3 <- cval(u100k, 10, krange, gen_ups_sim, z_score)
 ups_scores_uclust <- cval_pref_clust(u100k, 10, krange,
                                      gen_ups_sim, weighted_sum, ups_clust)
-
-library("viridis")
 
 scores <- rbind(ups_scores, ups_scores_2, ups_scores_3, ups_scores_uclust)
 

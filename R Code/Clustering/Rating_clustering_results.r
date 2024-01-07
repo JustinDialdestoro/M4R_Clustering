@@ -6,6 +6,8 @@ u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
 
 colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
 
+# call functions
+library("viridis")
 source("M4R_Clustering/R Code/Clustering/Rating_clustering.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
@@ -27,8 +29,6 @@ nrange <- seq(from = 2, to = 10)
 #                                  gen_mhat_sim, weighted_sum)
 # cheb_scores <- cval_rating_clust(u100k, 10, 30, nrange,
 #                                  gen_cheb_sim, weighted_sum)
-
-library("viridis")
 
 scores <- rbind(cos_scores, acos_scores, pcc_scores, jacc_scores,
                 euc_scores, mhat_scores, cheb_scores)

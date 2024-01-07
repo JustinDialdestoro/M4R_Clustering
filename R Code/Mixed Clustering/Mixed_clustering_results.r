@@ -10,6 +10,8 @@ udem <- read.table("M4R_Clustering/Data/u.user", sep = "|",
                    col.names = c("userID", "age", "gender",
                                  "occupation", "zip"))
 
+# call functions
+library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")

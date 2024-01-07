@@ -34,22 +34,41 @@ pref_clust <- function(ui, clust_metric) {
   return(cluster)
 }
 
-pred_fold_clust <- function(df, df_ind, uis, sims, pred_func, k, clusters) {
+pred_fold_clust <- function(df, df_ind, uis, sims,
+                            pred_func, k, clusters, user = TRUE) {
   preds <- c()
 
-  # compute rating prediction for every test case
-  for (p in df_ind) {
-    # target prediction id
-    userid <- df$userID[p]
-    filmid <- df$filmID[p]
+  if (user == TRUE) {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
 
-    # find users cluster
-    c <- clusters[userid]
-    # within cluster user index
-    userind <- which(which(clusters == c) == userid)
+      # find users cluster
+      c <- clusters[userid]
+      # within cluster user index
+      userind <- which(which(clusters == c) == userid)
 
-    # prediction
-    preds <- c(preds, pred_func(df, uis[[c]], sims[[c]], k, userind, filmid))
+      # prediction
+      preds <- c(preds, pred_func(df, uis[[c]], sims[[c]], k, userind, filmid))
+    }
+  } else {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
+
+      # find films cluster
+      c <- clusters[filmid]
+      # within cluster user index
+      filmind <- which(which(clusters == c) == filmid)
+
+      # prediction
+      preds <- c(preds, pred_func(df, uis[[c]], sims[[c]],
+                                  k, userid, filmind, user))
+    }
   }
   return(preds)
 }

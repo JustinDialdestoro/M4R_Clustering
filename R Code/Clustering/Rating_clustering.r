@@ -3,9 +3,9 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
-rating_clust <- function(ui, k) {
+rating_clust <- function(ui, k, user = TRUE) {
   # create similarity matrix
-  sim <- gen_euc_sim(ui) # nolint
+  sim <- gen_euc_sim(ui, user) # nolint
   sim[is.na(sim)] <- 0
 
   # k-means clustering
@@ -14,7 +14,8 @@ rating_clust <- function(ui, k) {
   return(cluster$clustering)
 }
 
-cval_rating_clust <- function(df, t, k, n_range, metric, pred_func) {
+cval_rating_clust <- function(df, t, k, n_range,
+                              metric, pred_func, user = TRUE) {
   m <- length(n_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, m), mae = rep(0, m), r2 = rep(0, m))
@@ -35,18 +36,18 @@ cval_rating_clust <- function(df, t, k, n_range, metric, pred_func) {
       ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
       # create rating clusters
-      clusters <- rating_clust(ui, n_range[n])
+      clusters <- rating_clust(ui, n_range[n], user)
 
       # segment user ratings matrix into the n clusters
       uis <- replicate(n_range[n], c())
       for (j in 1:n_range[n]) {
-        uis[[j]] <- ui[which(clusters == j), ]
+        uis[[j]] <- ui[, which(clusters == j)]
       }
 
       # similarity matrix for each segmented ui matrix
       sims <- replicate(n_range[n], c())
       for (j in 1:n_range[n]) {
-        sims[[j]] <- metric(uis[[j]])
+        sims[[j]] <- metric(uis[[j]], user)
       }
 
       print(Sys.time() - t1)
@@ -56,7 +57,7 @@ cval_rating_clust <- function(df, t, k, n_range, metric, pred_func) {
 
       # predict on test fold ratings
       r_pred <- pred_fold_clust(df, cval_f_i[[i]], uis, sims, pred_func, # nolint
-                                k, clusters)
+                                k, clusters, user)
       r_true <- df$rating[cval_f_i[[i]]]
 
       # error metrics

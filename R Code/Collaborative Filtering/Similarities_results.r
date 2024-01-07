@@ -8,6 +8,7 @@ u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
 colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
 
 # call functions
+library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 
@@ -15,48 +16,121 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 krange <- seq(from = 10, to = 300, by = 10)
 
 # evaluate cosine, adjusted cosine, and pcc
-cos_scores <- cval(u100k, 10, krange, gen_cos_sim, weighted_sum)
-acos_scores <- cval(u100k, 10, krange, gen_acos_sim, weighted_sum)
-pcc_scores <- cval(u100k, 10, krange, gen_pcc_sim, weighted_sum)
-jacc_scores <- cval(u100k, 10, krange, gen_jacc_sim, weighted_sum)
-euc_scores <- cval(u100k, 10, krange, gen_euc_sim, weighted_sum)
-mhat_scores <- cval(u100k, 10, krange, gen_mhat_sim, weighted_sum)
-cheb_scores <- cval(u100k, 10, krange, gen_cheb_sim, weighted_sum)
+cos_scores_u <- cval(u100k, 10, krange, gen_cos_sim, weighted_sum)
+acos_scores_u <- cval(u100k, 10, krange, gen_acos_sim, weighted_sum)
+pcc_scores_u <- cval(u100k, 10, krange, gen_pcc_sim, weighted_sum)
+jacc_scores_u <- cval(u100k, 10, krange, gen_jacc_sim, weighted_sum)
+euc_scores_u <- cval(u100k, 10, krange, gen_euc_sim, weighted_sum)
+mhat_scores_u <- cval(u100k, 10, krange, gen_mhat_sim, weighted_sum)
+cheb_scores_u <- cval(u100k, 10, krange, gen_cheb_sim, weighted_sum)
 
-library("viridis")
+scores <- rbind(cos_scores_u, acos_scores_u, pcc_scores_u, jacc_scores_u,
+                euc_scores_u, mhat_scores_u, cheb_scores_u)
 
-plot(krange, cos_scores$rmse, type = "l", col = viridis(7)[1], lwd = 2,
-     ylim = c(0.955, 1.05))
-lines(krange, acos_scores$rmse, type = "l", col = viridis(7)[2], lwd = 2)
-lines(krange, pcc_scores$rmse, type = "l", col = viridis(7)[3], lwd = 2)
-lines(krange, jacc_scores$rmse, type = "l", col = viridis(7)[4], lwd = 2)
-lines(krange, euc_scores$rmse, type = "l", col = viridis(7)[5], lwd = 2)
-lines(krange, mhat_scores$rmse, type = "l", col = viridis(7)[6], lwd = 2)
-lines(krange, cheb_scores$rmse, type = "l", col = viridis(7)[7], lwd = 2)
+ymax <- max(scores$rmse)
+ymin <- min(scores$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_u$rmse, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_u$rmse, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_u$rmse, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_u$rmse, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_u$rmse, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_u$rmse, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_u$rmse, type = "l", col = viridis(7)[7], lwd = 2)
 legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
                         "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lwd = 2, cex = 1)
 
-plot(krange, cos_scores$mae, type = "l", col = viridis(7)[1], lwd = 2,
-     ylim = c(0.75, 0.825))
-lines(krange, acos_scores$mae, type = "l", col = viridis(7)[2], lwd = 2)
-lines(krange, pcc_scores$mae, type = "l", col = viridis(7)[3], lwd = 2)
-lines(krange, jacc_scores$mae, type = "l", col = viridis(7)[4], lwd = 2)
-lines(krange, euc_scores$mae, type = "l", col = viridis(7)[5], lwd = 2)
-lines(krange, mhat_scores$mae, type = "l", col = viridis(7)[6], lwd = 2)
-lines(krange, cheb_scores$mae, type = "l", col = viridis(7)[7], lwd = 2)
+ymax <- max(scores$mae)
+ymin <- min(scores$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_u$mae, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_u$mae, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_u$mae, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_u$mae, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_u$mae, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_u$mae, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_u$mae, type = "l", col = viridis(7)[7], lwd = 2)
 legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
                         "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lwd = 2, cex = 1)
 
-plot(krange, cos_scores$r2, type = "l", col = viridis(7)[1], lwd = 2,
-     ylim = c(0.165, 0.28))
-lines(krange, acos_scores$r2, type = "l", col = viridis(7)[2], lwd = 2)
-lines(krange, pcc_scores$r2, type = "l", col = viridis(7)[3], lwd = 2)
-lines(krange, jacc_scores$r2, type = "l", col = viridis(7)[4], lwd = 2)
-lines(krange, euc_scores$r2, type = "l", col = viridis(7)[5], lwd = 2)
-lines(krange, mhat_scores$r2, type = "l", col = viridis(7)[6], lwd = 2)
-lines(krange, cheb_scores$r2, type = "l", col = viridis(7)[7], lwd = 2)
+ymax <- max(scores$r2)
+ymin <- min(scores$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_u$r2, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_u$r2, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_u$r2, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_u$r2, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_u$r2, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_u$r2, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_u$r2, type = "l", col = viridis(7)[7], lwd = 2)
+legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
+                     "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lwd = 2, cex = 1)
+
+# evaluate cosine, adjusted cosine, and pcc
+cos_scores_i <- cval(u100k, 10, krange, gen_cos_sim, weighted_sum, FALSE)
+acos_scores_i <- cval(u100k, 10, krange, gen_acos_sim, weighted_sum, FALSE)
+pcc_scores_i <- cval(u100k, 10, krange, gen_pcc_sim, weighted_sum, FALSE)
+jacc_scores_i <- cval(u100k, 10, krange, gen_jacc_sim, weighted_sum, FALSE)
+euc_scores_i <- cval(u100k, 10, krange, gen_euc_sim, weighted_sum, FALSE)
+mhat_scores_i <- cval(u100k, 10, krange, gen_mhat_sim, weighted_sum, FALSE)
+cheb_scores_i <- cval(u100k, 10, krange, gen_cheb_sim, weighted_sum, FALSE)
+
+scores <- rbind(cos_scores_i, acos_scores_i, pcc_scores_i, jacc_scores_i,
+                euc_scores_i, mhat_scores_i, cheb_scores_i)
+
+ymax <- max(scores$rmse)
+ymin <- min(scores$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_i$rmse, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_i$rmse, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_i$rmse, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_i$rmse, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_i$rmse, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_i$rmse, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_i$rmse, type = "l", col = viridis(7)[7], lwd = 2)
+legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
+                        "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lwd = 2, cex = 1)
+
+ymax <- max(scores$mae)
+ymin <- min(scores$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_i$mae, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_i$mae, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_i$mae, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_i$mae, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_i$mae, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_i$mae, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_i$mae, type = "l", col = viridis(7)[7], lwd = 2)
+legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
+                        "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lwd = 2, cex = 1)
+
+ymax <- max(scores$r2)
+ymin <- min(scores$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, cos_scores_i$r2, type = "l", col = viridis(7)[1], lwd = 2,
+     ylim = c(ymin - ygap, ymax + ygap))
+lines(krange, acos_scores_i$r2, type = "l", col = viridis(7)[2], lwd = 2)
+lines(krange, pcc_scores_i$r2, type = "l", col = viridis(7)[3], lwd = 2)
+lines(krange, jacc_scores_i$r2, type = "l", col = viridis(7)[4], lwd = 2)
+lines(krange, euc_scores_i$r2, type = "l", col = viridis(7)[5], lwd = 2)
+lines(krange, mhat_scores_i$r2, type = "l", col = viridis(7)[6], lwd = 2)
+lines(krange, cheb_scores_i$r2, type = "l", col = viridis(7)[7], lwd = 2)
 legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
                      "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lwd = 2, cex = 1)

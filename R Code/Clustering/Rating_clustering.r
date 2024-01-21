@@ -9,9 +9,9 @@ rating_clust <- function(ui, k, user = TRUE) {
   sim[is.na(sim)] <- 0
 
   # k-means clustering
-  cluster <- pam(sim, k, TRUE)
+  cluster <- kmeans(sim, k)
 
-  return(cluster$clustering)
+  return(cluster$cluster)
 }
 
 cval_rating_clust <- function(df, t, k, n_range,

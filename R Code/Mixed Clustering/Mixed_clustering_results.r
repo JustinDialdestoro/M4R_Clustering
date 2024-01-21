@@ -10,7 +10,14 @@ udem <- read.table("M4R_Clustering/Data/u.user", sep = "|",
                    col.names = c("userID", "age", "gender",
                                  "occupation", "zip"))
 
-ifeat <- read.table
+ifeat <- read.delim("M4R_Clustering/Data/u.item", sep = "|", header = FALSE,
+                    col.names = c("filmID", "title", "null", "date", "imdb",
+                                  "unknown", "action", "adventure", "animation",
+                                  "children", "comedy", "crime",
+                                  "documentary", "drama", "fantasy",
+                                  "film-noir", "horror", "musical", "mystery",
+                                  "romance", "sci-fi", "thriller", "war",
+                                  "western"))
 
 # call functions
 library("viridis")

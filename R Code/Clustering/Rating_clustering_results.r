@@ -102,24 +102,24 @@ nrange <- seq(from = 2, to = 10)
 #                      "jaccard", "euclidean", "manhattan", "chebyshev"),
 #        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
 
-cos_scores_iclust <- cval_rating_clust(u100k, 10, 50, nrange,
-                                       gen_cos_sim, weighted_sum, FALSE)
-acos_scores_iclust <- cval_rating_clust(u100k, 10, 40, nrange,
-                                        gen_acos_sim, weighted_sum, FALSE)
-pcc_scores_iclust <- cval_rating_clust(u100k, 10, 90, nrange,
-                                       gen_pcc_sim, weighted_sum, FALSE)
-jacc_scores_iclust <- cval_rating_clust(u100k, 10, 10, nrange,
-                                        gen_jacc_sim, weighted_sum, FALSE)
-euc_scores_iclust <- cval_rating_clust(u100k, 10, 100, nrange,
-                                       gen_euc_sim, weighted_sum, FALSE)
-mhat_scores_iclust <- cval_rating_clust(u100k, 10, 300, nrange,
-                                        gen_mhat_sim, weighted_sum, FALSE)
-cheb_scores_iclust <- cval_rating_clust(u100k, 10, 60, nrange,
-                                        gen_cheb_sim, weighted_sum, FALSE)
+# cos_scores_iclust <- cval_rating_clust(u100k, 10, 50, nrange,
+#                                        gen_cos_sim, weighted_sum, FALSE)
+# acos_scores_iclust <- cval_rating_clust(u100k, 10, 40, nrange,
+#                                         gen_acos_sim, weighted_sum, FALSE)
+# pcc_scores_iclust <- cval_rating_clust(u100k, 10, 90, nrange,
+#                                        gen_pcc_sim, weighted_sum, FALSE)
+# jacc_scores_iclust <- cval_rating_clust(u100k, 10, 10, nrange,
+#                                         gen_jacc_sim, weighted_sum, FALSE)
+# euc_scores_iclust <- cval_rating_clust(u100k, 10, 100, nrange,
+#                                        gen_euc_sim, weighted_sum, FALSE)
+# mhat_scores_iclust <- cval_rating_clust(u100k, 10, 300, nrange,
+#                                         gen_mhat_sim, weighted_sum, FALSE)
+# cheb_scores_iclust <- cval_rating_clust(u100k, 10, 60, nrange,
+#                                         gen_cheb_sim, weighted_sum, FALSE)
 
-scores <- rbind(cos_scores_iclust, acos_scores_iclust, pcc_scores_iclust,
-                jacc_scores_iclust, euc_scores_iclust, mhat_scores_iclust,
-                cheb_scores_iclust)
+# scores <- rbind(cos_scores_iclust, acos_scores_iclust, pcc_scores_iclust,
+#                 jacc_scores_iclust, euc_scores_iclust, mhat_scores_iclust,
+#                 cheb_scores_iclust)
 
 ymax <- max(scores$rmse)
 ymin <- min(scores$rmse)
@@ -140,9 +140,9 @@ lines(nrange, mhat_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[6])
 lines(nrange, cheb_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
-legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-                        "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
+                   "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(scores$mae)
 ymin <- min(scores$mae)
@@ -163,9 +163,9 @@ lines(nrange, mhat_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[6])
 lines(nrange, cheb_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
-legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-                        "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
+                   "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(scores$r2)
 ymin <- min(scores$r2)
@@ -186,6 +186,6 @@ lines(nrange, mhat_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[6])
 lines(nrange, cheb_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(7)[7])
-legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
-                     "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
+                   "jaccard", "euclidean", "manhattan", "chebyshev"),
+       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)

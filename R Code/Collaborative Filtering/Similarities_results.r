@@ -46,7 +46,7 @@ lines(krange, mhat_scores_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[6])
 lines(krange, cheb_scores_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "pearson's correlation",
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
@@ -69,7 +69,7 @@ lines(krange, mhat_scores_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[6])
 lines(krange, cheb_scores_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "pearson's correlation",
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
@@ -92,7 +92,7 @@ lines(krange, mhat_scores_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[6])
 lines(krange, cheb_scores_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
       cex = 0.5, col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "pearson's correlation",
+legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 

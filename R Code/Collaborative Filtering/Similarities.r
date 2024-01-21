@@ -166,60 +166,12 @@ gen_jacc_sim <- function(ui, user = TRUE) {
   return(sim)
 }
 
-# gen_euc_sim <- function(ui, user = TRUE) {
-#   if (user == TRUE) {
-#     sim <- as(dist(ui, "euclidean"), "matrix")
-#   } else {
-#     sim <- as(dist(t(ui), "euclidean"), "matrix")
-#   }
-
-#   # transform into similarity matrix
-#   return(1 / (1 + sim))
-# }
-
 gen_euc_sim <- function(ui, user = TRUE) {
   if (user == TRUE) {
-    # construct similarity matrix skeleton
-    n <- nrow(ui)
-    sim <- matrix(NA, nrow = n, ncol = n)
-
-    # fill upper triangle of sim matrix
-    for (i in 1:n) {
-      for (j in i:n) {
-        # find non NA entries
-        ind <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
-
-        if (length(ind) == 0) {
-          sim[i, j] <- NA
-        } else {
-          # compute euclidean distance
-          sim[i, j] <- sqrt(sum((ui[i, ][ind] - ui[j, ][ind])**2))
-        }
-      }
-    }
+    sim <- as(dist(ui, "euclidean"), "matrix")
   } else {
-    # construct similarity matrix skeleton
-    n <- ncol(ui)
-    sim <- matrix(NA, nrow = n, ncol = n)
-
-    # fill upper triangle of sim matrix
-    for (i in 1:n) {
-      for (j in i:n) {
-        # find non NA entries
-        ind <- which(!is.na(ui[, i]) & !is.na(ui[, j]))
-
-        if (length(ind) == 0) {
-          sim[i, j] <- NA
-        } else {
-          # compute euclidean distance
-          sim[i, j] <- sqrt(sum((ui[, i][ind] - ui[, j][ind])**2))
-        }
-      }
-    }
+    sim <- as(dist(t(ui), "euclidean"), "matrix")
   }
-
-  # fill remainder of matrix
-  sim[lower.tri(sim, diag = FALSE)] <- t(sim)[lower.tri(t(sim), diag = FALSE)]
 
   # transform into similarity matrix
   return(1 / (1 + sim))

@@ -11,7 +11,7 @@ udem <- read.table("M4R_Clustering/Data/u.user", sep = "|",
                                  "occupation", "zip"))
 
 ifeat <- read.delim("M4R_Clustering/Data/u.item", sep = "|", header = FALSE,
-                    col.names = c("filmID", "title", "null", "date", "imdb",
+                    col.names = c("filmID", "title", "date", "null", "imdb",
                                   "unknown", "action", "adventure", "animation",
                                   "children", "comedy", "crime",
                                   "documentary", "drama", "fantasy",

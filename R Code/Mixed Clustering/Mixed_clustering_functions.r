@@ -29,7 +29,7 @@ gow_pam <- function(df, k, user = TRUE) {
     df$occupation <- NULL
   } else {
     # include only genre variables
-    df[1:6] <- NULL
+    df[1:5] <- NULL
   }
 
   # gower dissimilarity matrix
@@ -38,26 +38,42 @@ gow_pam <- function(df, k, user = TRUE) {
   return(pam(dsim, k = k)$clustering)
 }
 
-hl_pam <- function(df, k) {
-  # remove id and zip variable
-  n_u <- length(df$userID)
-  df$userID <- NULL
-  df$zip <- NULL
+hl_pam <- function(df, k, user = TRUE) {
+  n_u <- nrow(df)
 
-  # range normalise age variable
-  df$age <- range_normalise(df$age)
+  if (user == TRUE) {
+    # remove id and zip variable
+    df$userID <- NULL
+    df$zip <- NULL
 
-  # binarise gender variable
-  df$gender <- as.numeric(df$gender == "M")
+    # range normalise age variable
+    df$age <- range_normalise(df$age)
 
-  # dummy code occupation variable
-  df <- dummy_cols(df, select_columns = "occupation")
-  n_cat <- length(unique(df$occupation))
-  df$occupation <- NULL
+    # binarise gender variable
+    df$gender <- as.numeric(df$gender == "M")
+    # compute gender scaling factor
+    gender_fac <- distancefactor(2, n_u)
+    # scale occupation variable
+    df$gender <- df$gender * gender_fac
 
-  # compute categorical scaling factor
-  fac <- distancefactor(n_cat, n_u)
-  df[3:(2 + n_cat)] <- df[3:(2 + n_cat)] * fac
+    # dummy code occupation variable
+    df <- dummy_cols(df, select_columns = "occupation")
+    df$occupation <- NULL
+    # compute occupation scaling factor
+    n_occ <- length(unique(df$occupation))
+    occ_fac <- distancefactor(n_occ, n_u)
+    # scale occupation variable
+    df[3:(2 + n_occ)] <- df[3:(2 + n_occ)] * occ_fac
+
+  } else {
+    # include only genre variables
+    df[1:5] <- NULL
+    # compute genre scaling factor
+    n_gen <- ncol(df)
+    gen_fac <- distancefactor(n_gen, n_u)
+    # scale genre variables
+    df <- df*gen_fac
+  }
 
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")

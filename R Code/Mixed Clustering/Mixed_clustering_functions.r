@@ -99,7 +99,7 @@ kprototypes <- function(df, k, user = TRUE) {
     # include only genre variables
     df[1:5] <- NULL
 
-    return(kmodes(df, 2))
+    return(kmodes(df, 2)$cluster)
   }
 }
 

@@ -12,22 +12,27 @@ range_normalise <- function(x) {
   return((x - min(x)) / (max(x) - min(x)))
 }
 
-gow_pam <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
-  df$zip <- NULL
+gow_pam <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove id and zip variable
+    df$userID <- NULL
+    df$zip <- NULL
 
-  # range normalise age variable
-  df$age <- range_normalise(df$age)
+    # range normalise age variable
+    df$age <- range_normalise(df$age)
 
-  # binarise gender variable
-  df$gender <- as.numeric(df$gender == "M")
+    # binarise gender variable
+    df$gender <- as.numeric(df$gender == "M")
 
-  # dummy code occupation variable
-  df <- dummy_cols(df, select_columns = "occupation")
-  df$occupation <- NULL
+    # dummy code occupation variable
+    df <- dummy_cols(df, select_columns = "occupation")
+    df$occupation <- NULL
+  } else {
+    # include only genre variables
+    df[1:6] <- NULL
+  }
 
-  # euclidean dissimilarity matrix
+  # gower dissimilarity matrix
   dsim <- daisy(df, metric = "gower")
 
   return(pam(dsim, k = k)$clustering)

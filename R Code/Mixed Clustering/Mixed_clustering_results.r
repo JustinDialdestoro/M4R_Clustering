@@ -19,6 +19,12 @@ ifeat <- read.delim("M4R_Clustering/Data/u.item", sep = "|", header = FALSE,
                                   "romance", "sci-fi", "thriller", "war",
                                   "western"))
 
+imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)
+
+crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
+
+names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
+
 # call functions
 library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")

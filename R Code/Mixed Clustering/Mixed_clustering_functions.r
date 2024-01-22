@@ -143,17 +143,22 @@ famd <- function(df, k) {
   return(kmeans(pca, k)$cluster)
 }
 
-mrkmeans <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
-  df$zip <- NULL
+mrkmeans <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove id and zip variable
+    df$userID <- NULL
+    df$zip <- NULL
 
-  # dummy code gender and occupation variable
-  df <- dummy_cols(df, select_columns = "gender")
-  df$gender <- NULL
+    # dummy code gender and occupation variable
+    df <- dummy_cols(df, select_columns = "gender")
+    df$gender <- NULL
 
-  df <- dummy_cols(df, select_columns = "occupation")
-  df$occupation <- NULL
+    df <- dummy_cols(df, select_columns = "occupation")
+    df$occupation <- NULL
+  } else {
+    # include only genre variables
+    df[1:5] <- NULL
+  }
 
   return(cluspca(df, k)$cluster)
 }

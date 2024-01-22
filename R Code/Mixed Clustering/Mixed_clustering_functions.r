@@ -72,7 +72,7 @@ hl_pam <- function(df, k, user = TRUE) {
     n_gen <- ncol(df)
     gen_fac <- distancefactor(n_gen, n_u)
     # scale genre variables
-    df <- df*gen_fac
+    df <- df * gen_fac
   }
 
   # euclidean dissimilarity matrix
@@ -81,18 +81,25 @@ hl_pam <- function(df, k, user = TRUE) {
   return(pam(dsim, k = k)$clustering)
 }
 
-kprototypes <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
-  df$zip <- NULL
+kprototypes <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove id and zip variable
+    df$userID <- NULL
+    df$zip <- NULL
 
-  # binarise gender variable
-  df$gender <- as.numeric(df$gender == "M")
+    # binarise gender variable
+    df$gender <- as.numeric(df$gender == "M")
 
-  # dummy code occupation variable
-  df$occupation <- as.factor(df$occupation)
+    # dummy code occupation variable
+    df$occupation <- as.factor(df$occupation)
 
-  return(kproto(df, k)$cluster)
+    return(kproto(df, k)$cluster)
+  } else {
+    # include only genre variables
+    df[1:5] <- NULL
+
+    return(kmeans(df, 2))
+  }
 }
 
 mixed_k <- function(df, k) {

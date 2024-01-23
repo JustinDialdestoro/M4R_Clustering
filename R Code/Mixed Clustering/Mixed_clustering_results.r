@@ -25,7 +25,22 @@ crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 
-imdb[imdb$primaryTitle == "Toy Story" & imdb$titleType == "movie", ]
+title_info <- function(title) {
+  film_title <- gsub("\\s*\\([^\\)]+\\)", "", title)
+  film_date <- gsub("(?<=\\()[^()]*(?=\\))(*SKIP)(*F)|.",
+                    "", title, perl = TRUE)
+
+  return(c(film_title, film_date))
+}
+
+for (i in 1:10) {
+  film_text <- title_info(ifeat$title[i])
+  print(film_text[2])
+  print(imdb[imdb$originalTitle == film_text[1] &
+               imdb$startYear == film_text[2] &
+               imdb$titleType == "movie", ]$primaryTitle)
+}
+
 
 # call functions
 library("viridis")

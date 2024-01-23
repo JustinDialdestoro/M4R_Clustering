@@ -25,6 +25,8 @@ crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 
+imdb[imdb$primaryTitle == "Toy Story" & imdb$titleType == "movie", ]
+
 # call functions
 library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")

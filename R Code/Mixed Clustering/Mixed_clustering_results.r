@@ -25,20 +25,41 @@ crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 
-title_info <- function(title) {
-  film_title <- gsub("\\s*\\([^\\)]+\\)", "", title)
-  film_date <- gsub("(?<=\\()[^()]*(?=\\))(*SKIP)(*F)|.",
-                    "", title, perl = TRUE)
+library(stringr)
 
-  return(c(film_title, film_date))
+title_info <- function(title) {
+  # remove all parentheses text
+  film_title <- str_remove_all(title, "\\s*\\([^\\)]+\\)")
+  # move ", The" string if present
+  if (grepl(", The", film_title)) {
+    film_title <- paste("The", str_remove(film_title, ", The"), sep = " ")
+  }
+
+  if (grepl(", A", film_title)) {
+    film_title <- paste("A", str_remove(film_title, ", A"), sep = " ")
+  }
+
+  # get film date
+  film_date <- str_extract(title, "(?<=\\()\\d+(?=\\))")
+
+  # get original title
+  film_otitle <- str_extract(title, "(?<=\\()\\w+(?=\\))")
+
+  if (film_date == film_otitle) {
+    film_otitle <- ""
+  }
+
+
+  return(c(film_title, film_otitle, film_date))
 }
 
-for (i in 1:10) {
+for (i in 1:1682) {
   film_text <- title_info(ifeat$title[i])
-  print(film_text[2])
-  print(imdb[imdb$originalTitle == film_text[1] &
-               imdb$startYear == film_text[2] &
-               imdb$titleType == "movie", ]$primaryTitle)
+  found_row <- imdb[(imdb$primaryTitle == film_text[1] |
+                       imdb$primaryTitle == film_text[2]) &
+                      imdb$startYear == film_text[3] &
+                      imdb$titleType == "movie", ]$primaryTitle
+  print(found_row)
 }
 
 

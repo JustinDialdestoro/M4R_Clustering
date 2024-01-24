@@ -39,26 +39,27 @@ title_info <- function(title) {
     film_title <- paste("A", str_remove(film_title, ", A"), sep = " ")
   }
 
-  # get film date
-  film_date <- str_extract(title, "(?<=\\()\\d+(?=\\))")
+  # get all parenthesised text
+  extra_text <- str_extract_all(title, "(?<=\\()\\w+(?=\\))")[[1]]
 
-  # get original title
-  film_otitle <- str_extract(title, "(?<=\\()\\w+(?=\\))")
-
-  if (film_date == film_otitle) {
-    film_otitle <- ""
+  if (length(extra_text) == 2) {
+    return(c(film_title, extra_text[1], extra_text[2]))
+  } else if (length(extra_text) == 1) {
+    return(c(film_title, "", extra_text))
+  } else {
+    return(c(film_title, "", ""))
   }
-
-
-  return(c(film_title, film_otitle, film_date))
 }
 
 for (i in 1:1682) {
   film_text <- title_info(ifeat$title[i])
   found_row <- imdb[(imdb$primaryTitle == film_text[1] |
-                       imdb$primaryTitle == film_text[2]) &
+                       imdb$primaryTitle == film_text[2] |
+                       imdb$originalTitle == film_text[1] |
+                       imdb$originalTitle == film_text[2]) &
                       imdb$startYear == film_text[3] &
                       imdb$titleType == "movie", ]$primaryTitle
+  
   print(found_row)
 }
 

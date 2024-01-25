@@ -51,7 +51,7 @@ title_info <- function(title) {
   }
 }
 
-idlist <- replicate(1682, c())
+idlist <- c()
 
 for (i in 1:1682) {
   print(ifeat$title[i])
@@ -76,12 +76,13 @@ for (i in 1:1682) {
   }
 
   if (nrow(found_rows) == 1) {
-    idlist[[i]] <- found_rows$tconst
+    idlist <- c(idlist, found_rows$tconst)
   } else {
-    idlist[[i]] <- i
+    idlist <- c(idlist, "Not found")
   }
 }
 
+print(which(idlist == "Not found"))
 
 # call functions
 library("viridis")

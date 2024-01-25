@@ -1,6 +1,23 @@
 library(stringr)
 
-ifeat <- read.delim("M4R_Clustering/Data/u.item", sep = "|", header = FALSE,
+# read 100k rating data
+u100k <- read.table("Data/ml-100k/ml-100k/u.data",
+                    col.names = c("userID", "filmID", "rating", "timestamp"))
+
+# read 1m rating data
+u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",
+                colClasses = c(NA, "NULL"), header = FALSE)
+
+# column names for 1m dataset
+colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
+
+# read 100k user demographic data
+udem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
+                   col.names = c("userID", "age", "gender",
+                                 "occupation", "zip"))
+
+# read item data
+ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
                     col.names = c("filmID", "title", "date", "null", "imdb",
                                   "unknown", "action", "adventure", "animation",
                                   "children", "comedy", "crime",

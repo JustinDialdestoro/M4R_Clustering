@@ -93,8 +93,8 @@ for (i in 1:nrow(ifeat)) { # nolint
   }
 }
 
-# write imdb tconsts into file
-write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst.csv")
+# write currently found imdb tconsts into file
+write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv")
 
 # construct new data frame of not found movielens films
 not_found_mlid <- which(idlist == "Not found")

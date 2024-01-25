@@ -4,6 +4,15 @@ library(stringr)
 u100k <- read.table("Data/ml-100k/ml-100k/u.data",
                     col.names = c("userID", "filmID", "rating", "timestamp"))
 
+# remove entries of film 267
+u100knew <- u100k[u100k$filmID != 267, ]
+# accordingly adjust filmID's
+u100knew[u100knew$filmID > 267, ]$filmID <-
+  u100knew[u100knew$filmID > 267, ]$filmID - 1
+
+# write cleaned 100k rating data into file
+write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv")
+
 # read 1m rating data
 u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",
                 colClasses = c(NA, "NULL"), header = FALSE)

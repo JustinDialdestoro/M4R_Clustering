@@ -13,17 +13,15 @@ u100knew[u100knew$filmID > 267, ]$filmID <-
 # write cleaned 100k rating data into file
 write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv")
 
-# read 1m rating data
-u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",
-                colClasses = c(NA, "NULL"), header = FALSE)
-
-# column names for 1m dataset
-colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
-
 # read 100k user demographic data
 udem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
                    col.names = c("userID", "age", "gender",
                                  "occupation", "zip"))
+
+udem$userID <- NULL
+
+# write cleaned 100k user demographic data into file
+write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv")
 
 # read item data
 ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
@@ -106,3 +104,10 @@ write.csv(not_found_mlid, file = "M4R_Clustering/Data/u100k_nf_id.csv")
 for (id in not_found_mlid) {
   print(paste(id, ifeat$title[id]))
 }
+
+# read 1m rating data
+u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",
+                colClasses = c(NA, "NULL"), header = FALSE)
+
+# column names for 1m dataset
+colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")

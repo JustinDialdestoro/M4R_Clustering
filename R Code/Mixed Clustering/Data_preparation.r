@@ -70,4 +70,13 @@ for (i in 1:nrow(ifeat)) { # nolint
   }
 }
 
-print(which(idlist == "Not found"))
+# write imdb ids into file
+write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst.csv")
+
+# write movielens not found ids into file
+not_found_mlid <- which(idlist == "Not found")
+write.csv(not_found_mlid, file = "M4R_Clustering/Data/u100k_nf_id.csv")
+
+for (id in not_found_mlid) {
+  print(paste(id, ifeat$title[id]))
+}

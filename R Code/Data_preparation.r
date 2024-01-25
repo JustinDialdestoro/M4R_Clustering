@@ -23,7 +23,7 @@ udem$userID <- NULL
 # write cleaned 100k user demographic data into file
 write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv")
 
-# read item data
+# read 100k item feature data
 ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
                     col.names = c("filmID", "title", "date", "null", "imdb",
                                   "unknown", "action", "adventure", "animation",
@@ -33,12 +33,10 @@ ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
                                   "romance", "sci-fi", "thriller", "war",
                                   "western"))
 
+# read imdb title data
 imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 
-crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
-
-names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
-
+# function to decompose movielens titles
 title_info <- function(title) {
   # remove all parentheses text
   film_title <- str_remove_all(title, "\\s*\\([^\\)]+\\)")
@@ -65,6 +63,7 @@ title_info <- function(title) {
 
 idlist <- c()
 
+# find tconst in imdb data for each 100k movielens film
 for (i in 1:nrow(ifeat)) { # nolint
   print(ifeat$title[i])
   film_text <- title_info(ifeat$title[i])
@@ -94,16 +93,20 @@ for (i in 1:nrow(ifeat)) { # nolint
   }
 }
 
-# write imdb ids into file
+# write imdb tconsts into file
 write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst.csv")
 
-# write movielens not found ids into file
+# construct new data frame of not found movielens films
 not_found_mlid <- which(idlist == "Not found")
-write.csv(not_found_mlid, file = "M4R_Clustering/Data/u100k_nf_id.csv")
+u100k_nf_id <- data.frame(not_found_mlid, ifeat$title[not_found_mlid])
+names(u100k_nf_id) <- c("ML filmID", "ML title")
 
-for (id in not_found_mlid) {
-  print(paste(id, ifeat$title[id]))
-}
+# write movielens not found ids into file
+write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv")
+
+crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
+
+names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 
 # read 1m rating data
 u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",

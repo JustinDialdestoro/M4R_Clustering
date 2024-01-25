@@ -53,14 +53,41 @@ title_info <- function(title) {
 
 for (i in 1:1682) {
   film_text <- title_info(ifeat$title[i])
-  found_row <- imdb[(imdb$primaryTitle == film_text[1] |
-                       imdb$primaryTitle == film_text[2] |
-                       imdb$originalTitle == film_text[1] |
-                       imdb$originalTitle == film_text[2]) &
-                      imdb$startYear == film_text[3] &
-                      imdb$titleType == "movie", ]$primaryTitle
-  
-  print(found_row)
+  found_rows <- imdb[imdb$primaryTitle == film_text[1] &
+                       imdb$startYear == film_text[3] &
+                       imdb$titleType == "movie", ]
+
+  if (nrow(found_rows) != 1) {
+    year <- as.numeric(film_text[3])
+    film_text[1] <- str_remove(film_text[1], ":")
+    film_text[2] <- str_remove(film_text[2], ":")
+
+    found_rows <- imdb[(imdb$primaryTitle == film_text[1] |
+                          imdb$primaryTitle == film_text[2] |
+                          imdb$originalTitle == film_text[1] |
+                          imdb$originalTitle == film_text[2]) &
+                         (imdb$startYear == as.character(year + 1) |
+                            imdb$startYear == film_text[3] |
+                            imdb$startYear == as.character(year - 1)) &
+                         imdb$titleType == "movie", ]
+  }
+
+#   if (nrow(found_rows) != 1) {
+#     found_rows <- imdb[(grepl(film_text[1], imdb$primaryTitle,
+#                               ignore.case = TRUE) |
+#                           grepl(film_text[2], imdb$primaryTitle,
+#                                 ignore.case = TRUE) |
+#                           grepl(film_text[1], imdb$originalTitle,
+#                                 ignore.case = TRUE) |
+#                           grepl(film_text[2], imdb$originalTitle,
+#                                 ignore.case = TRUE)) &
+#                          (imdb$startYear == as.character(year + 1) |
+#                             imdb$startYear == film_text[3] |
+#                             imdb$startYear == as.character(year - 1)) &
+#                          imdb$titleType == "movie", ]
+#   }
+
+  print(found_rows$primaryTitle)
 }
 
 

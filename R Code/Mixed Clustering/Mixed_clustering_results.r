@@ -51,7 +51,10 @@ title_info <- function(title) {
   }
 }
 
+idlist <- replicate(1682, c())
+
 for (i in 1:1682) {
+  print(ifeat$title[i])
   film_text <- title_info(ifeat$title[i])
   found_rows <- imdb[imdb$primaryTitle == film_text[1] &
                        imdb$startYear == film_text[3] &
@@ -72,22 +75,11 @@ for (i in 1:1682) {
                          imdb$titleType == "movie", ]
   }
 
-#   if (nrow(found_rows) != 1) {
-#     found_rows <- imdb[(grepl(film_text[1], imdb$primaryTitle,
-#                               ignore.case = TRUE) |
-#                           grepl(film_text[2], imdb$primaryTitle,
-#                                 ignore.case = TRUE) |
-#                           grepl(film_text[1], imdb$originalTitle,
-#                                 ignore.case = TRUE) |
-#                           grepl(film_text[2], imdb$originalTitle,
-#                                 ignore.case = TRUE)) &
-#                          (imdb$startYear == as.character(year + 1) |
-#                             imdb$startYear == film_text[3] |
-#                             imdb$startYear == as.character(year - 1)) &
-#                          imdb$titleType == "movie", ]
-#   }
-
-  print(found_rows$primaryTitle)
+  if (nrow(found_rows) == 1) {
+    idlist[[i]] <- found_rows$tconst
+  } else {
+    idlist[[i]] <- i
+  }
 }
 
 

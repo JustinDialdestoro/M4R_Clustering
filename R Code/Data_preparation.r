@@ -33,6 +33,9 @@ ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
                                   "romance", "sci-fi", "thriller", "war",
                                   "western"))
 
+# remove entries of film 267
+ifeat <- ifeat[-c(267), ]
+
 # read imdb title data
 imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)
 

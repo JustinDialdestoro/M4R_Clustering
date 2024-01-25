@@ -41,7 +41,7 @@ title_info <- function(title) {
 
 idlist <- c()
 
-for (i in 1:1682) {
+for (i in 1:nrow(ifeat)) { # nolint
   print(ifeat$title[i])
   film_text <- title_info(ifeat$title[i])
   found_rows <- imdb[imdb$primaryTitle == film_text[1] &

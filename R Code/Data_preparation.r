@@ -1,5 +1,7 @@
 library(stringr)
 
+# clean ml 100k rating data ----------------------------------------------------
+
 # read 100k rating data
 u100k <- read.table("Data/ml-100k/ml-100k/u.data",
                     col.names = c("userID", "filmID", "rating", "timestamp"))
@@ -42,13 +44,15 @@ u100knew$filmID[u100knew$filmID > repeats_ind[r, 2]] <-
   u100knew$filmID[u100knew$filmID > repeats_ind[r, 2]] - r
 
 # remove entries of film 267
-u100knew <- u100k[u100k$filmID != 267, ]
+u100knew <- u100knew[u100knew$filmID != 267, ]
 # accordingly adjust filmID's
-u100knew[u100knew$filmID > 267, ]$filmID <-
-  u100knew[u100knew$filmID > 267, ]$filmID - 1
+u100knew$filmID[u100knew$filmID > 267] <-
+  u100knew$filmID[u100knew$filmID > 267] - 1
 
 # write cleaned 100k rating data into file
 write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv")
+
+# clean ml 100k user demographic data ------------------------------------------
 
 # read 100k user demographic data
 udem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
@@ -59,6 +63,8 @@ udem$userID <- NULL
 
 # write cleaned 100k user demographic data into file
 write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv")
+
+# clean ml 100k item feature data ----------------------------------------------
 
 # remove entries of film 267
 ifeat <- ifeat[-c(267), ]
@@ -137,6 +143,8 @@ write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv")
 crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
+
+# clean ml 1m rating data ------------------------------------------------------
 
 # read 1m rating data
 u1m <- read.csv("Data/ml-1m/ml-1m/ratings.dat", sep = ":",

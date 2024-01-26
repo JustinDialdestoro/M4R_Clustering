@@ -73,7 +73,7 @@ ifeatnew <- ifeat[-repeats_ind[, 2], ]
 ifeatnew <- ifeatnew[-c(267), ]
 
 # reorder film ID's
-ifeatnew$filmID <- 1:nrow(ifeatnew)
+ifeatnew$filmID <- 1:nrow(ifeatnew) # nolint
 
 # write cleaned 100k iteam feature data into file
 write.csv(ifeatnew, file = "M4R_Clustering/Data/u100k_feat.csv")

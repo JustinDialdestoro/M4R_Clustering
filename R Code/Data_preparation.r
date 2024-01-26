@@ -66,8 +66,19 @@ write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv")
 
 # clean ml 100k item feature data ----------------------------------------------
 
+# remove repeated rows
+ifeatnew <- ifeat[-repeats_ind[, 2], ]
+
 # remove entries of film 267
-ifeat <- ifeat[-c(267), ]
+ifeatnew <- ifeatnew[-c(267), ]
+
+# reorder film ID's
+ifeatnew$filmID <- 1:nrow(ifeatnew)
+
+# write cleaned 100k iteam feature data into file
+write.csv(ifeatnew, file = "M4R_Clustering/Data/u100k_feat.csv")
+
+# make new data set of item features -------------------------------------------
 
 # read imdb title data
 imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)

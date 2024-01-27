@@ -160,6 +160,31 @@ u100k_tconst <- read.csv("M4R_Clustering/Data/u100k_tconst.csv")
 # read imdb crew data
 crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
+# create new dataframe for item features
+u100k_full_feat <- data.frame(matrix(ncol = 25, nrow = 0))
+names(u100k_full_feat) <- c("titleType", "year", "runtime", "adult", "director",
+                            "writer", "unknown", "action", "adventure",
+                            "animation", "children", "comedy", "crime",
+                            "documentary", "drama", "fantasy", "film-noir",
+                            "horror", "musical", "mystery", "romance", "sci-fi",
+                            "thriller", "war", "western")
+
+# fill rows with data from imdb and ml datasets
+for (i in 1:nrow(u100k_feat)) { # nolint
+  print(paste("filmID:", i))
+  imdb_row <- imdb[imdb$tconst == u100k_tconst[i, ], ]
+  crew_row <- crew[crew$tconst == u100k_tconst[i, ], ]
+  genre_row <- u100k_feat[u100k_tconst == u100k_tconst[i, ]]
+  u100k_full_feat[i, ] <- c(imdb_row$titleType, imdb_row$startYear,
+                            imdb_row$runtimeMinutes, imdb_row$isAdult,
+                            crew_row$directors, crew_row$writers,
+                            genre_row[6:24])
+}
+
+# write new item features data into file
+write.csv(u100k_full_feat, file = "M4R_Clustering/Data/u100k_full_feat.csv",
+          row.names = FALSE)
+
 # clean ml 1m rating data ------------------------------------------------------
 
 # read 1m rating data

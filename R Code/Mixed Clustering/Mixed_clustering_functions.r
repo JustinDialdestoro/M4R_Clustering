@@ -15,8 +15,7 @@ range_normalise <- function(x) {
 
 gow_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove id and zip variable
-    df$userID <- NULL
+    # remove zip variable
     df$zip <- NULL
 
     # range normalise age variable
@@ -43,8 +42,7 @@ hl_pam <- function(df, k, user = TRUE) {
   n_u <- nrow(df)
 
   if (user == TRUE) {
-    # remove id and zip variable
-    df$userID <- NULL
+    # remove zip variable
     df$zip <- NULL
 
     # range normalise age variable
@@ -84,8 +82,7 @@ hl_pam <- function(df, k, user = TRUE) {
 
 kprototypes <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove id and zip variable
-    df$userID <- NULL
+    # remove zip variable
     df$zip <- NULL
 
     # binarise gender variable
@@ -104,11 +101,12 @@ kprototypes <- function(df, k, user = TRUE) {
 }
 
 mixed_k <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
+  # remove zip variable
   df$zip <- NULL
+
   # binarise gender variable
   df$gender <- as.numeric(df$gender == "M")
+
   # factorise occupation variable
   df$occupation <- as.factor(df$occupation)
 
@@ -128,14 +126,11 @@ mskmeans <- function(df, k) {
   df <- dummy_cols(df, select_columns = "occupation")
   df$occupation <- NULL
 
-  df$userID <- df$age
-
-  return(gmsClust(df[1:2], df[3:25], k)$results$cluster)
+  return(gmsClust(df$age, df[3:25], k)$results$cluster)
 }
 
 famd <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
+  # remove zip variable
   df$zip <- NULL
 
   pca <- FAMD(df, k, graph = FALSE)$ind$coord
@@ -145,8 +140,7 @@ famd <- function(df, k) {
 
 mrkmeans <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove id and zip variable
-    df$userID <- NULL
+    # remove zip variable
     df$zip <- NULL
 
     # dummy code gender and occupation variable
@@ -164,8 +158,7 @@ mrkmeans <- function(df, k, user = TRUE) {
 }
 
 kamila_clust <- function(df, k) {
-  # remove id and zip variable
-  df$userID <- NULL
+  # remove zip variable
   df$zip <- NULL
 
   # binarise gender variable

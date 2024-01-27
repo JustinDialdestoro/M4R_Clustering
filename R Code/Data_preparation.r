@@ -142,7 +142,8 @@ for (i in 1:nrow(ifeatnew)) { # nolint
 }
 
 # write currently found imdb tconsts into file
-write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv")
+write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv",
+          row.names = FALSE)
 
 # construct new data frame of not found movielens films
 not_found_mlid <- which(idlist == "Not found")
@@ -150,7 +151,8 @@ u100k_nf_id <- data.frame(not_found_mlid, ifeat$title[not_found_mlid])
 names(u100k_nf_id) <- c("ML filmID", "ML title")
 
 # write movielens not found ids into file
-write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv")
+write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv",
+          row.names = FALSE)
 
 crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 

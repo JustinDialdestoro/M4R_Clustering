@@ -7,20 +7,21 @@ u100k <- read.table("Data/ml-100k/ml-100k/u.data",
                     col.names = c("userID", "filmID", "rating", "timestamp"))
 
 # read 100k item feature data
-ifeat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|", header = FALSE,
-                    col.names = c("filmID", "title", "date", "null", "imdb",
-                                  "unknown", "action", "adventure", "animation",
-                                  "children", "comedy", "crime",
-                                  "documentary", "drama", "fantasy",
-                                  "film-noir", "horror", "musical", "mystery",
-                                  "romance", "sci-fi", "thriller", "war",
-                                  "western"))
+u100k_feat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|",
+                         header = FALSE,
+                         col.names = c("filmID", "title", "date", "null",
+                                       "imdb", "unknown", "action", "adventure",
+                                       "animation", "children", "comedy",
+                                       "crime", "documentary", "drama",
+                                       "fantasy", "film-noir", "horror",
+                                       "musical", "mystery", "romance",
+                                       "sci-fi", "thriller", "war", "western"))
 
 # skeleton dataframe to be cleaned
 u100knew <- u100k
 
 # find repeated titles
-repeats <- ifeat$title[duplicated(ifeat$title)]
+repeats <- u100k_feat$title[duplicated(u100k_feat$title)]
 r <- length(repeats)
 
 # find indices of repeated films
@@ -28,7 +29,7 @@ repeats_ind <- matrix(NA, r, 2)
 
 for (i in 1:r) { # nolint
   # indexes of repeated films
-  repeats_ind[i, ] <- which(ifeat$title == repeats[i])
+  repeats_ind[i, ] <- which(u100k_feat$title == repeats[i])
   # change filmID of to the first one to remove repeats
   u100knew$filmID[u100k$filmID == repeats_ind[i, 2]] <- repeats_ind[i, 1]
 }
@@ -55,28 +56,28 @@ write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv", row.names = FALSE)
 # clean ml 100k user demographic data ------------------------------------------
 
 # read 100k user demographic data
-udem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
+u100k_dem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
                    col.names = c("userID", "age", "gender",
                                  "occupation", "zip"))
 
-udem$userID <- NULL
+u100k_dem$userID <- NULL
 
 # write cleaned 100k user demographic data into file
-write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv", row.names = FALSE)
+write.csv(u100k_dem, file = "M4R_Clustering/Data/u100k_dem.csv", row.names = FALSE)
 
 # clean ml 100k item feature data ----------------------------------------------
 
 # remove repeated rows
-ifeatnew <- ifeat[-repeats_ind[, 2], ]
+u100k_feat <- u100k_feat[-repeats_ind[, 2], ]
 
 # remove entries of film 267
-ifeatnew <- ifeatnew[-c(267), ]
+u100k_feat <- u100k_feat[-c(267), ]
 
 # reorder film ID's
-ifeatnew$filmID <- 1:nrow(ifeatnew) # nolint
+u100k_feat$filmID <- 1:nrow(u100k_feat) # nolint
 
 # write cleaned 100k iteam feature data into file
-write.csv(ifeatnew, file = "M4R_Clustering/Data/u100k_feat.csv",
+write.csv(u100k_feat, file = "M4R_Clustering/Data/u100k_feat.csv",
           row.names = FALSE)
 
 # make new data set of item features -------------------------------------------
@@ -112,9 +113,9 @@ title_info <- function(title) {
 idlist <- c()
 
 # find tconst in imdb data for each 100k movielens film
-for (i in 1:nrow(ifeatnew)) { # nolint
-  print(ifeatnew$title[i])
-  film_text <- title_info(ifeatnew$title[i])
+for (i in 1:nrow(u100k_feat)) { # nolint
+  print(u100k_feat$title[i])
+  film_text <- title_info(u100k_feat$title[i])
   found_rows <- imdb[imdb$primaryTitle == film_text[1] &
                        imdb$startYear == film_text[3] &
                        imdb$titleType == "movie", ]
@@ -142,21 +143,22 @@ for (i in 1:nrow(ifeatnew)) { # nolint
 }
 
 # write currently found imdb tconsts into file
-write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv",
-          row.names = FALSE)
+write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv")
 
 # construct new data frame of not found movielens films
 not_found_mlid <- which(idlist == "Not found")
-u100k_nf_id <- data.frame(not_found_mlid, ifeat$title[not_found_mlid])
+u100k_nf_id <- data.frame(not_found_mlid, u100k_feat$title[not_found_mlid])
 names(u100k_nf_id) <- c("ML filmID", "ML title")
 
 # write movielens not found ids into file
 write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv",
           row.names = FALSE)
 
-crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
+# read completed imdb tconst data
+u100k_tconst <- read.csv("M4R_Clustering/Data/u100k_tconst.csv")
 
-names <- read.delim("Data/name.basics.tsv/data.tsv", sep = "\t", header = TRUE)
+# read imdb crew data
+crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 # clean ml 1m rating data ------------------------------------------------------
 

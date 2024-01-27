@@ -50,7 +50,7 @@ u100knew$filmID[u100knew$filmID > 267] <-
   u100knew$filmID[u100knew$filmID > 267] - 1
 
 # write cleaned 100k rating data into file
-write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv")
+write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv", row.names = FALSE)
 
 # clean ml 100k user demographic data ------------------------------------------
 
@@ -62,7 +62,7 @@ udem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
 udem$userID <- NULL
 
 # write cleaned 100k user demographic data into file
-write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv")
+write.csv(udem, file = "M4R_Clustering/Data/u100k_dem.csv", row.names = FALSE)
 
 # clean ml 100k item feature data ----------------------------------------------
 
@@ -76,7 +76,8 @@ ifeatnew <- ifeatnew[-c(267), ]
 ifeatnew$filmID <- 1:nrow(ifeatnew) # nolint
 
 # write cleaned 100k iteam feature data into file
-write.csv(ifeatnew, file = "M4R_Clustering/Data/u100k_feat.csv")
+write.csv(ifeatnew, file = "M4R_Clustering/Data/u100k_feat.csv",
+          row.names = FALSE)
 
 # make new data set of item features -------------------------------------------
 
@@ -111,9 +112,9 @@ title_info <- function(title) {
 idlist <- c()
 
 # find tconst in imdb data for each 100k movielens film
-for (i in 1:nrow(ifeat)) { # nolint
-  print(ifeat$title[i])
-  film_text <- title_info(ifeat$title[i])
+for (i in 1:nrow(ifeatnew)) { # nolint
+  print(ifeatnew$title[i])
+  film_text <- title_info(ifeatnew$title[i])
   found_rows <- imdb[imdb$primaryTitle == film_text[1] &
                        imdb$startYear == film_text[3] &
                        imdb$titleType == "movie", ]

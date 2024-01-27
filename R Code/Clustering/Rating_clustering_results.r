@@ -1,10 +1,5 @@
-u100k <- read.table("M4R_Clustering/Data/u.data",
-                    col.names = c("userID", "filmID", "rating", "timestamp"))
-
-u1m <- read.csv("M4R_Clustering/Data/ratings.dat", sep = ":",
-                colClasses = c(NA, "NULL"), header = FALSE)
-
-colnames(u1m) <- c("userID", "filmID", "rating", "timestamp")
+# read in the data
+u100k <- read.csv("M4R_Clustering/Data/u100k.csv")
 
 # call functions
 library("viridis")

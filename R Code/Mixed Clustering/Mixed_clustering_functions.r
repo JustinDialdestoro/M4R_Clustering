@@ -126,7 +126,7 @@ mskmeans <- function(df, k) {
   df <- dummy_cols(df, select_columns = "occupation")
   df$occupation <- NULL
 
-  return(gmsClust(df$age, df[3:25], k)$results$cluster)
+  return(gmsClust(df[1:2], df[4:24], k)$results$cluster)
 }
 
 famd <- function(df, k) {

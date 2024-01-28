@@ -1,26 +1,26 @@
 # read 100k item full feature data
-u100k_feat_full <- read.csv("M4R_Clustering/Data/u100k_full_feat.csv")
+u100k_full_feat <- read.csv("M4R_Clustering/Data/u100k_full_feat.csv")
 
 # remove adult variable
-u100k_feat_full$adult <- NULL
+u100k_full_feat$adult <- NULL
 
 # indices of items with multiple directors and no director
-ind_dir <- which(nchar(u100k_feat_full$director) > 9)
-ind_na <- which(u100k_feat_full$director == "\\N")
+ind_dir <- which(nchar(u100k_full_feat$director) > 9)
+ind_na <- which(u100k_full_feat$director == "\\N")
 
 # list of directors credited as sole director
-directors <- u100k_feat_full$director[-c(ind_dir, ind_na)]
+directors <- u100k_full_feat$director[-c(ind_dir, ind_na)]
 
 # add all directors credited as a co-director
 for (i in ind_dir) {
-  directors <- c(directors, strsplit(u100k_feat_full$director[i], ",")[[1]])
+  directors <- c(directors, strsplit(u100k_full_feat$director[i], ",")[[1]])
 }
 
 # find the most common directors
 top_directors <- names(table(directors)[table(directors) > 4])
 
-for (i in 1:nrow(u100k_feat_full)) { # nolint
-  d <- u100k_feat_full$director[i]
+for (i in 1:nrow(u100k_full_feat)) { # nolint
+  d <- u100k_full_feat$director[i]
 
   # check if single director
   if (nchar(d) == 9) {
@@ -29,7 +29,7 @@ for (i in 1:nrow(u100k_feat_full)) { # nolint
       # leave as is
     } else {
       # remove director entry
-      u100k_feat_full$director[i] <- "\\N"
+      u100k_full_feat$director[i] <- "\\N"
     }
 
     # check if multiple directors
@@ -39,32 +39,32 @@ for (i in 1:nrow(u100k_feat_full)) { # nolint
     # check if any are a top director
     if (any(d_list %in% top_directors)) {
       # update director to the most prolific director
-      u100k_feat_full$director[i] <-
+      u100k_full_feat$director[i] <-
         top_directors[min(which(top_directors %in% d_list))]
     } else {
       # remove director entry
-      u100k_feat_full$director[i] <- "\\N"
+      u100k_full_feat$director[i] <- "\\N"
     }
   }
 }
 
 # indices of items with multiple writers and no writer
-ind_wri <- which(nchar(u100k_feat_full$writer) > 9)
-ind_na <- which(u100k_feat_full$writer == "\\N")
+ind_wri <- which(nchar(u100k_full_feat$writer) > 9)
+ind_na <- which(u100k_full_feat$writer == "\\N")
 
 # list of writers credited as sole writer
-writers <- u100k_feat_full$writer[-c(ind_wri, ind_na)]
+writers <- u100k_full_feat$writer[-c(ind_wri, ind_na)]
 
 # add all writers credited as a co-writer
 for (i in ind_wri) {
-  writers <- c(writers, strsplit(u100k_feat_full$writer[i], ",")[[1]])
+  writers <- c(writers, strsplit(u100k_full_feat$writer[i], ",")[[1]])
 }
 
 # find the most common directors
 top_writers <- names(table(writers)[table(writers) > 5])
 
-for (i in 1:nrow(u100k_feat_full)) { # nolint
-  w <- u100k_feat_full$writer[i]
+for (i in 1:nrow(u100k_full_feat)) { # nolint
+  w <- u100k_full_feat$writer[i]
 
   # check if single writer
   if (nchar(w) == 9) {
@@ -73,7 +73,7 @@ for (i in 1:nrow(u100k_feat_full)) { # nolint
       # leave as is
     } else {
       # remove writer entry
-      u100k_feat_full$writer[i] <- "\\N"
+      u100k_full_feat$writer[i] <- "\\N"
     }
 
     # check if multiple writers
@@ -83,11 +83,11 @@ for (i in 1:nrow(u100k_feat_full)) { # nolint
     # check if any are a top writer
     if (any(w_list %in% top_writers)) {
       # update writer to the most prolific writer
-      u100k_feat_full$writer[i] <-
+      u100k_full_feat$writer[i] <-
         top_writers[min(which(top_writers %in% w_list))]
     } else {
       # remove writer entry
-      u100k_feat_full$writer[i] <- "\\N"
+      u100k_full_feat$writer[i] <- "\\N"
     }
   }
 }
@@ -98,14 +98,18 @@ range_normalise <- function(x) {
 }
 
 # range normalise year
-u100k_feat_full$year <- range_normalise(as.numeric(u100k_feat_full$year))
+u100k_full_feat$year <- range_normalise(as.numeric(u100k_full_feat$year))
 
 # indices of items with no runtime
-ind_na <- which(u100k_feat_full$runtime == "\\N")
+ind_na <- which(u100k_full_feat$runtime == "\\N")
 
 # range normalise run time
-u100k_feat_full$runtime[-ind_na] <-
-  range_normalise(as.numeric(u100k_feat_full$runtime[-ind_na]))
+u100k_full_feat$runtime[-ind_na] <-
+  range_normalise(as.numeric(u100k_full_feat$runtime[-ind_na]))
 
 # fill in missing values
-u100k_feat_full$runtime[ind_na] <- 0
+u100k_full_feat$runtime[ind_na] <- 0
+
+# write new item features data into file
+write.csv(u100k_full_feat, file = "M4R_Clustering/Data/u100k_feat_a.csv",
+          row.names = FALSE)

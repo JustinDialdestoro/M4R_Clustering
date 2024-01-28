@@ -26,7 +26,7 @@ repeats_ind <- matrix(NA, r, 2)
 for (i in 1:r) { # nolint
   # indexes of repeated films
   repeats_ind[i, ] <- which(u100k_feat$title == repeats[i])
-  # change filmID of to the first one to remove repeats
+  # change filmID of repeated to the first one to remove repeats
   u100knew$filmID[u100k$filmID == repeats_ind[i, 2]] <- repeats_ind[i, 1]
 }
 
@@ -48,3 +48,16 @@ u100knew$filmID[u100knew$filmID > 267] <-
 
 # write cleaned 100k rating data into file
 write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv", row.names = FALSE)
+
+# remove repeated rows
+u100k_feat <- u100k_feat[-repeats_ind[, 2], ]
+
+# remove entries of film 267
+u100k_feat <- u100k_feat[-c(267), ]
+
+# reorder film ID's
+u100k_feat$filmID <- 1:nrow(u100k_feat) # nolint
+
+# write cleaned 100k iteam feature data into file
+write.csv(u100k_feat, file = "M4R_Clustering/Data/u100k_feat.csv",
+          row.names = FALSE)

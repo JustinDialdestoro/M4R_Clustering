@@ -1,5 +1,16 @@
 library(stringr)
 
+# read 100k item feature data
+u100k_feat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|",
+                         header = FALSE,
+                         col.names = c("filmID", "title", "date", "null",
+                                       "imdb", "unknown", "action", "adventure",
+                                       "animation", "children", "comedy",
+                                       "crime", "documentary", "drama",
+                                       "fantasy", "film-noir", "horror",
+                                       "musical", "mystery", "romance",
+                                       "sci-fi", "thriller", "war", "western"))
+
 # remove repeated rows
 u100k_feat <- u100k_feat[-repeats_ind[, 2], ]
 

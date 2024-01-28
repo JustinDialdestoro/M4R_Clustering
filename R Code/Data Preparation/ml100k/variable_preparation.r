@@ -91,3 +91,21 @@ for (i in 1:nrow(u100k_feat_full)) { # nolint
     }
   }
 }
+
+range_normalise <- function(x) {
+  # normalise variable to a [0,1] range
+  return((x - min(x)) / (max(x) - min(x)))
+}
+
+# range normalise year
+u100k_feat_full$year <- range_normalise(as.numeric(u100k_feat_full$year))
+
+# indices of items with no runtime
+ind_na <- which(u100k_feat_full$runtime == "\\N")
+
+# range normalise run time
+u100k_feat_full$runtime[-ind_na] <-
+  range_normalise(as.numeric(u100k_feat_full$runtime[-ind_na]))
+
+# fill in missing values
+u100k_feat_full$runtime[ind_na] <- 0

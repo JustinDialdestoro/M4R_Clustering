@@ -3,6 +3,8 @@ u100k <- read.csv("M4R_Clustering/Data/u100k.csv")
 
 udem <- read.csv("M4R_Clustering/Data/u100k_dem.csv")
 
+u100k_feat_a <- read.csv("M4R_Clustering/Data/u100k_feat_a.csv")
+
 # call functions
 library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")

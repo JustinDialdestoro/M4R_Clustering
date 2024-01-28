@@ -1,28 +1,7 @@
 library(stringr)
 
 # read 100k item feature data
-u100k_feat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|",
-                         header = FALSE,
-                         col.names = c("filmID", "title", "date", "null",
-                                       "imdb", "unknown", "action", "adventure",
-                                       "animation", "children", "comedy",
-                                       "crime", "documentary", "drama",
-                                       "fantasy", "film-noir", "horror",
-                                       "musical", "mystery", "romance",
-                                       "sci-fi", "thriller", "war", "western"))
-
-# remove repeated rows
-u100k_feat <- u100k_feat[-repeats_ind[, 2], ]
-
-# remove entries of film 267
-u100k_feat <- u100k_feat[-c(267), ]
-
-# reorder film ID's
-u100k_feat$filmID <- 1:nrow(u100k_feat) # nolint
-
-# write cleaned 100k iteam feature data into file
-write.csv(u100k_feat, file = "M4R_Clustering/Data/u100k_feat.csv",
-          row.names = FALSE)
+u100k_feat <- read.csv("M4R_Clustering/Data/u100k_feat.csv")
 
 # read imdb title data
 imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)

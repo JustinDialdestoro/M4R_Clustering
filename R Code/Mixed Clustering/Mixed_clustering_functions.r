@@ -8,18 +8,10 @@ library("kamila")
 library("FactoMineR")
 library("clustrd")
 
-range_normalise <- function(x) {
-  # normalise variable to a [0,1] range
-  return((x - min(x)) / (max(x) - min(x)))
-}
-
 gow_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
     # remove zip variable
     df$zip <- NULL
-
-    # range normalise age variable
-    df$age <- range_normalise(df$age)
 
     # binarise gender variable
     df$gender <- as.numeric(df$gender == "M")
@@ -44,9 +36,6 @@ hl_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
     # remove zip variable
     df$zip <- NULL
-
-    # range normalise age variable
-    df$age <- range_normalise(df$age)
 
     # binarise gender variable
     df$gender <- as.numeric(df$gender == "M")

@@ -57,8 +57,8 @@ write.csv(u100knew, file = "M4R_Clustering/Data/u100k.csv", row.names = FALSE)
 
 # read 100k user demographic data
 u100k_dem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
-                   col.names = c("userID", "age", "gender",
-                                 "occupation", "zip"))
+                        col.names = c("userID", "age", "gender",
+                                      "occupation", "zip"))
 
 u100k_dem$userID <- NULL
 

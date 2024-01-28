@@ -16,6 +16,15 @@ u100k_feat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|",
 # skeleton dataframe to be cleaned
 u100knew <- u100k
 
+# change filmID of repeated item 1504
+u100knew$filmID[u100knew$filmID == 1504] <- 1202
+
+u100knew$filmID[u100knew$filmID > 1504] <-
+  u100knew$filmID[u100knew$filmID > 1504] - 1
+
+# remove repeated row 1504
+u100k_feat <- u100k_feat[-c(1504), ]
+
 # find repeated titles
 repeats <- u100k_feat$title[duplicated(u100k_feat$title)]
 r <- length(repeats)

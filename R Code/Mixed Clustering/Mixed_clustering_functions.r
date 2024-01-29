@@ -132,13 +132,18 @@ kprototypes <- function(df, k, user = TRUE) {
     # dummy code occupation variable
     df$occupation <- as.factor(df$occupation)
 
-    return(kproto(df, k)$cluster)
   } else {
-    # include only genre variables
-    df[1:5] <- NULL
+    # factorise categorical variables
+    df$titleType <- as.factor(df$titleType)
+    df$director <- as.factor(df$director)
+    df$writer <- as.factor(df$writer)
 
-    return(kmodes(df, 2)$cluster)
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime) 
   }
+
+  return(kproto(df, k)$cluster)
 }
 
 mixed_k <- function(df, k) {

@@ -244,12 +244,26 @@ mrkmeans <- function(df, k, user = TRUE) {
 
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
+
   } else {
-    # include only genre variables
-    df[1:5] <- NULL
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
+    # dummy code title type
+    df <- dummy_cols(df, select_columns = "titleType")
+    df$titleType <- NULL
+
+    # dummy code director type
+    df <- dummy_cols(df, select_columns = "director")
+    df$director <- NULL
+
+    # dummy code writer type
+    df <- dummy_cols(df, select_columns = "writer")
+    df$writer <- NULL
   }
 
-  return(cluspca(df, k)$cluster)
+  return(cluspca(df, k, k - 1)$cluster)
 }
 
 kamila_clust <- function(df, k) {

@@ -20,8 +20,10 @@ gow_pam <- function(df, k, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
   } else {
-    # include only genre variables
-    df[1:5] <- NULL
+    # factorise nominal variables
+    df$titleType <- as.factor(df$titleType)
+    df$director <- as.factor(df$director)
+    df$writer <- as.factor(df$writer)
   }
 
   # gower dissimilarity matrix

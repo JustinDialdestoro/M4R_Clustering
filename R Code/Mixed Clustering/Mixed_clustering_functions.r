@@ -171,7 +171,7 @@ mixed_k <- function(df, k, user = TRUE) {
     df$runtime <- unit_var_normalise(df$runtime)
 
     dist <- distmix(df, method = "ahmad",
-                    idnum = 2:3, idbin = 5:24, idcat = c(1, 4, 5))
+                    idnum = 2:3, idbin = 6:24, idcat = c(1, 4, 5))
   }
 
   return(fastkmed(dist, k)$cluster)
@@ -266,14 +266,28 @@ mrkmeans <- function(df, k, user = TRUE) {
   return(cluspca(df, k, k - 1)$cluster)
 }
 
-kamila_clust <- function(df, k) {
-  # remove zip variable
-  df$zip <- NULL
+kamila_clust <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove zip variable
+    df$zip <- NULL
 
-  # binarise gender variable
-  df$gender <- as.factor(df$gender)
-  # factorise occupation variable
-  df$occupation <- as.factor(df$occupation)
+    # binarise gender variable
+    df$gender <- as.factor(df$gender)
+    # factorise occupation variable
+    df$occupation <- as.factor(df$occupation)
 
-  return(kamila(df[1], df[2:3], k, 10)$finalMemb)
+    return(kamila(df[1], df[2:3], k, 10)$finalMemb)
+
+  } else {
+    # factorise categorical variables
+    df$titleType <- as.factor(df$titleType)
+    df$director <- as.factor(df$director)
+    df$writer <- as.factor(df$writer)
+
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
+    return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalMemb)
+  }
 }

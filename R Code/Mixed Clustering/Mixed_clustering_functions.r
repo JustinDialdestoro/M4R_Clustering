@@ -8,6 +8,26 @@ library("kamila")
 library("FactoMineR")
 library("clustrd")
 
+range_normalise <- function(x) {
+  # numericise variable
+  xnew <- as.numeric(x)
+
+  # normalise variable to a [0,1] range
+  x <- (xnew - min(xnew)) / (max(xnew) - min(xnew))
+
+  return(x)
+}
+
+unit_var_normalise <- function(x) {
+  # subtract mean from original variable
+  xnew <- x - mean(x)
+
+  # divide by standard deviation
+  xnew <- xnew / sd(x)
+
+  return(xnew)
+}
+
 gow_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
     # remove zip variable
@@ -56,8 +76,7 @@ hl_pam <- function(df, k, user = TRUE) {
     df[3:(2 + n_occ)] <- df[3:(2 + n_occ)] * occ_fac
 
   } else {
-    # include only genre variables
-    df[1:5] <- NULL
+    
     # compute genre scaling factor
     n_gen <- ncol(df)
     gen_fac <- distancefactor(n_gen, n_u)

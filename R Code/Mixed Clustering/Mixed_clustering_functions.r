@@ -212,11 +212,23 @@ mskmeans <- function(df, k, user = TRUE) {
   }
 }
 
-famd <- function(df, k) {
-  # remove zip variable
-  df$zip <- NULL
+famd <- function(df, k, p, user = TRUE) {
+  if (user == TRUE) {
+    # remove zip variable
+    df$zip <- NULL
 
-  pca <- FAMD(df, k, graph = FALSE)$ind$coord
+  } else {
+    # factorise categorical variables
+    df$titleType <- as.factor(df$titleType)
+    df$director <- as.factor(df$director)
+    df$writer <- as.factor(df$writer)
+
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+  }
+
+  pca <- FAMD(df, p, graph = FALSE)$ind$coord
 
   return(kmeans(pca, k)$cluster)
 }

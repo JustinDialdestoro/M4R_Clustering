@@ -92,6 +92,11 @@ for (i in 1:nrow(u100k_full_feat)) { # nolint
   }
 }
 
+# impute missing values in runtime
+ind_na <- which(u100k_full_feat$runtime == "\\N")
+u100k_full_feat$runtime[ind_na] <-
+  mean(as.numeric(u100k_full_feat$runtime[-ind_na]))
+
 # write new item features data into file
 write.csv(u100k_full_feat, file = "M4R_Clustering/Data/u100k_feat_a.csv",
           row.names = FALSE)

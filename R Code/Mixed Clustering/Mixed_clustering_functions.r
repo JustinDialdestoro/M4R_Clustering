@@ -57,9 +57,9 @@ gow_pam <- function(df, k, user = TRUE) {
 }
 
 hl_pam <- function(df, k, user = TRUE) {
-  n_u <- nrow(df)
-
   if (user == TRUE) {
+    n_u <- nrow(df)
+
     # remove zip variable
     df$zip <- NULL
 
@@ -80,12 +80,39 @@ hl_pam <- function(df, k, user = TRUE) {
     df[3:(2 + n_occ)] <- df[3:(2 + n_occ)] * occ_fac
 
   } else {
-    
-    # compute genre scaling factor
-    n_gen <- ncol(df)
-    gen_fac <- distancefactor(n_gen, n_u)
-    # scale genre variables
-    df <- df * gen_fac
+    n_i <- nrow(df)
+
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
+    # compute scaling factor for genre
+    genre_fac <- distancefactor(19, n_i)
+    df[6:24] <- df[6:24] * genre_fac
+
+    # dummy code title type
+    df <- dummy_cols(df, select_columns = "titleType")
+    # compute scaling factor
+    n_type <- length(unique(df$titleType))
+    df$titleType <- NULL
+    type_fac <- distancefactor(n_type, n_i)
+    df[24:29] <- df[24:29] * type_fac
+
+    # dummy code director type
+    df <- dummy_cols(df, select_columns = "director")
+    # compute scaling factor
+    n_dir <- length(unique(df$director))
+    df$director <- NULL
+    dir_fac <- distancefactor(n_dir, n_i)
+    df[29:59] <- df[29:59] * dir_fac
+
+    # dummy code writer type
+    df <- dummy_cols(df, select_columns = "writer")
+    # compute scaling factor
+    n_wri <- length(unique(df$writer))
+    df$writer <- NULL
+    wri_fac <- distancefactor(n_wri, n_i)
+    df[59:84] <- df[59:84] * wri_fac
   }
 
   # euclidean dissimilarity matrix

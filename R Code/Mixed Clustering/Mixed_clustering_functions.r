@@ -39,6 +39,7 @@ gow_pam <- function(df, k, user = TRUE) {
     # dummy code occupation variable
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
+
   } else {
     # range normalise continuous variables
     df$year <- range_normalise(df$year)
@@ -140,23 +141,38 @@ kprototypes <- function(df, k, user = TRUE) {
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)
-    df$runtime <- unit_var_normalise(df$runtime) 
+    df$runtime <- unit_var_normalise(df$runtime)
   }
 
   return(kproto(df, k)$cluster)
 }
 
-mixed_k <- function(df, k) {
-  # remove zip variable
-  df$zip <- NULL
+mixed_k <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove zip variable
+    df$zip <- NULL
 
-  # binarise gender variable
-  df$gender <- as.numeric(df$gender == "M")
+    # binarise gender variable
+    df$gender <- as.numeric(df$gender == "M")
 
-  # factorise occupation variable
-  df$occupation <- as.factor(df$occupation)
+    # factorise occupation variable
+    df$occupation <- as.factor(df$occupation)
 
-  dist <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
+    dist <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
+
+  } else {
+    # factorise categorical variables
+    df$titleType <- as.factor(df$titleType)
+    df$director <- as.factor(df$director)
+    df$writer <- as.factor(df$writer)
+
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
+    dist <- distmix(df, method = "ahmad",
+                    idnum = 2:3, idbin = 5:24, idcat = c(1, 4, 5))
+  }
 
   return(fastkmed(dist, k)$cluster)
 }

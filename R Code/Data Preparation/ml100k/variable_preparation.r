@@ -92,24 +92,6 @@ for (i in 1:nrow(u100k_full_feat)) { # nolint
   }
 }
 
-range_normalise <- function(x) {
-  # normalise variable to a [0,1] range
-  return((x - min(x)) / (max(x) - min(x)))
-}
-
-# range normalise year
-u100k_full_feat$year <- range_normalise(as.numeric(u100k_full_feat$year))
-
-# indices of items with no runtime
-ind_na <- which(u100k_full_feat$runtime == "\\N")
-
-# range normalise run time
-u100k_full_feat$runtime[-ind_na] <-
-  range_normalise(as.numeric(u100k_full_feat$runtime[-ind_na]))
-
-# fill in missing values
-u100k_full_feat$runtime[ind_na] <- 0
-
 # write new item features data into file
 write.csv(u100k_full_feat, file = "M4R_Clustering/Data/u100k_feat_a.csv",
           row.names = FALSE)

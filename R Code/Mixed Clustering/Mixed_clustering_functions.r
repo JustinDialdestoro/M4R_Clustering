@@ -177,18 +177,39 @@ mixed_k <- function(df, k, user = TRUE) {
   return(fastkmed(dist, k)$cluster)
 }
 
-mskmeans <- function(df, k) {
-  # remove zip variable
-  df$zip <- NULL
+mskmeans <- function(df, k, user = TRUE) {
+  if (user == TRUE) {
+    # remove zip variable
+    df$zip <- NULL
 
-  # dummy code gender and occupation variable
-  df <- dummy_cols(df, select_columns = "gender")
-  df$gender <- NULL
+    # dummy code gender and occupation variable
+    df <- dummy_cols(df, select_columns = "gender")
+    df$gender <- NULL
 
-  df <- dummy_cols(df, select_columns = "occupation")
-  df$occupation <- NULL
+    df <- dummy_cols(df, select_columns = "occupation")
+    df$occupation <- NULL
 
-  return(gmsClust(df[1:2], df[4:24], k)$results$cluster)
+    return(gmsClust(df[1:2], df[4:24], k)$results$cluster)
+
+  } else {
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
+    # dummy code title type
+    df <- dummy_cols(df, select_columns = "titleType")
+    df$titleType <- NULL
+
+    # dummy code director type
+    df <- dummy_cols(df, select_columns = "director")
+    df$director <- NULL
+
+    # dummy code writer type
+    df <- dummy_cols(df, select_columns = "writer")
+    df$writer <- NULL
+
+    return(gmsClust(df[c(1, 2)], df[3:84], k)$results$cluster)
+  }
 }
 
 famd <- function(df, k) {

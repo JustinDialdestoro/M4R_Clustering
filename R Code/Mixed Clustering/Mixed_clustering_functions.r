@@ -40,6 +40,10 @@ gow_pam <- function(df, k, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
   } else {
+    # range normalise continuous variables
+    df$year <- range_normalise(df$year)
+    df$runtime <- range_normalise(df$runtime)
+
     # factorise nominal variables
     df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)

@@ -91,7 +91,8 @@ r2 <- function(pred, true) {
 cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
   n <- length(k_range)
   # initial scores table
-  scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
+  scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n),
+                       offline = rep(0, t), online = rep(0, n))
 
   # t-fold creation
   cval_f_i <- t_fold_index(df, t)
@@ -106,7 +107,9 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
     ui <- gen_ui_matrix(df, cval_f[[i]])
     sim <- metric(ui, user)
 
-    print(Sys.time() - t1)
+    time <- Sys.time() - t1
+    print(time)
+    scores$offline[i] <- time
 
     # loop over every k
     for (k in seq_along(k_range)) {
@@ -123,8 +126,11 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
 
-      print(Sys.time() - t1)
+      time <- Sys.time() - t1
+      print(time)
+      scores$online[k] <- scores$online[k] + time
     }
   }
-  return(scores / t)
+  scores[c(1:3, 5)] <- scores[c(1:3, 5)] / t
+  return(scores)
 }

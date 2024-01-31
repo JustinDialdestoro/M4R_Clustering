@@ -1,5 +1,5 @@
 # read in the data
-u100k <- read.csv("M4R_Clustering/Data/u100k.csv")
+ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
 # call functions
 library("viridis")
@@ -10,10 +10,10 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
 krange <- seq(from = 10, to = 100, by = 10)
 
-ups_scores <- cval(u100k, 10, krange, gen_ups_sim, weighted_sum)
-ups_scores_2 <- cval(u100k, 10, krange, gen_ups_sim, mean_centered)
-ups_scores_3 <- cval(u100k, 10, krange, gen_ups_sim, z_score)
-ups_scores_uclust <- cval_pref_clust(u100k, 10, krange,
+ups_scores <- cval(ml100k, 10, krange, gen_ups_sim, weighted_sum)
+ups_scores_2 <- cval(ml100k, 10, krange, gen_ups_sim, mean_centered)
+ups_scores_3 <- cval(ml100k, 10, krange, gen_ups_sim, z_score)
+ups_scores_uclust <- cval_pref_clust(ml100k, 10, krange,
                                      gen_ups_sim, weighted_sum, ups_clust)
 
 scores <- rbind(ups_scores, ups_scores_2, ups_scores_3, ups_scores_uclust)

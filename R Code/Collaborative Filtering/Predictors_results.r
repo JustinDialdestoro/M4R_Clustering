@@ -1,5 +1,5 @@
 # read in the data
-u100k <- read.csv("M4R_Clustering/Data/u100k.csv")
+ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
 # call functions
 library("viridis")
@@ -11,10 +11,10 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 krange <- seq(from = 10, to = 100, by = 10)
 
 # # evaluate cosine, adjusted cosine, and pcc
-euc_scores_wsum_u <- cval(u100k, 10, krange,  gen_euc_sim, weighted_sum)
-euc_scores_mcent_u <- cval(u100k, 10, krange,  gen_euc_sim, mean_centered)
-euc_scores_z_u <- cval(u100k, 10, krange,  gen_euc_sim, z_score)
-euc_scores_disc_u <- cval(u100k, 10, krange,  gen_euc_sim, discrete)
+euc_scores_wsum_u <- cval(ml100k, 10, krange,  gen_euc_sim, weighted_sum)
+euc_scores_mcent_u <- cval(ml100k, 10, krange,  gen_euc_sim, mean_centered)
+euc_scores_z_u <- cval(ml100k, 10, krange,  gen_euc_sim, z_score)
+euc_scores_disc_u <- cval(ml100k, 10, krange,  gen_euc_sim, discrete)
 
 scores <- rbind(euc_scores_wsum_u, euc_scores_mcent_u,
                 euc_scores_z_u, euc_scores_disc_u)
@@ -68,10 +68,10 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 # evaluate cosine, adjusted cosine, and pcc
-euc_scores_wsum_i <- cval(u100k, 10, krange, gen_euc_sim, weighted_sum, FALSE)
-euc_scores_mean_i <- cval(u100k, 10, krange,  gen_euc_sim, mean_centered, FALSE)
-euc_scores_z_i <- cval(u100k, 10, krange,  gen_euc_sim, z_score, FALSE)
-euc_scores_disc_i <- cval(u100k, 10, krange,  gen_euc_sim, discrete, FALSE)
+euc_scores_wsum_i <- cval(ml100k, 10, krange, gen_euc_sim, weighted_sum, FALSE)
+euc_scores_mean_i <- cval(ml100k, 10, krange,  gen_euc_sim, mean_centered, FALSE)
+euc_scores_z_i <- cval(ml100k, 10, krange,  gen_euc_sim, z_score, FALSE)
+euc_scores_disc_i <- cval(ml100k, 10, krange,  gen_euc_sim, discrete, FALSE)
 
 scores <- rbind(euc_scores_wsum_i, euc_scores_mean_i,
                 euc_scores_z_i, euc_scores_disc_i)

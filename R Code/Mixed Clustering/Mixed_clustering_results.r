@@ -1,9 +1,9 @@
 # read in the data
-u100k <- read.csv("M4R_Clustering/Data/u100k.csv")
+ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
-udem <- read.csv("M4R_Clustering/Data/u100k_dem.csv")
+udem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
 
-u100k_feat_a <- read.csv("M4R_Clustering/Data/u100k_feat_a.csv")
+ml100k_feat_a <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
 
 # call functions
 library("viridis")
@@ -14,17 +14,17 @@ source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering.r")
 
 nrange <- seq(from = 2, to = 10)
 
-# euc_scores_gow <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+# euc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
 #                                    gen_euc_sim, weighted_sum, gow_pam)
-euc_scores_hl <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+euc_scores_hl <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
                                   gen_euc_sim, weighted_sum, hl_pam)
-euc_scores_kproto <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+euc_scores_kproto <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
                                       gen_euc_sim, weighted_sum, kprototypes)
-euc_scores_mix <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+euc_scores_mix <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
                                    gen_euc_sim, weighted_sum, mixed_k)
-euc_scores_famd <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+euc_scores_famd <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
                                     gen_euc_sim, weighted_sum, famd)
-euc_scores_kam <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+euc_scores_kam <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
                                    gen_euc_sim, weighted_sum, kamila_clust)
 
 library("viridis")
@@ -95,19 +95,19 @@ legend("bottomright", c("Gower PAM", "HL Pam", "K-Prototypes", "Mixed K-Means",
                         "FAMD", "KAMILA"),
        col = viridis(6), lty = 2, pch = 4, lwd = 2, cex = 0.8)
 
-# cos_scores_gow <- cval_mixed_clust(u100k, udem, 10, 40, nrange,
+# cos_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 40, nrange,
 #                                    gen_cos_sim, weighted_sum, gow_pam)
-# acos_scores_gow <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+# acos_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
 #                                     gen_acos_sim, weighted_sum, gow_pam)
-# pcc_scores_gow <- cval_mixed_clust(u100k, udem, 10, 40, nrange,
+# pcc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 40, nrange,
 #                                    gen_pcc_sim, weighted_sum, gow_pam)
-# jacc_scores_gow <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+# jacc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
 #                                     gen_jacc_sim, weighted_sum, gow_pam)
-# euc_scores_gow <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+# euc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
 #                                    gen_euc_sim, weighted_sum, gow_pam)
-# mhat_scores_gow <- cval_mixed_clust(u100k, udem, 10, 20, nrange,
+# mhat_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 20, nrange,
 #                                     gen_mhat_sim, weighted_sum, gow_pam)
-# cheb_scores_gow <- cval_mixed_clust(u100k, udem, 10, 30, nrange,
+# cheb_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
 #                                     gen_cheb_sim, weighted_sum, gow_pam)
 
 # library("viridis")

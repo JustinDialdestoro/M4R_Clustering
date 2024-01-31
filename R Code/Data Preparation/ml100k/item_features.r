@@ -1,7 +1,7 @@
 library(stringr)
 
 # read 100k item feature data
-u100k_feat <- read.csv("M4R_Clustering/Data/u100k_feat.csv")
+ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat.csv")
 
 # read imdb title data
 imdb <- read.delim("Data/title.basics.tsv/data.tsv", sep = "\t", header = TRUE)
@@ -34,9 +34,9 @@ title_info <- function(title) {
 idlist <- c()
 
 # find tconst in imdb data for each 100k movielens film
-for (i in 1:nrow(u100k_feat)) { # nolint
-  print(u100k_feat$title[i])
-  film_text <- title_info(u100k_feat$title[i])
+for (i in 1:nrow(ml100k_feat)) { # nolint
+  print(ml100k_feat$title[i])
+  film_text <- title_info(ml100k_feat$title[i])
   found_rows <- imdb[imdb$primaryTitle == film_text[1] &
                        imdb$startYear == film_text[3] &
                        imdb$titleType == "movie", ]
@@ -64,44 +64,44 @@ for (i in 1:nrow(u100k_feat)) { # nolint
 }
 
 # write currently found imdb tconsts into file
-write.csv(idlist, file = "M4R_Clustering/Data/u100k_tconst_missing.csv")
+write.csv(idlist, file = "M4R_Clustering/Data/ml100k_tconst_missing.csv")
 
 # construct new data frame of not found movielens films
 not_found_mlid <- which(idlist == "Not found")
-u100k_nf_id <- data.frame(not_found_mlid, u100k_feat$title[not_found_mlid])
-names(u100k_nf_id) <- c("ML filmID", "ML title")
+ml100k_nf_id <- data.frame(not_found_mlid, ml100k_feat$title[not_found_mlid])
+names(ml100k_nf_id) <- c("ML filmID", "ML title")
 
 # write movielens not found ids into file
-write.csv(u100k_nf_id, file = "M4R_Clustering/Data/u100k_nf_id.csv",
+write.csv(ml100k_nf_id, file = "M4R_Clustering/Data/ml100k_nf_id.csv",
           row.names = FALSE)
 
 # read completed imdb tconst data
-u100k_tconst <- read.csv("M4R_Clustering/Data/u100k_tconst.csv")
+ml100k_tconst <- read.csv("M4R_Clustering/Data/ml100k_tconst.csv")
 
 # read imdb crew data
 crew <- read.delim("Data/title.crew.tsv/data.tsv", sep = "\t", header = TRUE)
 
 # create new dataframe for item features
-u100k_full_feat <- data.frame(matrix(ncol = 25, nrow = 0))
-names(u100k_full_feat) <- c("titleType", "year", "runtime", "adult", "director",
-                            "writer", "unknown", "action", "adventure",
-                            "animation", "children", "comedy", "crime",
-                            "documentary", "drama", "fantasy", "film-noir",
-                            "horror", "musical", "mystery", "romance", "sci-fi",
-                            "thriller", "war", "western")
+ml100k_full_feat <- data.frame(matrix(ncol = 25, nrow = 0))
+names(ml100k_full_feat) <- c("titleType", "year", "runtime", "adult",
+                             "director", "writer", "unknown", "action",
+                             "adventure", "animation", "children", "comedy",
+                             "crime", "documentary", "drama", "fantasy",
+                             "film-noir", "horror", "musical", "mystery",
+                             "romance", "sci-fi", "thriller", "war", "western")
 
 # fill rows with data from imdb and ml datasets
-for (i in 1:nrow(u100k_feat)) { # nolint
+for (i in 1:nrow(ml100k_feat)) { # nolint
   print(paste("filmID:", i))
-  imdb_row <- imdb[imdb$tconst == u100k_tconst[i, ], ]
-  crew_row <- crew[crew$tconst == u100k_tconst[i, ], ]
-  genre_row <- u100k_feat[u100k_tconst == u100k_tconst[i, ]]
-  u100k_full_feat[i, ] <- c(imdb_row$titleType, imdb_row$startYear,
-                            imdb_row$runtimeMinutes, imdb_row$isAdult,
-                            crew_row$directors, crew_row$writers,
-                            genre_row[6:24])
+  imdb_row <- imdb[imdb$tconst == ml100k_tconst[i, ], ]
+  crew_row <- crew[crew$tconst == ml100k_tconst[i, ], ]
+  genre_row <- ml100k_feat[ml100k_tconst == ml100k_tconst[i, ]]
+  ml100k_full_feat[i, ] <- c(imdb_row$titleType, imdb_row$startYear,
+                             imdb_row$runtimeMinutes, imdb_row$isAdult,
+                             crew_row$directors, crew_row$writers,
+                             genre_row[6:24])
 }
 
 # write new item features data into file
-write.csv(u100k_full_feat, file = "M4R_Clustering/Data/u100k_full_feat.csv",
+write.csv(ml100k_full_feat, file = "M4R_Clustering/Data/ml100k_full_feat.csv",
           row.names = FALSE)

@@ -9,6 +9,7 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
 # set range of k values to test over
 krange <- seq(from = 10, to = 300, by = 10)
+n <- length(krange)
 
 # evaluate cosine, adjusted cosine, and pcc
 cos_u <- cval(ml100k, 10, krange, gen_cos_sim, weighted_sum)
@@ -19,11 +20,19 @@ euc_u <- cval(ml100k, 10, krange, gen_euc_sim, weighted_sum)
 mhat_u <- cval(ml100k, 10, krange, gen_mhat_sim, weighted_sum)
 cheb_u <- cval(ml100k, 10, krange, gen_cheb_sim, weighted_sum)
 
-scores_u <- rbind(cos_u, acos_u, pcc_u, jacc_u,
-                  euc_u, mhat_u, cheb_u)
+sim_u <- rbind(cos_u, acos_u, pcc_u, jacc_u, euc_u, mhat_u, cheb_u)
 
-ymax <- max(scores_u$rmse)
-ymin <- min(scores_u$rmse)
+sim_u <- cbind(metric = c(rep("cosine", n), rep("acosine", n),
+                          rep("pcc", n), rep("jaccard", n),
+                          rep("euclidean", n), rep("manhattan", n),
+                          rep("chebyshev", n)), sim_u)
+
+# write user similarity results into file
+write.csv(sim_u, file = "M4R_Clustering/Results/sim_u.csv",
+          row.names = FALSE)
+
+ymax <- max(sim_u$rmse)
+ymin <- min(sim_u$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -45,8 +54,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$mae)
-ymin <- min(scores_u$mae)
+ymax <- max(sim_u$mae)
+ymin <- min(sim_u$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -68,8 +77,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$r2)
-ymin <- min(scores_u$r2)
+ymax <- max(sim_u$r2)
+ymin <- min(sim_u$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -91,8 +100,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$online)
-ymin <- min(scores_u$online)
+ymax <- max(sim_u$online)
+ymin <- min(sim_u$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -123,11 +132,19 @@ euc_i <- cval(ml100k, 10, krange, gen_euc_sim, weighted_sum, FALSE)
 mhat_i <- cval(ml100k, 10, krange, gen_mhat_sim, weighted_sum, FALSE)
 cheb_i <- cval(ml100k, 10, krange, gen_cheb_sim, weighted_sum, FALSE)
 
-scores_i <- rbind(cos_i, acos_i, pcc_i, jacc_i,
-                  euc_i, mhat_i, cheb_i)
+sim_i <- rbind(cos_i, acos_i, pcc_i, jacc_i, euc_i, mhat_i, cheb_i)
 
-ymax <- max(scores_i$rmse)
-ymin <- min(scores_i$rmse)
+sim_i <- cbind(metric = c(rep("cosine", n), rep("acosine", n),
+                          rep("pcc", n), rep("jaccard", n),
+                          rep("euclidean", n), rep("manhattan", n),
+                          rep("chebyshev", n)), sim_i)
+
+# write user similarity results into file
+write.csv(sim_i, file = "M4R_Clustering/Results/sim_i.csv",
+          row.names = FALSE)
+
+ymax <- max(sim_i$rmse)
+ymin <- min(sim_i$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -149,8 +166,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_i$mae)
-ymin <- min(scores_i$mae)
+ymax <- max(sim_i$mae)
+ymin <- min(sim_i$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -173,8 +190,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 
-ymax <- max(scores_i$r2)
-ymin <- min(scores_i$r2)
+ymax <- max(sim_i$r2)
+ymin <- min(sim_i$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -196,8 +213,8 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC",
                    "jaccard", "euclidean", "manhattan", "chebyshev"),
        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_i$online)
-ymin <- min(scores_i$online)
+ymax <- max(sim_i$online)
+ymin <- min(sim_i$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$online, lty = 2, type = "b", pch = 4, lwd = 2,

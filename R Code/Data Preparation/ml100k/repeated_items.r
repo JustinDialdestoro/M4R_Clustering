@@ -17,14 +17,17 @@ ml100k_feat <- read.delim("Data/ml-100k/ml-100k/u.item", sep = "|",
 # skeleton dataframe to be cleaned
 ml100knew <- ml100k
 
+# remove repeated row 1504
+ml100k_feat <- ml100k_feat[-c(1504), ]
+
+ml100k_feat$filmID[ml100k_feat$filmID > 1504] <-
+  ml100k_feat$filmID[ml100k_feat$filmID > 1504] - 1
+
 # change filmID of repeated item 1504
 ml100knew$filmID[ml100knew$filmID == 1504] <- 1202
 
 ml100knew$filmID[ml100knew$filmID > 1504] <-
   ml100knew$filmID[ml100knew$filmID > 1504] - 1
-
-# remove repeated row 1504
-ml100k_feat <- ml100k_feat[-c(1504), ]
 
 # find repeated titles
 repeats <- ml100k_feat$title[duplicated(ml100k_feat$title)]
@@ -37,7 +40,7 @@ for (i in 1:r) { # nolint
   # indexes of repeated films
   repeats_ind[i, ] <- which(ml100k_feat$title == repeats[i])
   # change filmID of repeated to the first one to remove repeats
-  ml100knew$filmID[ml100k$filmID == repeats_ind[i, 2]] <- repeats_ind[i, 1]
+  ml100knew$filmID[ml100knew$filmID == repeats_ind[i, 2]] <- repeats_ind[i, 1]
 }
 
 for (i in 1:(r - 1)) {

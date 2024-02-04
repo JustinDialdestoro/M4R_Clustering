@@ -228,7 +228,7 @@ gen_cheb_sim <- function(ui, user = TRUE) {
   return(1 / (1 + sim))
 }
 
-gen_ups_sim <- function(ui) {
+gen_ups_sim <- function(ui, user = TRUE) {
   # construct similarity matrix skeleton
   n <- nrow(ui)
   sim <- matrix(NA, nrow = n, ncol = n)

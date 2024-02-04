@@ -18,6 +18,10 @@ disc_u <- cval(ml100k, 10, krange,  gen_acos_sim, discrete)
 
 scores_u <- rbind(wsum_u, mcent_u, zscore_u, disc_u)
 
+# write user predictor results into file
+write.csv(scores_u, file = "M4R_Clustering/Results/pred_u.csv",
+          row.names = FALSE)
+
 ymax <- max(scores_u$rmse)
 ymin <- min(scores_u$rmse)
 ygap <- 0.2 * (ymax - ymin)
@@ -82,10 +86,6 @@ lines(krange, disc_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
-# write user predictor results into file
-write.csv(scores_u, file = "M4R_Clustering/Results/pred_u.csv",
-          row.names = FALSE)
-
 # evaluate cosine, adjusted cosine, and pcc
 wsum_i <- cval(ml100k, 10, krange, gen_acos_sim, weighted_sum, FALSE)
 mean_i <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered, FALSE)
@@ -93,6 +93,10 @@ zscore_i <- cval(ml100k, 10, krange,  gen_acos_sim, z_score, FALSE)
 disc_i <- cval(ml100k, 10, krange,  gen_acos_sim, discrete, FALSE)
 
 scores_i <- rbind(wsum_i, mean_i, zscore_i, disc_i)
+
+# write item predictor results into file
+write.csv(scores_i, file = "M4R_Clustering/Results/pred_i.csv",
+          row.names = FALSE)
 
 ymax <- max(scores_i$rmse)
 ymin <- min(scores_i$rmse)
@@ -157,7 +161,3 @@ lines(krange, disc_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
       col = viridis(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = viridis(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
-
-# write item predictor results into file
-write.csv(scores_i, file = "M4R_Clustering/Results/pred_i.csv",
-          row.names = FALSE)

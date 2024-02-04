@@ -229,24 +229,47 @@ gen_cheb_sim <- function(ui, user = TRUE) {
 }
 
 gen_ups_sim <- function(ui, user = TRUE) {
-  # construct similarity matrix skeleton
-  n <- nrow(ui)
-  sim <- matrix(NA, nrow = n, ncol = n)
+  if (user == TRUE) {
+    # construct similarity matrix skeleton
+    n <- nrow(ui)
+    sim <- matrix(NA, nrow = n, ncol = n)
 
-  # user rating means
-  mean <- rowMeans(ui, na.rm = TRUE)
+    # user rating means
+    mean <- rowMeans(ui, na.rm = TRUE)
 
-  # fill upper triangle of sim matrix
-  for (i in 1:n) {
-    for (j in i:n) {
-      # find non NA entries intersection and union
-      ind <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
-      denom <- which(!is.na(ui[i, ]) | !is.na(ui[j, ]))
+    # fill upper triangle of sim matrix
+    for (i in 1:n) {
+      for (j in i:n) {
+        # find non NA entries intersection and union
+        ind <- which(!is.na(ui[i, ]) & !is.na(ui[j, ]))
+        denom <- which(!is.na(ui[i, ]) | !is.na(ui[j, ]))
 
-      # compute UPS
-      num <- exp(-mean(abs(ui[i, ][ind] - ui[j, ][ind]))
-                 * abs(mean[i] - mean[j])) * length(ind)
-      sim[i, j] <- num / length(denom)
+        # compute UPS
+        num <- exp(-mean(abs(ui[i, ][ind] - ui[j, ][ind]))
+                  * abs(mean[i] - mean[j])) * length(ind)
+        sim[i, j] <- num / length(denom)
+      }
+    }
+  } else {
+    # construct similarity matrix skeleton
+    n <- ncol(ui)
+    sim <- matrix(NA, nrow = n, ncol = n)
+
+    # item rating means
+    mean <- rowMeans(t(ui), na.rm = TRUE)
+
+    # fill upper triangle of sim matrix
+    for (i in 1:n) {
+      for (j in i:n) {
+        # find non NA entries intersection and union
+        ind <- which(!is.na(ui[, i]) & !is.na(ui[, j]))
+        denom <- which(!is.na(ui[, i]) | !is.na(ui[, j]))
+
+        # compute UPS
+        num <- exp(-mean(abs(ui[, i][ind] - ui[, j][ind]))
+                   * abs(mean[i] - mean[j])) * length(ind)
+        sim[i, j] <- num / length(denom)
+      }
     }
   }
 

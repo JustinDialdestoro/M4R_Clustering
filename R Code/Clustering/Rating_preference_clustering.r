@@ -76,7 +76,8 @@ pred_fold_clust <- function(df, df_ind, uis, sims,
 cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
   n <- length(k_range)
   # initial scores table
-  scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n))
+  scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n),
+                       offline = rep(0, t), online = rep(0, n))
 
   # t-fold creation
   cval_f_i <- t_fold_index(df, t) # nolint
@@ -84,7 +85,7 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
 
   # loop over each fold
   for (i in 1:t) {
-    print("Offline phase:")
+    print(paste("Offline phase for fold", i, ":"))
     t1 <- Sys.time()
 
     # ui and similarity matrix
@@ -105,11 +106,13 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
       sims[[i]] <- metric(uis[[i]])
     }
 
-    print(Sys.time() - t1)
+    time <- Sys.time() - t1
+    print(time)
+    scores$offline[i] <- time
 
     # loop over every k
     for (k in seq_along(k_range)) {
-      print("Online phase:")
+      print(paste("Online phase for k =", k_range[k]))
       t1 <- Sys.time()
 
       # predict on test fold ratings
@@ -122,8 +125,11 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
       scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
       scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
 
-      print(Sys.time() - t1)
+      time <- Sys.time() - t1
+      print(time)
+      scores$online[k] <- scores$online[k] + time
     }
   }
+  scores[c(1:3, 5)] <- scores[c(1:3, 5)] / t
   return(scores / t)
 }

@@ -203,7 +203,6 @@ legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
        col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
-
 ymax <- max(sim_i$r2)
 ymin <- min(sim_i$r2)
 ygap <- 0.2 * (ymax - ymin)

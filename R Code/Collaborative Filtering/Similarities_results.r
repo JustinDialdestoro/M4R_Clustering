@@ -1,8 +1,10 @@
+# load colour package
+library("scales")
+
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
 # call functions
-library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
@@ -37,100 +39,100 @@ ymin <- min(sim_u$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "RMSE",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_u$mae)
 ymin <- min(sim_u$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "MAE",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_u$r2)
 ymin <- min(sim_u$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "R2",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_u$online)
 ymin <- min(sim_u$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours",
+     col = hue_pal()(8)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 # evaluate cosine, adjusted cosine, and pcc
 cos_i <- cval(ml100k, 10, krange, gen_cos_sim, weighted_sum, FALSE)
@@ -158,97 +160,97 @@ ymin <- min(sim_i$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "RMSE",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_i$mae)
 ymin <- min(sim_i$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "MAE",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_i$r2)
 ymin <- min(sim_i$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours", ylab = "R2",
+     col = hue_pal()(8)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(sim_i$online)
 ymin <- min(sim_i$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, cos_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(8)[1], xlab = "k neighbours",
+     col = hue_pal()(8)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
 lines(krange, acos_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[2])
+      col = hue_pal()(8)[2])
 lines(krange, pcc_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[3])
+      col = hue_pal()(8)[3])
 lines(krange, jacc_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[4])
+      col = hue_pal()(8)[4])
 lines(krange, euc_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[5])
+      col = hue_pal()(8)[5])
 lines(krange, mhat_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[6])
+      col = hue_pal()(8)[6])
 lines(krange, cheb_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[7])
+      col = hue_pal()(8)[7])
 lines(krange, ups_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(8)[8])
+      col = hue_pal()(8)[8])
 legend("bottom", c("cosine", "adjusted cosine", "PCC", "jaccard",
                    "euclidean", "manhattan", "chebyshev", "UPS"),
-       col = viridis(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(8), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)

@@ -6,8 +6,8 @@ pref_clust <- function(ui, clust_metric, alpha, beta) {
   u_mean <- rowMeans(ui, na.rm = TRUE)
 
   # segment users by mean
-  o_ind <- which(u_mean >= alpha)
-  p_ind <- which(u_mean <= beta)
+  o_ind <- which(u_mean >= beta)
+  p_ind <- which(u_mean <= alpha)
 
   # find cluster centre indexes
   c_o_ind <- o_ind[which.max(n_ratings[o_ind])]

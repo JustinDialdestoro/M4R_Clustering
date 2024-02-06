@@ -8,3 +8,5 @@ ui <- gen_ui_matrix(ml100k, ml100k)
 
 # average user ratings
 u_mean <- rowMeans(ui, na.rm = TRUE)
+
+hist(u_mean, breaks = 20)

@@ -22,7 +22,7 @@ zscore_u <- cval_pref_clust(ml100k, 10, krange,
 disc_u <- cval_pref_clust(ml100k, 10, krange,
                           gen_ups_sim, discrete, acos_clust)
 
-pref_clust_u <- rbind(wsum, mcent, zscore, disc)
+pref_clust_u <- rbind(wsum_u, mcent_u, zscore_u, disc_u)
 
 pref_clust_u <- cbind(predictor = c(rep("weighted sum", n),
                                     rep("mean centred", n),
@@ -96,7 +96,3 @@ lines(krange, disc$online, lty = 2, type = "b", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
-
-# write user predictor results into file
-write.csv(scores, file = "M4R_Clustering/Results/pred_ups.csv",
-          row.names = FALSE)

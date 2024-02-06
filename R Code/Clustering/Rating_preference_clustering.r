@@ -1,4 +1,4 @@
-pref_clust <- function(ui, clust_metric) {
+pref_clust <- function(ui, clust_metric, alpha, beta) {
   # find number of rated items for each user
   n_ratings <- rowSums(!is.na(ui))
 
@@ -6,8 +6,8 @@ pref_clust <- function(ui, clust_metric) {
   u_mean <- rowMeans(ui, na.rm = TRUE)
 
   # segment users by mean
-  o_ind <- which(u_mean >= 4)
-  p_ind <- which(u_mean <= 3)
+  o_ind <- which(u_mean >= alpha)
+  p_ind <- which(u_mean <= beta)
 
   # find cluster centre indexes
   c_o_ind <- o_ind[which.max(n_ratings[o_ind])]
@@ -73,7 +73,8 @@ pred_fold_clust <- function(df, df_ind, uis, sims,
   return(preds)
 }
 
-cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
+cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric,
+                            alpha, beta) {
   n <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, n), mae = rep(0, n), r2 = rep(0, n),
@@ -92,7 +93,7 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric) {
     ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
     # create user clusters
-    clusters <- pref_clust(ui, clust_metric)
+    clusters <- pref_clust(ui, clust_metric, alpha, beta)
 
     # segment user ratings matrix into clusters
     uis <- replicate(3, c())

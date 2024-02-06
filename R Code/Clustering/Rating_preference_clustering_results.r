@@ -27,7 +27,7 @@ pref_clust_u <- rbind(wsum_u, mcent_u, zscore_u, disc_u)
 pref_clust_u <- cbind(predictor = c(rep("weighted sum", n),
                                     rep("mean centred", n),
                                     rep("z score", n),
-                                    rep("discrete", n), pref_clust_u))
+                                    rep("discrete", n)), pref_clust_u)
 
 # write item predictor results into file
 write.csv(pref_clust_u, file = "M4R_Clustering/Results/pref_clust_u.csv",

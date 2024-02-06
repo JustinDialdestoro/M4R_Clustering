@@ -29,7 +29,7 @@ pref_clust_u <- cbind(predictor = c(rep("weighted sum", n),
                                     rep("z score", n),
                                     rep("discrete", n)), pref_clust_u)
 
-# write item predictor results into file
+# write user preference clustering results into file
 write.csv(pref_clust_u, file = "M4R_Clustering/Results/pref_clust_u.csv",
           row.names = FALSE)
 
@@ -114,3 +114,7 @@ for (i in 1:3) {
     alpha_beta <- rbind(alpha_beta, results)
   }
 }
+
+# write alpha, beta comparison results into file
+write.csv(alpha_beta, file = "M4R_Clustering/Results/alpha_beta",
+          row.names = FALSE)

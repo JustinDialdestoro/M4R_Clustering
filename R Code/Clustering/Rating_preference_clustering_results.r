@@ -96,23 +96,3 @@ lines(krange, disc$online, lty = 2, type = "b", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
-
-# construct folds
-fold_ind <- t_fold_index(ml100k, 10)
-folds <- t_fold(ml100k, f_ind)
-
-# ui matrix for first fold
-ui <- gen_ui_matrix(ml100k, folds[[1]])
-
-# cluster users
-acos_clust <- pref_clust(ui, acos_clust)
-
-nrated <- colSums(!is.na(ui))
-top_nrated <- sort(nrated, decreasing = TRUE)[1:2]
-
-i1 <- ui[, which(nrated == top_nrated[1])]
-i2 <- ui[, which(nrated == top_nrated[2])]
-
-ind <- which(!is.na(i1) & !is.na(i2))
-
-plot(i1[ind], i2[ind])

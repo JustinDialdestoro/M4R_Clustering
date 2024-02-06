@@ -28,8 +28,8 @@ pred_u <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
 write.csv(pred_u, file = "M4R_Clustering/Results/pred_u.csv",
           row.names = FALSE)
 
-ymax <- max(scores_u$rmse)
-ymin <- min(scores_u$rmse)
+ymax <- max(pred_u$rmse)
+ymin <- min(pred_u$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -44,8 +44,8 @@ lines(krange, disc_u$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$mae)
-ymin <- min(scores_u$mae)
+ymax <- max(pred_u$mae)
+ymin <- min(pred_u$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -60,8 +60,8 @@ lines(krange, disc_u$mae, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$r2)
-ymin <- min(scores_u$r2)
+ymax <- max(pred_u$r2)
+ymin <- min(pred_u$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -76,8 +76,8 @@ lines(krange, disc_u$r2, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_u$online)
-ymin <- min(scores_u$online)
+ymax <- max(pred_u$online)
+ymin <- min(pred_u$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_u$online, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -107,8 +107,8 @@ pred_i <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
 write.csv(pred_i, file = "M4R_Clustering/Results/pred_i.csv",
           row.names = FALSE)
 
-ymax <- max(scores_i$rmse)
-ymin <- min(scores_i$rmse)
+ymax <- max(pred_i$rmse)
+ymin <- min(pred_i$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -123,8 +123,8 @@ lines(krange, disc_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_i$mae)
-ymin <- min(scores_i$mae)
+ymax <- max(pred_i$mae)
+ymin <- min(pred_i$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -139,8 +139,8 @@ lines(krange, disc_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_i$r2)
-ymin <- min(scores_i$r2)
+ymax <- max(pred_i$r2)
+ymin <- min(pred_i$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
@@ -155,8 +155,8 @@ lines(krange, disc_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
        col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
-ymax <- max(scores_i$online)
-ymin <- min(scores_i$online)
+ymax <- max(pred_i$online)
+ymin <- min(pred_i$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, wsum_i$online, lty = 2, type = "b", pch = 4, lwd = 2,

@@ -103,8 +103,8 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric,
 
     # similarity matrix for each segmented ui matrix
     sims <- replicate(3, c())
-    for (i in 1:3) {
-      sims[[i]] <- metric(uis[[i]])
+    for (l in 1:3) {
+      sims[[l]] <- metric(uis[[l]])
     }
 
     time <- Sys.time() - t1

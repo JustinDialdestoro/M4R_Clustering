@@ -118,3 +118,14 @@ for (i in 1:3) {
 # write alpha, beta comparison results into file
 write.csv(alpha_beta, file = "M4R_Clustering/Results/alpha_beta",
           row.names = FALSE)
+
+# find row indices
+inds <- rep(c(), 9)
+l <- 1
+for (i in 1:3) {
+  for (j in 1:3) {
+    inds[[l]] <- which(alpha_beta$alpha == alpha_range[i] &
+                         alpha_beta$beta == beta_range[j])
+    l <- l + 1
+  }
+}

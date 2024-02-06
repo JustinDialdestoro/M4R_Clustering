@@ -22,7 +22,7 @@ disc_u <- cval(ml100k, 10, krange,  gen_acos_sim, discrete)
 pred_u <- rbind(wsum_u, mcent_u, zscore_u, disc_u)
 
 pred_u <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
-                              rep("z score", n), rep("discrete", n), pred_u))
+                              rep("z score", n), rep("discrete", n)), pred_u)
 
 # write user predictor results into file
 write.csv(pred_u, file = "M4R_Clustering/Results/pred_u.csv",
@@ -101,7 +101,7 @@ disc_i <- cval(ml100k, 10, krange,  gen_ups_sim, discrete, FALSE)
 pred_i <- rbind(wsum_i, mean_i, zscore_i, disc_i)
 
 pred_i <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
-                              rep("z score", n), rep("discrete", n), pred_i))
+                              rep("z score", n), rep("discrete", n)), pred_i)
 
 # write item predictor results into file
 write.csv(pred_i, file = "M4R_Clustering/Results/pred_i.csv",

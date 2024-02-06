@@ -108,7 +108,7 @@ for (i in 1:3) {
   for (j in 1:3) {
     results <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
                                acos_clust, alpha_range[i], beta_range[j])
-    results <- cbind(beta = rep(beta_range[i], n), results)
+    results <- cbind(beta = rep(beta_range[j], n), results)
     results <- cbind(alpha = rep(alpha_range[i], n), results)
 
     alpha_beta <- rbind(alpha_beta, results)
@@ -119,13 +119,74 @@ for (i in 1:3) {
 write.csv(alpha_beta, file = "M4R_Clustering/Results/alpha_beta",
           row.names = FALSE)
 
-# find row indices
-inds <- rep(c(), 9)
-l <- 1
-for (i in 1:3) {
-  for (j in 1:3) {
-    inds[[l]] <- which(alpha_beta$alpha == alpha_range[i] &
-                         alpha_beta$beta == beta_range[j])
-    l <- l + 1
-  }
+ymax <- max(alpha_beta$rmse)
+ymin <- min(alpha_beta$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, alpha_beta[1:30, ]$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 2,
+        type = "b", pch = 4, lwd = 2, col = hue_pal()(9)[i + 1])
 }
+legend("topright", c("a=3, b=3.75", "a=3, b=4",
+                     "a=3, b=4.25", "a=3.25, b=3.75",
+                     "a=3.25, b=4", "a=3.25, b=4.25",
+                     "a=3.5, b=3.75", "a=3.5, b=4",
+                     "a=3.5, b=4.25"),
+       col = hue_pal()(9), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+
+ymax <- max(alpha_beta$mae)
+ymin <- min(alpha_beta$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, alpha_beta[1:30, ]$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 2,
+        type = "b", pch = 4, lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("a=3, b=3.75", "a=3, b=4",
+                     "a=3, b=4.25", "a=3.25, b=3.75",
+                     "a=3.25, b=4", "a=3.25, b=4.25",
+                     "a=3.5, b=3.75", "a=3.5, b=4",
+                     "a=3.5, b=4.25"),
+       col = hue_pal()(9), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+
+ymax <- max(alpha_beta$r2)
+ymin <- min(alpha_beta$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, alpha_beta[1:30, ]$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 2,
+        type = "b", pch = 4, lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("a=3, b=3.75", "a=3, b=4",
+                     "a=3, b=4.25", "a=3.25, b=3.75",
+                     "a=3.25, b=4", "a=3.25, b=4.25",
+                     "a=3.5, b=3.75", "a=3.5, b=4",
+                     "a=3.5, b=4.25"),
+       col = hue_pal()(9), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+
+ymax <- max(alpha_beta$online)
+ymin <- min(alpha_beta$online)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, alpha_beta[1:30, ]$online, lty = 2, type = "b", pch = 4, lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours",
+     ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 2,
+        type = "b", pch = 4, lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("a=3, b=3.75", "a=3, b=4",
+                     "a=3, b=4.25", "a=3.25, b=3.75",
+                     "a=3.25, b=4", "a=3.25, b=4.25",
+                     "a=3.5, b=3.75", "a=3.5, b=4",
+                     "a=3.5, b=4.25"),
+       col = hue_pal()(9), lty = 2, pch = 4, lwd = 2, cex = 0.8)

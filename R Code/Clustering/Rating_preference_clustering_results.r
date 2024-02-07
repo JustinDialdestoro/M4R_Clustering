@@ -146,96 +146,77 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
        col = c(hue_pal()(4), "black"),
        lty = c(1, 1, 1, 1, 2), lwd = 2, cex = 0.8, horiz = TRUE)
 
-alpha_range <- c(3, 3.25, 3.5)
-beta_range <- c(3.75, 4, 4.25)
+beta_range <- c(3, 3.2, 3.4, 3.6, 3.8, 4, 4.2)
 
-alpha_beta <- NULL
+beta_search <- NULL
 
 p <- 1
 
-for (i in 1:3) {
-  for (j in 1:3) {
-    results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
-                               acos_clust, alpha_range[i], beta_range[j])
-    results <- cbind(beta = rep(beta_range[j], n), results)
-    results <- cbind(alpha = rep(alpha_range[i], n), results)
+for (i in 1:7) {
+  results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
+                             acos_clust, 2, beta_range[i])
+  results <- cbind(beta = rep(beta_range[i], n), results)
 
-    alpha_beta <- rbind(alpha_beta, results)
-  }
+  beta_search <- rbind(beta_search, results)
 }
+
 
 # write alpha, beta comparison results into file
-write.csv(alpha_beta, file = "M4R_Clustering/Results/alpha_beta",
+write.csv(beta_search, file = "M4R_Clustering/Results/beta_search.csv",
           row.names = FALSE)
 
-ymax <- max(alpha_beta$rmse)
-ymin <- min(alpha_beta$rmse)
+ymax <- max(beta_search$rmse)
+ymin <- min(beta_search$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, alpha_beta[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+plot(krange, beta_search[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+for (i in 1:6) {
+  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("topright", c("a=3, b=3.75", "a=3, b=4",
-                     "a=3, b=4.25", "a=3.25, b=3.75",
-                     "a=3.25, b=4", "a=3.25, b=4.25",
-                     "a=3.5, b=3.75", "a=3.5, b=4",
-                     "a=3.5, b=4.25"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(alpha_beta$mae)
 ymin <- min(alpha_beta$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, alpha_beta[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+plot(krange, beta_search[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+for (i in 1:6) {
+  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("topright", c("a=3, b=3.75", "a=3, b=4",
-                     "a=3, b=4.25", "a=3.25, b=3.75",
-                     "a=3.25, b=4", "a=3.25, b=4.25",
-                     "a=3.5, b=3.75", "a=3.5, b=4",
-                     "a=3.5, b=4.25"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(alpha_beta$r2)
 ymin <- min(alpha_beta$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, alpha_beta[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+plot(krange, beta_search[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+for (i in 1:6) {
+  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("topright", c("a=3, b=3.75", "a=3, b=4",
-                     "a=3, b=4.25", "a=3.25, b=3.75",
-                     "a=3.25, b=4", "a=3.25, b=4.25",
-                     "a=3.5, b=3.75", "a=3.5, b=4",
-                     "a=3.5, b=4.25"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(alpha_beta$online)
 ymin <- min(alpha_beta$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, alpha_beta[1:30, ]$online, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours",
+plot(krange, beta_search[1:30, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(7)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, alpha_beta[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+for (i in 1:6) {
+  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("topright", c("a=3, b=3.75", "a=3, b=4",
-                     "a=3, b=4.25", "a=3.25, b=3.75",
-                     "a=3.25, b=4", "a=3.25, b=4.25",
-                     "a=3.5, b=3.75", "a=3.5, b=4",
-                     "a=3.5, b=4.25"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)

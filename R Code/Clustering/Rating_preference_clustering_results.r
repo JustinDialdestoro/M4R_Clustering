@@ -66,7 +66,7 @@ lines(krange, disc_pred$rmse, lty = 2, type = "l", lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
-       lty = c(1, 1, 1, 1, 2), lwd = 2, cex = 0.8, horiz = TRUE)
+       lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(full$mae)
 ymin <- min(full$mae)
@@ -92,7 +92,7 @@ lines(krange, disc_pred$mae, lty = 2, type = "l", lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
-       lty = c(1, 1, 1, 1, 2), lwd = 2, cex = 0.8, horiz = TRUE)
+       lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(full$r2)
 ymin <- min(full$r2)
@@ -118,7 +118,7 @@ lines(krange, disc_pred$r2, lty = 2, type = "l", lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
-       lty = c(1, 1, 1, 1, 2), lwd = 2, cex = 0.8, horiz = TRUE)
+       lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
 
 ymax <- max(full$online)
 ymin <- min(full$online)
@@ -144,7 +144,7 @@ lines(krange, disc_pred$online, lty = 2, type = "l", lwd = 2,
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
-       lty = c(1, 1, 1, 1, 2), lwd = 2, cex = 0.8, horiz = TRUE)
+       lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
 
 beta_range <- c(3, 3.2, 3.4, 3.6, 3.8, 4, 4.2)
 

@@ -146,16 +146,16 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
        col = c(hue_pal()(4), "black"),
        lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
 
-beta_range <- c(3, 3.2, 3.4, 3.6, 3.8, 4, 4.2)
+beta_range <- c(2.9, 3, 3.1, 3.9, 4, 4.1, 4.3, 4.4, 4.5)
 
 beta_search <- NULL
 
 p <- 1
 
-for (i in 1:7) {
+for (b in beta_range) {
   results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
-                             acos_clust, 2, beta_range[i])
-  results <- cbind(beta = rep(beta_range[i], n), results)
+                             acos_clust, 2, b)
+  results <- cbind(beta = rep(b, n), results)
 
   beta_search <- rbind(beta_search, results)
 }
@@ -170,55 +170,57 @@ ymin <- min(beta_search$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, beta_search[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "RMSE",
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:6) {
+for (i in 1:8) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
 }
-legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
-       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(beta_search$mae)
 ymin <- min(beta_search$mae)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, beta_search[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "MAE",
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:6) {
+for (i in 1:8) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
 }
-legend("topright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
-       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(beta_search$r2)
 ymin <- min(beta_search$r2)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, beta_search[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(7)[1], xlab = "k neighbours", ylab = "R2",
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:6) {
+for (i in 1:8) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
 }
-legend("bottomright",
-       c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
-       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(beta_search$online)
 ymin <- min(beta_search$online)
 ygap <- 0.2 * (ymax - ymin)
 
 plot(krange, beta_search[1:30, ]$online, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(7)[1], xlab = "k neighbours",
+     col = hue_pal()(9)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:6) {
+for (i in 1:8) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
 }
-legend("bottomright",
-       c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
-       col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)

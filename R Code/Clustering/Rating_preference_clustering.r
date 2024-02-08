@@ -132,5 +132,5 @@ cval_pref_clust <- function(df, t, k_range, metric, pred_func, clust_metric,
     }
   }
   scores[c(1:3, 5)] <- scores[c(1:3, 5)] / t
-  return(scores / t)
+  return(scores)
 }

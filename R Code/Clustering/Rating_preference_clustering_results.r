@@ -204,7 +204,8 @@ for (i in 1:6) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
         type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("bottomright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+legend("bottomright",
+       c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
        col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)
 
 ymax <- max(beta_search$online)
@@ -218,5 +219,6 @@ for (i in 1:6) {
   lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
         type = "l", lwd = 2, col = hue_pal()(7)[i + 1])
 }
-legend("bottomright", c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
+legend("bottomright",
+       c("b=3", "b=3.2", "b=3.4", "b=3.6", "b=3.8", "b=4", "b=4.2"),
        col = hue_pal()(7), lty = 1, lwd = 2, cex = 0.8)

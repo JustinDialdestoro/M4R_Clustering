@@ -13,14 +13,92 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 krange <- seq(from = 10, to = 300, by = 10)
 n <- length(krange)
 
+# acosine beta search
+beta_range <- c(2.9, 3, 3.1, 3.9, 4, 4.1, 4.3, 4.4, 4.5)
+beta_acos <- NULL
+
+p <- 1
+
+for (b in beta_range) {
+  results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
+                             acos_clust, 2, b)
+  results <- cbind(beta = rep(b, n), results)
+
+  beta_acos <- rbind(beta_acos, results)
+}
+
+# write beta comparison results into file
+write.csv(beta_acos, file = "M4R_Clustering/Results/beta_acos.csv",
+          row.names = FALSE)
+
+ymax <- max(beta_acos$rmse)
+ymin <- min(beta_acos$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_acos[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_acos[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_acos$mae)
+ymin <- min(beta_acos$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_acos[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_acos[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_acos$r2)
+ymin <- min(beta_acos$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_acos[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_acos[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_acos$online)
+ymin <- min(beta_acos$online)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_acos[1:30, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours",
+     ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_acos[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
 wsum_acos_c <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
-                               acos_clust, 3, 4)
+                               acos_clust, 3, 4.5)
 mcent_acos_c <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, mean_centered,
-                                acos_clust, 3, 4)
+                                acos_clust, 3, 4.5)
 zscore_acos_c <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, z_score,
-                                 acos_clust, 3, 4)
+                                 acos_clust, 3, 4.5)
 disc_acos_c <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, discrete,
-                               acos_clust, 3, 4)
+                               acos_clust, 3, 4.5)
 
 pref_clust_acos <- rbind(wsum_acos_c, mcent_acos_c, zscore_acos_c, disc_acos_c)
 
@@ -145,6 +223,83 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
        lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
+
+# UPS beta search
+beta_ups <- NULL
+
+p <- 1
+
+for (b in beta_range) {
+  results <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
+                             ups_clust, 2, b)
+  results <- cbind(beta = rep(b, n), results)
+
+  beta_ups <- rbind(beta_ups, results)
+}
+
+# write beta comparison results into file
+write.csv(beta_ups, file = "M4R_Clustering/Results/beta_ups.csv",
+          row.names = FALSE)
+
+ymax <- max(beta_ups$rmse)
+ymin <- min(beta_ups$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_ups[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_ups[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_ups$mae)
+ymin <- min(beta_ups$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_ups[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_ups[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_ups$r2)
+ymin <- min(beta_ups$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_ups[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_ups[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(beta_ups$online)
+ymin <- min(beta_ups$online)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, beta_ups[1:30, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours",
+     ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, beta_ups[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
+                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
 wsum_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
                               ups_clust, 3, 4)
@@ -278,82 +433,3 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
                    "clustered"),
        col = c(hue_pal()(4), "black"),
        lty = c(2, 2, 2, 2, 1), lwd = 2, cex = 0.8, horiz = TRUE)
-
-beta_range <- c(2.9, 3, 3.1, 3.9, 4, 4.1, 4.3, 4.4, 4.5)
-
-beta_search <- NULL
-
-p <- 1
-
-for (b in beta_range) {
-  results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
-                             acos_clust, 2, b)
-  results <- cbind(beta = rep(b, n), results)
-
-  beta_search <- rbind(beta_search, results)
-}
-
-
-# write beta comparison results into file
-write.csv(beta_search, file = "M4R_Clustering/Results/beta_search.csv",
-          row.names = FALSE)
-
-ymax <- max(beta_search$rmse)
-ymin <- min(beta_search$rmse)
-ygap <- 0.2 * (ymax - ymin)
-
-plot(krange, beta_search[1:30, ]$rmse, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
-     ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$rmse, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
-                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
-
-ymax <- max(beta_search$mae)
-ymin <- min(beta_search$mae)
-ygap <- 0.2 * (ymax - ymin)
-
-plot(krange, beta_search[1:30, ]$mae, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
-     ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$mae, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
-                     "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
-
-ymax <- max(beta_search$r2)
-ymin <- min(beta_search$r2)
-ygap <- 0.2 * (ymax - ymin)
-
-plot(krange, beta_search[1:30, ]$r2, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
-     ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$r2, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
-                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
-
-ymax <- max(beta_search$online)
-ymin <- min(beta_search$online)
-ygap <- 0.2 * (ymax - ymin)
-
-plot(krange, beta_search[1:30, ]$online, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours",
-     ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, beta_search[(30 * i + 1):(30 * (i + 1)), ]$online, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
-                        "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)

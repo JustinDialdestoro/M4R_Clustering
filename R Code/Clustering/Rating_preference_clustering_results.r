@@ -112,10 +112,10 @@ write.csv(pref_clust_acos, file = "M4R_Clustering/Results/pref_clust_acos.csv",
 
 # read previously obtained prediction comparison
 pred_acos <- read.csv("M4R_Clustering/Results/pred_acos.csv")
-wsum_acos <- pred_u[pred_u$predictor == "weighted sum", 2:6]
-mcent_acos <- pred_u[pred_u$predictor == "mean centred", 2:6]
-zscore_acos <- pred_u[pred_u$predictor == "z score", 2:6]
-disc_acos <- pred_u[pred_u$predictor == "discrete", 2:6]
+wsum_acos <- pred_acos[pred_acos$predictor == "weighted sum", 2:6]
+mcent_acos <- pred_acos[pred_acos$predictor == "mean centred", 2:6]
+zscore_acos <- pred_acos[pred_acos$predictor == "z score", 2:6]
+disc_acos <- pred_acos[pred_acos$predictor == "discrete", 2:6]
 
 full <- rbind(pref_clust_acos, pred_acos)
 
@@ -320,10 +320,10 @@ write.csv(pref_clust_ups, file = "M4R_Clustering/Results/pref_clust_ups.csv",
 
 # read previously obtained prediction comparison
 pred_ups <- read.csv("M4R_Clustering/Results/pred_ups.csv")
-wsum_ups <- pred_u[pred_u$predictor == "weighted sum", 2:6]
-mcent_ups <- pred_u[pred_u$predictor == "mean centred", 2:6]
-zscore_ups <- pred_u[pred_u$predictor == "z score", 2:6]
-disc_ups <- pred_u[pred_u$predictor == "discrete", 2:6]
+wsum_ups <- pred_ups[pred_ups$predictor == "weighted sum", 2:6]
+mcent_ups <- pred_ups[pred_ups$predictor == "mean centred", 2:6]
+zscore_ups <- pred_ups[pred_ups$predictor == "z score", 2:6]
+disc_ups <- pred_ups[pred_ups$predictor == "discrete", 2:6]
 
 full <- rbind(pref_clust_ups, pred_ups)
 

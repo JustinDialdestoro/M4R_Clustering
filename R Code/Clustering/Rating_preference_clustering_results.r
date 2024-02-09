@@ -15,9 +15,8 @@ n <- length(krange)
 
 # acosine beta search
 beta_range <- c(2.9, 3, 3.1, 3.9, 4, 4.1, 4.3, 4.4, 4.5)
-beta_acos <- NULL
 
-p <- 1
+beta_acos <- NULL
 
 for (b in beta_range) {
   results <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
@@ -227,8 +226,6 @@ legend("bottom", c("weighted sum", "mean centered", "z score", "discrete",
 # UPS beta search
 beta_ups <- NULL
 
-p <- 1
-
 for (b in beta_range) {
   results <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
                              ups_clust, 2, b)
@@ -302,13 +299,13 @@ legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
        col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
 wsum_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
-                              ups_clust, 3, 4)
+                              ups_clust, 3, 4.5)
 mcent_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, mean_centered,
-                               ups_clust, 3, 4)
+                               ups_clust, 3, 4.5)
 zscore_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, z_score,
-                                ups_clust, 3, 4)
+                                ups_clust, 3, 4.5)
 disc_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, discrete,
-                              ups_clust, 3, 4)
+                              ups_clust, 3, 4.5)
 
 pref_clust_ups <- rbind(wsum_ups_c, mcent_ups_c, zscore_ups_c, disc_ups_c)
 

@@ -33,65 +33,65 @@ ymax <- max(pred_acos$rmse)
 ymin <- min(pred_acos$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_acos$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_acos$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_acos$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_acos$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_acos$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_acos$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_acos$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_acos$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_acos$mae)
 ymin <- min(pred_acos$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_acos$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_acos$mae, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_acos$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_acos$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_acos$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_acos$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_acos$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_acos$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_acos$r2)
 ymin <- min(pred_acos$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_acos$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_acos$r2, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_acos$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_acos$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_acos$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_acos$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_acos$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_acos$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_acos$online)
 ymin <- min(pred_acos$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_acos$online, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_acos$online, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_acos$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_acos$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_acos$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_acos$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_acos$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_acos$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 # evaluate adjusted cosine predictor performance
 wsum_ups <- cval(ml100k, 10, krange,  gen_ups_sim, weighted_sum)
@@ -113,65 +113,65 @@ ymax <- max(pred_ups$rmse)
 ymin <- min(pred_ups$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_ups$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_ups$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_ups$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_ups$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_ups$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_ups$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_ups$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_ups$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_ups$mae)
 ymin <- min(pred_ups$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_ups$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_ups$mae, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_ups$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_ups$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_ups$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_ups$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_ups$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_ups$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_ups$r2)
 ymin <- min(pred_ups$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_ups$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_ups$r2, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_ups$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_ups$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_ups$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_ups$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_ups$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_ups$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_ups$online)
 ymin <- min(pred_ups$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_ups$online, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_ups$online, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mcent_ups$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mcent_ups$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_ups$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_ups$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_ups$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_ups$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
 
 # evaluate cosine, adjusted cosine, and pcc
 wsum_i <- cval(ml100k, 10, krange, gen_ups_sim, weighted_sum, FALSE)
@@ -192,62 +192,62 @@ ymax <- max(pred_i$rmse)
 ymin <- min(pred_i$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_i$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mean_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mean_i$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_i$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_i$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_i$rmse, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_i$mae)
 ymin <- min(pred_i$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_i$mae, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mean_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mean_i$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_i$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_i$mae, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_i$mae, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_i$r2)
 ymin <- min(pred_i$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_i$r2, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mean_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mean_i$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_i$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_i$r2, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_i$r2, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
 
 ymax <- max(pred_i$online)
 ymin <- min(pred_i$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, wsum_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
+plot(krange, wsum_i$online, lty = 1, type = "l", pch = 4, lwd = 2,
      col = hue_pal()(4)[1], xlab = "k neighbours",
      ylab = "Online phase time (seconds)", ylim = c(ymin - ygap, ymax + ygap))
-lines(krange, mean_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, mean_i$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[2])
-lines(krange, zscore_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, zscore_i$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[3])
-lines(krange, disc_i$online, lty = 2, type = "b", pch = 4, lwd = 2,
+lines(krange, disc_i$online, lty = 1, type = "l", pch = 4, lwd = 2,
       col = hue_pal()(4)[4])
 legend("bottom", c("weighted sum", "mean centered", "z score", "discrete"),
-       col = hue_pal()(4), lty = 2, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)
+       col = hue_pal()(4), lty = 1, pch = 4, lwd = 2, cex = 0.8, horiz = TRUE)

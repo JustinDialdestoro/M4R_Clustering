@@ -1,186 +1,194 @@
+# load packages
+library("scales")
+library("Rtsne")
+
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
 # call functions
-library("viridis")
 source("M4R_Clustering/R Code/Clustering/Rating_clustering.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
-nrange <- seq(from = 2, to = 10)
+krange <- seq(from = 10, to = 100, by = 10)
+nk <- length(krange)
 
-# cos_scores <- cval_rating_clust(ml100k, 10, 40, nrange,
-#                                 gen_cos_sim, weighted_sum)
-# acos_scores <- cval_rating_clust(ml100k, 10, 30, nrange,
-#                                  gen_acos_sim, weighted_sum)
-# pcc_scores <- cval_rating_clust(ml100k, 10, 40, nrange,
-#                                 gen_pcc_sim, weighted_sum)
-# jacc_scores <- cval_rating_clust(ml100k, 10, 30, nrange,
-#                                  gen_jacc_sim, weighted_sum)
-# euc_scores <- cval_rating_clust(ml100k, 10, 30, nrange,
-#                                 gen_euc_sim, weighted_sum)
-# mhat_scores <- cval_rating_clust(ml100k, 10, 20, nrange,
-#                                  gen_mhat_sim, weighted_sum)
-# cheb_scores <- cval_rating_clust(ml100k, 10, 30, nrange,
-#                                  gen_cheb_sim, weighted_sum)
+n_range <- 2:10
+uclust <- NULL
 
-# scores <- rbind(cos_scores, acos_scores, pcc_scores, jacc_scores,
-#                 euc_scores, mhat_scores, cheb_scores)
+for (n in n_range) {
+  results <- cval_clust(ml100k, 10, n, krange, gen_acos_sim, mean_centered)
+  results <- cbind(n = rep(n, nk), results)
 
-# ymax <- max(scores$rmse)
-# ymin <- min(scores$rmse)
-# ygap <- 0.2 * (ymax - ymin)
+  uclust <- rbind(uclust, results)
+}
 
-# plot(nrange, cos_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "RMSE",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+# write beta comparison results into file
+write.csv(uclust, file = "M4R_Clustering/Results/uclust.csv",
+          row.names = FALSE)
 
-# ymax <- max(scores$mae)
-# ymin <- min(scores$mae)
-# ygap <- 0.2 * (ymax - ymin)
-
-# plot(nrange, cos_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "MAE",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-# ymax <- max(scores$r2)
-# ymin <- min(scores$r2)
-# ygap <- 0.2 * (ymax - ymin)
-
-# plot(nrange, cos_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "R2",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                      "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-# cos_scores_iclust <- cval_rating_clust(ml100k, 10, 50, nrange,
-#                                        gen_cos_sim, weighted_sum, FALSE)
-# acos_scores_iclust <- cval_rating_clust(ml100k, 10, 40, nrange,
-#                                         gen_acos_sim, weighted_sum, FALSE)
-# pcc_scores_iclust <- cval_rating_clust(ml100k, 10, 90, nrange,
-#                                        gen_pcc_sim, weighted_sum, FALSE)
-# jacc_scores_iclust <- cval_rating_clust(ml100k, 10, 10, nrange,
-#                                         gen_jacc_sim, weighted_sum, FALSE)
-# euc_scores_iclust <- cval_rating_clust(ml100k, 10, 100, nrange,
-#                                        gen_euc_sim, weighted_sum, FALSE)
-# mhat_scores_iclust <- cval_rating_clust(ml100k, 10, 300, nrange,
-#                                         gen_mhat_sim, weighted_sum, FALSE)
-# cheb_scores_iclust <- cval_rating_clust(ml100k, 10, 60, nrange,
-#                                         gen_cheb_sim, weighted_sum, FALSE)
-
-# scores <- rbind(cos_scores_iclust, acos_scores_iclust, pcc_scores_iclust,
-#                 jacc_scores_iclust, euc_scores_iclust, mhat_scores_iclust,
-#                 cheb_scores_iclust)
-
-ymax <- max(scores$rmse)
-ymin <- min(scores$rmse)
+ymax <- max(uclust$rmse)
+ymin <- min(uclust$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(nrange, cos_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(7)[1], xlab = "n clusters", ylab = "RMSE",
+plot(krange, uclust[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, acos_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[2])
-lines(nrange, pcc_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[3])
-lines(nrange, jacc_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[4])
-lines(nrange, euc_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[5])
-lines(nrange, mhat_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[6])
-lines(nrange, cheb_scores_iclust$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "PCC",
-                   "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+for (i in 1:8) {
+  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$rmse, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
-ymax <- max(scores$mae)
-ymin <- min(scores$mae)
+ymax <- max(uclust$mae)
+ymin <- min(uclust$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(nrange, cos_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(7)[1], xlab = "n clusters", ylab = "MAE",
+plot(krange, uclust[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, acos_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[2])
-lines(nrange, pcc_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[3])
-lines(nrange, jacc_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[4])
-lines(nrange, euc_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[5])
-lines(nrange, mhat_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[6])
-lines(nrange, cheb_scores_iclust$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "PCC",
-                   "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+for (i in 1:8) {
+  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$mae, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
-ymax <- max(scores$r2)
-ymin <- min(scores$r2)
+ymax <- max(uclust$r2)
+ymin <- min(uclust$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(nrange, cos_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(7)[1], xlab = "n clusters", ylab = "R2",
+plot(krange, uclust[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
      ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, acos_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[2])
-lines(nrange, pcc_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[3])
-lines(nrange, jacc_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[4])
-lines(nrange, euc_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[5])
-lines(nrange, mhat_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[6])
-lines(nrange, cheb_scores_iclust$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(7)[7])
-legend("bottom", c("cosine", "adjusted cosine", "PCC",
-                   "jaccard", "euclidean", "manhattan", "chebyshev"),
-       col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 1, horiz = TRUE)
+for (i in 1:8) {
+  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$r2, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(uclust$online)
+ymin <- min(uclust$online)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, uclust[1:10, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$online, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+# generate user-item matrix
+ui <- gen_ui_matrix(ml100k, ml100k)
+
+# cluster users
+clust_labels <- rating_clust(ui, 5, gen_acos_sim)
+
+# generate TSNE points using appropriate similarity
+sim <- gen_acos_sim(ui)
+sim[is.na(sim)] <- 0
+set.seed(1)
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(5)[clust_labels], 0.4))
+
+iclust <- NULL
+
+for (n in n_range) {
+  results <- cval_clust(ml100k, 10, n, krange, gen_ups_sim,
+                        mean_centered, FALSE)
+  results <- cbind(n = rep(n, nk), results)
+
+  iclust <- rbind(iclust, results)
+}
+
+# write beta comparison results into file
+write.csv(iclust, file = "M4R_Clustering/Results/iclust.csv",
+          row.names = FALSE)
+
+ymax <- max(iclust$rmse)
+ymin <- min(iclust$rmse)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, iclust[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$rmse, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(iclust$mae)
+ymin <- min(iclust$mae)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, iclust[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$mae, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(iclust$r2)
+ymin <- min(iclust$r2)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, iclust[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$r2, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+ymax <- max(iclust$online)
+ymin <- min(iclust$online)
+ygap <- 0.2 * (ymax - ymin)
+
+plot(krange, iclust[1:10, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+     ylim = c(ymin - ygap, ymax + ygap))
+for (i in 1:8) {
+  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$online, lty = 1,
+        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
+}
+legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
+                     "n=7", "n=8", "n=9", "n=10"),
+       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+# cluster users
+clust_labels <- rating_clust(ui, 5, gen_ups_sim, FALSE)
+
+# generate TSNE points using appropriate similarity
+sim <- gen_ups_sim(ui, FALSE)
+sim[is.na(sim)] <- 0
+set.seed(1)
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(5)[clust_labels], 0.4))

@@ -1,5 +1,7 @@
-# load colour package
+# load packages
 library("scales")
+library("Rtsne")
+library("irlba")
 
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
@@ -15,7 +17,6 @@ n <- length(krange)
 
 # acosine beta search
 beta_range <- c(2.9, 3, 3.1, 3.9, 4, 4.1, 4.3, 4.4, 4.5)
-
 beta_acos <- NULL
 
 for (b in beta_range) {
@@ -89,6 +90,25 @@ for (i in 1:8) {
 legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
                         "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
        col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+# generate user-item matrix
+ui <- gen_ui_matrix(ml100k, ml100k)
+
+# cluster users
+clust_labels <- pref_clust(ui, acos_clust, 3, 4.5)
+
+# generate TSNE points using appropriate similarity
+sim <- gen_acos_sim(ui)
+sim[is.na(sim)] <- 0
+set.seed(1)
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(3)[clust_labels], 0.4))
+legend("topright", c("optimistic group", "neutral group", "pessimistic group"),
+       col = alpha(hue_pal()(3), 0.4), pch = 19)
 
 wsum_acos_c <- cval_pref_clust(ml100k, 10, krange, gen_acos_sim, weighted_sum,
                                acos_clust, 3, 4.5)
@@ -297,6 +317,23 @@ for (i in 1:8) {
 legend("bottomright", c("b=2.9", "b=3", "b=3.1", "b=3.9", "b=4",
                         "b=4.1", "b=4.3", "b=4.4", "b=4.5"),
        col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+
+# cluster users
+clust_labels <- pref_clust(ui, ups_clust, 3, 4.5)
+
+# generate TSNE points using appropriate similarity
+sim <- gen_ups_sim(ui)
+sim[is.na(sim)] <- 0
+set.seed(1)
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(3)[clust_labels], 0.4))
+legend("bottomleft",
+       c("optimistic group", "neutral group", "pessimistic group"),
+       col = alpha(hue_pal()(3), 0.4), pch = 19)
 
 wsum_ups_c <- cval_pref_clust(ml100k, 10, krange, gen_ups_sim, weighted_sum,
                               ups_clust, 3, 4.5)

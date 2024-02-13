@@ -18,7 +18,8 @@ n_range <- 2:10
 uclust <- NULL
 
 for (n in n_range) {
-  results <- cval_clust(ml100k, 10, n, krange, gen_acos_sim, mean_centered)
+  results <- cval_clust(ml100k, 10, n, krange, gen_acos_sim,
+                        euc_clust, mean_centered)
   results <- cbind(n = rep(n, nk), results)
 
   uclust <- rbind(uclust, results)
@@ -88,28 +89,11 @@ legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
                      "n=7", "n=8", "n=9", "n=10"),
        col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
 
-# generate user-item matrix
-ui <- gen_ui_matrix(ml100k, ml100k)
-
-# cluster users
-clust_labels <- rating_clust(ui, 5, gen_acos_sim)
-
-# generate TSNE points using appropriate similarity
-sim <- gen_acos_sim(ui)
-sim[is.na(sim)] <- 0
-set.seed(1)
-tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
-              is.distance = TRUE)
-
-# TSNE plot
-plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
-     ylab = "Second dimension", col = alpha(hue_pal()(5)[clust_labels], 0.4))
-
 iclust <- NULL
 
 for (n in n_range) {
   results <- cval_clust(ml100k, 10, n, krange, gen_ups_sim,
-                        mean_centered, FALSE)
+                        euc_clust, mean_centered, FALSE)
   results <- cbind(n = rep(n, nk), results)
 
   iclust <- rbind(iclust, results)
@@ -178,17 +162,3 @@ for (i in 1:8) {
 legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
                      "n=7", "n=8", "n=9", "n=10"),
        col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
-
-# cluster users
-clust_labels <- rating_clust(ui, 5, gen_ups_sim, FALSE)
-
-# generate TSNE points using appropriate similarity
-sim <- gen_ups_sim(ui, FALSE)
-sim[is.na(sim)] <- 0
-set.seed(1)
-tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
-              is.distance = TRUE)
-
-# TSNE plot
-plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
-     ylab = "Second dimension", col = alpha(hue_pal()(5)[clust_labels], 0.4))

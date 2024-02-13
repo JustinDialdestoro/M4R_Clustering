@@ -24,7 +24,7 @@ pref_clust <- function(ui, clust_metric, alpha, beta) {
   cluster <- c()
 
   # compute user distances to cluster centres
-  clust_dist <- clust_metric(ui, centres)
+  clust_dist <- clust_metric(ui, centres, 3)
 
   # assign each user to their closest clustering centre
   for (i in 1:nrow(ui)) { # nolint

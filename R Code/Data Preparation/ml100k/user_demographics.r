@@ -4,6 +4,7 @@ ml100k_dem <- read.table("Data/ml-100k/ml-100k/u.user", sep = "|",
                                        "occupation", "zip"))
 
 ml100k_dem$userID <- NULL
+ml100k_dem$zip <- NULL
 
 # write cleaned 100k user demographic data into file
 write.csv(ml100k_dem, file = "M4R_Clustering/Data/ml100k_dem.csv",

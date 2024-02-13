@@ -30,8 +30,8 @@ unit_var_normalise <- function(x) {
 
 gow_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # range normalise age
+    df$age <- range_normalise(df$age)
 
     # binarise gender variable
     df$gender <- as.numeric(df$gender == "M")
@@ -61,24 +61,25 @@ hl_pam <- function(df, k, user = TRUE) {
   if (user == TRUE) {
     n_u <- nrow(df)
 
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
-    # binarise gender variable
-    df$gender <- as.numeric(df$gender == "M")
-    # compute gender scaling factor
+    # dummy code gender
+    df <- dummy_cols(df, select_columns = "gender")
+    # compute scaling factor
+    df$gender <- NULL
     gender_fac <- distancefactor(2, n_u)
     # scale occupation variable
-    df$gender <- df$gender * gender_fac
+    df[3:4] <- df[3:4] * gender_fac
 
-    # dummy code occupation variable
+    # dummy code occupation
     df <- dummy_cols(df, select_columns = "occupation")
-    df$occupation <- NULL
-    # compute occupation scaling factor
+    # compute scaling factor
     n_occ <- length(unique(df$occupation))
+    df$occupation <- NULL
     occ_fac <- distancefactor(n_occ, n_u)
     # scale occupation variable
-    df[3:(2 + n_occ)] <- df[3:(2 + n_occ)] * occ_fac
+    df[4:24] <- df[4:24] * occ_fac
 
   } else {
     n_i <- nrow(df)
@@ -97,22 +98,25 @@ hl_pam <- function(df, k, user = TRUE) {
     n_type <- length(unique(df$titleType))
     df$titleType <- NULL
     type_fac <- distancefactor(n_type, n_i)
+    # scale title type variable
     df[24:29] <- df[24:29] * type_fac
 
-    # dummy code director type
+    # dummy code director
     df <- dummy_cols(df, select_columns = "director")
     # compute scaling factor
     n_dir <- length(unique(df$director))
     df$director <- NULL
     dir_fac <- distancefactor(n_dir, n_i)
+    # scale director variable
     df[29:59] <- df[29:59] * dir_fac
 
-    # dummy code writer type
+    # dummy code writer
     df <- dummy_cols(df, select_columns = "writer")
     # compute scaling factor
     n_wri <- length(unique(df$writer))
     df$writer <- NULL
     wri_fac <- distancefactor(n_wri, n_i)
+    # scale writer variable
     df[59:84] <- df[59:84] * wri_fac
   }
 
@@ -124,8 +128,8 @@ hl_pam <- function(df, k, user = TRUE) {
 
 kprototypes <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
     # binarise gender variable
     df$gender <- as.numeric(df$gender == "M")
@@ -149,10 +153,10 @@ kprototypes <- function(df, k, user = TRUE) {
 
 mixed_k <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
-    # binarise gender variable
+    # numericise gender variable
     df$gender <- as.numeric(df$gender == "M")
 
     # factorise occupation variable
@@ -179,8 +183,8 @@ mixed_k <- function(df, k, user = TRUE) {
 
 mskmeans <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
     # dummy code gender and occupation variable
     df <- dummy_cols(df, select_columns = "gender")
@@ -189,7 +193,7 @@ mskmeans <- function(df, k, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
 
-    return(gmsClust(df[1:2], df[4:24], k)$results$cluster)
+    return(gmsClust(df[1:2], df[3:24], k)$results$cluster)
 
   } else {
     # variance normalise continuous variables
@@ -214,8 +218,12 @@ mskmeans <- function(df, k, user = TRUE) {
 
 famd <- function(df, k, p, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
+
+    # factorise categorical variables
+    df$gender <- as.factor(df$gender == "M")
+    df$occupation <- as.factor(df$occupation)
 
   } else {
     # factorise categorical variables
@@ -235,8 +243,8 @@ famd <- function(df, k, p, user = TRUE) {
 
 mrkmeans <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
     # dummy code gender and occupation variable
     df <- dummy_cols(df, select_columns = "gender")
@@ -263,17 +271,16 @@ mrkmeans <- function(df, k, user = TRUE) {
     df$writer <- NULL
   }
 
-  return(cluspca(df, k, k - 1)$cluster)
+  return(cluspca(df, k, k - 1)$cluster) # nolint
 }
 
 kamila_clust <- function(df, k, user = TRUE) {
   if (user == TRUE) {
-    # remove zip variable
-    df$zip <- NULL
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
 
-    # binarise gender variable
+    # factorise categorical variables
     df$gender <- as.factor(df$gender)
-    # factorise occupation variable
     df$occupation <- as.factor(df$occupation)
 
     return(kamila(df[1], df[2:3], k, 10)$finalMemb)

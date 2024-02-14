@@ -18,7 +18,8 @@ n_range <- 2:15
 
 # user within cluster sum of squares
 withinss_u <- best_n(ui, n_range)
-write.csv(withinss_u, "M4R_Clustering/Results/withinss_u.csv")
+write.csv(withinss_u, "M4R_Clustering/Results/withinss_u.csv",
+          row.names = FALSE)
 plot(n_range, withinss_u, lty = 1, type = "l", lwd = 2,
      col = hue_pal()(2)[1], xlab = "n clusters",
      ylab = "Average within-cluster sum of squares")
@@ -36,7 +37,7 @@ plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
 
 # evaluate performance over a k range
 clust_u <- cval_clust(ml100k, 10, 6, krange, gen_acos_sim, mean_centered)
-write.csv(clust_u, "M4R_Clustering/Results/clust_u.csv")
+write.csv(clust_u, "M4R_Clustering/Results/clust_u.csv", row.names = FALSE)
 # load unclustered performance results
 pred_acos <- read.csv("M4R_Clustering/Results/pred_acos.csv")
 noclust_u <- pred_acos[pred_acos$predictor == "mean centred", ][2:6]
@@ -113,7 +114,8 @@ legend("bottom",
 
 # item within cluster sum of squares
 withinss_i <- best_n(ui, n_range, FALSE)
-write.csv(withinss_i, "M4R_Clustering/Results/withinss_i.csv")
+write.csv(withinss_i, "M4R_Clustering/Results/withinss_i.csv",
+          row.names = FALSE)
 plot(n_range, withinss_i, lty = 1, type = "l", lwd = 2,
      col = hue_pal()(2)[1], xlab = "n clusters",
      ylab = "Average within-cluster sum of squares")
@@ -131,7 +133,7 @@ plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
 
 # evaluate performance over a k range
 clust_i <- cval_clust(ml100k, 10, 7, krange, gen_acos_sim, mean_centered)
-write.csv(clust_u, "M4R_Clustering/Results/clust_i.csv")
+write.csv(clust_u, "M4R_Clustering/Results/clust_i.csv", row.names = FALSE)
 # load unclustered performance results
 pred_ups <- read.csv("M4R_Clustering/Results/pred_ups.csv")
 noclust_i <- pred_ups[pred_ups$predictor == "mean centred", ][2:6]

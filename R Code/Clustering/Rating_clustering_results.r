@@ -11,154 +11,186 @@ source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
-krange <- seq(from = 10, to = 100, by = 10)
-nk <- length(krange)
+# initialise evaluation fixed variables
+ui <- gen_ui_matrix(ml100k, ml100k)
+krange <- krange <- seq(from = 10, to = 100, by = 10)
+n_range <- 2:15
 
-n_range <- 2:10
-uclust <- NULL
+# user within cluster sum of squares
+withinss_u <- best_n(ui, n_range)
+write.csv(withinss_u, "M4R_Clustering/Results/withinss_u.csv")
+plot(n_range, withinss_u, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(2)[1], xlab = "n clusters",
+     ylab = "Average within-cluster sum of squares")
 
-for (n in n_range) {
-  results <- cval_clust(ml100k, 10, n, krange, gen_acos_sim,
-                        euc_clust, mean_centered)
-  results <- cbind(n = rep(n, nk), results)
+# cluster users
+clust_labels <- rating_clust(ui, 6)
+# generate TSNE points using appropriate similarity
+sim <- gen_euc_sim(ui)
+sim[is.na(sim)] <- 0
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(6)[clust_labels], 0.4))
 
-  uclust <- rbind(uclust, results)
-}
+# evaluate performance over a k range
+clust_u <- cval_clust(ml100k, 10, 6, krange, gen_acos_sim, mean_centered)
+write.csv(clust_u, "M4R_Clustering/Results/clust_u.csv")
+# load unclustered performance results
+pred_acos <- read.csv("M4R_Clustering/Results/pred_acos.csv")
+noclust_u <- pred_acos[pred_acos$predictor == "mean centred", ][2:6]
+pref_clust_acos <- read.csv("M4R_Clustering/Results/pref_clust_acos.csv")
+pref_clust_u <- pref_clust_acos[pref_clust_acos$predictor ==
+                                  "mean centred", ][2:6]
 
-# write beta comparison results into file
-write.csv(uclust, file = "M4R_Clustering/Results/uclust.csv",
-          row.names = FALSE)
+full <- rbind(clust_u, noclust_u[1:10, ], pref_clust_u[1:10, ])
 
-ymax <- max(uclust$rmse)
-ymin <- min(uclust$rmse)
+ymax <- max(full$rmse)
+ymin <- min(full$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, uclust[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+plot(krange, noclust_u[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$rmse, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_u$rmse, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+lines(krange, pref_clust_u[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[3])
+legend("bottom",
+       c("no clustering", "kmeans clustering", "rating preference clustering"),
+       col = c(hue_pal()(3)),
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(uclust$mae)
-ymin <- min(uclust$mae)
+ymax <- max(full$mae)
+ymin <- min(full$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, uclust[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+plot(krange, noclust_u[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$mae, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_u$mae, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+lines(krange, pref_clust_u[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[3])
+legend("bottom",
+       c("no clustering", "kmeans clustering", "rating preference clustering"),
+       col = c(hue_pal()(3)),
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(uclust$r2)
-ymin <- min(uclust$r2)
+ymax <- max(full$r2)
+ymin <- min(full$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, uclust[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+plot(krange, noclust_u[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "R^2",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$r2, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_u$r2, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+lines(krange, pref_clust_u[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[3])
+legend("bottom",
+       c("no clustering", "kmeans clustering", "rating preference clustering"),
+       col = c(hue_pal()(3)),
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(uclust$online)
-ymin <- min(uclust$online)
+ymax <- max(full$online)
+ymin <- min(full$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, uclust[1:10, ]$online, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+plot(krange, noclust_u[1:10, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours",
+     ylab = "Online phase time (seconds)",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, uclust[(10 * i + 1):(10 * (i + 1)), ]$online, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_u$online, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+lines(krange, pref_clust_u[1:10, ]$online, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[3])
+legend("bottom",
+       c("no clustering", "kmeans clustering", "rating preference clustering"),
+       col = c(hue_pal()(3)),
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-iclust <- NULL
+# item within cluster sum of squares
+withinss_i <- best_n(ui, n_range, FALSE)
+write.csv(withinss_i, "M4R_Clustering/Results/withinss_i.csv")
+plot(n_range, withinss_i, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(2)[1], xlab = "n clusters",
+     ylab = "Average within-cluster sum of squares")
 
-for (n in n_range) {
-  results <- cval_clust(ml100k, 10, n, krange, gen_ups_sim,
-                        euc_clust, mean_centered, FALSE)
-  results <- cbind(n = rep(n, nk), results)
+# cluster items
+clust_labels <- rating_clust(ui, 7, FALSE)
+# generate TSNE points using appropriate similarity
+sim <- gen_euc_sim(ui, FALSE)
+sim[is.na(sim)] <- 0
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+# TSNE plot
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(7)[clust_labels], 0.4))
 
-  iclust <- rbind(iclust, results)
-}
+# evaluate performance over a k range
+clust_i <- cval_clust(ml100k, 10, 7, krange, gen_acos_sim, mean_centered)
+write.csv(clust_u, "M4R_Clustering/Results/clust_i.csv")
+# load unclustered performance results
+pred_ups <- read.csv("M4R_Clustering/Results/pred_ups.csv")
+noclust_i <- pred_ups[pred_ups$predictor == "mean centred", ][2:6]
 
-# write beta comparison results into file
-write.csv(iclust, file = "M4R_Clustering/Results/iclust.csv",
-          row.names = FALSE)
+full <- rbind(clust_i, noclust_i[1:10, ])
 
-ymax <- max(iclust$rmse)
-ymin <- min(iclust$rmse)
+ymax <- max(full$rmse)
+ymin <- min(full$rmse)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, iclust[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+plot(krange, noclust_i[1:10, ]$rmse, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "RMSE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$rmse, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_i$rmse, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+legend("bottom",
+       c("no clustering", "kmeans clustering"),
+       col = hue_pal()(3)[1:2],
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(iclust$mae)
-ymin <- min(iclust$mae)
+ymax <- max(full$mae)
+ymin <- min(full$mae)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, iclust[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "MAE",
+plot(krange, noclust_i[1:10, ]$mae, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "MAE",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$mae, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_i$mae, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+legend("bottom",
+       c("no clustering", "kmeans clustering"),
+       col = hue_pal()(3)[1:2],
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(iclust$r2)
-ymin <- min(iclust$r2)
+ymax <- max(full$r2)
+ymin <- min(full$r2)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, iclust[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "R2",
+plot(krange, noclust_i[1:10, ]$r2, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours", ylab = "R^2",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$r2, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_i$r2, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+legend("bottom",
+       c("no clustering", "kmeans clustering"),
+       col = hue_pal()(3)[1:2],
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)
 
-ymax <- max(iclust$online)
-ymin <- min(iclust$online)
+ymax <- max(full$online)
+ymin <- min(full$online)
 ygap <- 0.2 * (ymax - ymin)
 
-plot(krange, iclust[1:10, ]$online, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(9)[1], xlab = "k neighbours", ylab = "RMSE",
+plot(krange, noclust_i[1:10, ]$online, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(3)[1], xlab = "k neighbours",
+     ylab = "Online phase time (seconds)",
      ylim = c(ymin - ygap, ymax + ygap))
-for (i in 1:8) {
-  lines(krange, iclust[(10 * i + 1):(10 * (i + 1)), ]$online, lty = 1,
-        type = "l", lwd = 2, col = hue_pal()(9)[i + 1])
-}
-legend("topright", c("n=2", "n=3", "n=4", "n=5", "n=6",
-                     "n=7", "n=8", "n=9", "n=10"),
-       col = hue_pal()(9), lty = 1, lwd = 2, cex = 0.8)
+lines(krange, clust_i$online, lty = 1, type = "l", lwd = 2,
+      col = hue_pal()(3)[2])
+legend("bottom",
+       c("no clustering", "kmeans clustering"),
+       col = hue_pal()(3)[1:2],
+       lty = 1, lwd = 2, cex = 0.8, horiz = TRUE)

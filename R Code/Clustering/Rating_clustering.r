@@ -3,7 +3,9 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
-rating_clust <- function(ui, n, clust_metric, user = TRUE) {
+rating_clust <- function(ui, n, user = TRUE) {
+  set.seed(1)
+
   if (user == TRUE) {
     # choose n random points
     nu <- nrow(ui)
@@ -18,11 +20,12 @@ rating_clust <- function(ui, n, clust_metric, user = TRUE) {
     old_labels <- rep(0, nu)
 
     # compute distance from each point to each centre
-    dist <- clust_metric(ui, centres, n)
+    dist <- euc_clust(ui, centres, n)
     # assign each point to closest centre
     new_labels <- max.col(dist)
 
     # run kmeans until labels do not change
+    j <- 0
     while (!identical(old_labels, new_labels)) {
       # set current labels to be old
       old_labels <- new_labels
@@ -30,12 +33,21 @@ rating_clust <- function(ui, n, clust_metric, user = TRUE) {
       # compute new centres as cluster means
       centres <- rep(c(), n)
       for (i in 1:n) {
-        centres[[i]] <- colMeans(ui[which(old_labels == i), ], na.rm = TRUE)
+        mat <- ui[which(old_labels == i), ]
+        if (is.matrix(mat)) {
+          centres[[i]] <- colMeans(mat, na.rm = TRUE)
+        } else {
+          centres[[i]] <- mat
+        }
       }
       # compute distance from each point to each centre
-      dist <- clust_metric(ui, centres, n)
+      dist <- euc_clust(ui, centres, n)
       # assign each point to closest centre
       new_labels <- max.col(dist)
+      j <- j + 1
+      if (j > 50) {
+        break
+      }
     }
     return(new_labels)
   } else {
@@ -52,31 +64,70 @@ rating_clust <- function(ui, n, clust_metric, user = TRUE) {
     old_labels <- rep(0, ni)
 
     # compute distance from each point to each centre
-    dist <- clust_metric(ui, centres, n, user)
+    dist <- euc_clust(ui, centres, n, user)
     # assign each point to closest centre
     new_labels <- max.col(dist)
 
     # run kmeans until labels do not change
+    j <- 0
     while (!identical(old_labels, new_labels)) {
       # set current labels to be old
       old_labels <- new_labels
 
       # compute new centres as cluster means
       centres <- rep(c(), n)
+      mat <- ui[, which(old_labels == i)]
       for (i in 1:n) {
-        centres[[i]] <- rowMeans(ui[, which(old_labels == i)], na.rm = TRUE)
+        if (is.matrix(mat)) {
+          centres[[i]] <- rowMeans(mat, na.rm = TRUE)
+        } else {
+          centres[[i]] <- mat
+        }
       }
       # compute distance from each point to each centre
-      dist <- clust_metric(ui, centres, n, user)
+      dist <- euc_clust(ui, centres, n, user)
       # assign each point to closest centre
       new_labels <- max.col(dist)
+      j <- j + 1
+      if (j > 50) {
+        break
+      }
     }
     return(new_labels)
   }
 }
 
-cval_clust <- function(df, t, n, k_range, metric, clust_metric,
-                       pred_func, user = TRUE) {
+best_n <- function(ui, n_range, user = TRUE) {
+  withinss <- rep(0, length(n_range))
+
+  # loop over each n clusters
+  for (i in seq_along(n_range)) {
+    print(paste("Constructing", n_range[i], "clusters"))
+
+    # compute clustering
+    labels <- rating_clust(ui, n_range[i], user)
+
+    if (user == TRUE) {
+      for (j in 1:n_range[i]) {
+        # compute within cluster sum of squares
+        disim <- 1 / gen_euc_sim(ui[labels == j, ]) - 1
+        withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
+      }
+      withinss[i] <- withinss[i] / nrow(ui)
+
+    } else {
+      for (j in 1:n_range[i]) {
+        # compute within cluster sum of squares
+        disim <- 1 / gen_euc_sim(ui[, labels == j], FALSE) - 1
+        withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
+      }
+      withinss[i] <- withinss[i] / ncol(ui)
+    }
+  }
+  return(withinss)
+}
+
+cval_clust <- function(df, t, n, k_range, metric, pred_func, user = TRUE) {
   nk <- length(k_range)
   # initial scores table
   scores <- data.frame(rmse = rep(0, nk), mae = rep(0, nk), r2 = rep(0, nk),
@@ -95,7 +146,7 @@ cval_clust <- function(df, t, n, k_range, metric, clust_metric,
     ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
 
     # create user clusters
-    clusters <- rating_clust(ui, n, clust_metric, user)
+    clusters <- rating_clust(ui, n, user)
 
     # segment user ratings matrix into the n clusters
     uis <- replicate(n, c())

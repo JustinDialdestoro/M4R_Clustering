@@ -40,3 +40,31 @@ m2[4, ] <- c(5, NA, 5, 4, 4, NA, 4, 4, NA)
 m2[5, ] <- c(1, NA, NA, NA, 2, NA, NA, NA, 2)
 
 print(t2 - t1)
+
+pred_acos <- read.csv("M4R_Clustering/Results/pred_acos.csv")
+
+wsum_acos <- pred_acos[pred_acos$predictor == "weighted sum", ][2:6]
+mcent_acos <- pred_acos[pred_acos$predictor == "mean centred", ][2:6]
+zscore_acos <- pred_acos[pred_acos$predictor == "z score", ][2:6]
+disc_acos <- pred_acos[pred_acos$predictor == "discrete", ][2:6]
+
+pred_ups <- read.csv("M4R_Clustering/Results/pred_ups.csv")
+
+wsum_ups <- pred_ups[pred_ups$predictor == "weighted sum", ][2:6]
+mcent_ups <- pred_ups[pred_ups$predictor == "mean centred", ][2:6]
+zscore_ups <- pred_ups[pred_ups$predictor == "z score", ][2:6]
+disc_ups <- pred_ups[pred_ups$predictor == "discrete", ][2:6]
+
+pref_clust_acos <- read.csv("M4R_Clustering/Results/pref_clust_acos.csv")
+
+wsum_acos_c <- pref_clust_acos[pref_clust_acos$predictor == "weighted sum", ][2:6]
+mcent_acos_c <- pref_clust_acos[pref_clust_acos$predictor == "mean centred", ][2:6]
+zscore_acos_c <- pref_clust_acos[pref_clust_acos$predictor == "z score", ][2:6]
+disc_acos_c <- pref_clust_acos[pref_clust_acos$predictor == "discrete", ][2:6]
+
+pref_clust_ups <- read.csv("M4R_Clustering/Results/pref_clust_ups.csv")
+
+wsum_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "weighted sum", ][2:6]
+mcent_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "mean centred", ][2:6]
+zscore_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "z score", ][2:6]
+disc_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "discrete", ][2:6]

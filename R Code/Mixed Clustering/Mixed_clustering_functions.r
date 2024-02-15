@@ -28,7 +28,7 @@ unit_var_normalise <- function(x) {
   return(xnew)
 }
 
-gow_pam <- function(df, k, user = TRUE) {
+gow_pam <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     # range normalise age
     df$age <- range_normalise(df$age)
@@ -54,10 +54,14 @@ gow_pam <- function(df, k, user = TRUE) {
   # gower dissimilarity matrix
   dsim <- daisy(df, metric = "gower")
 
-  return(pam(dsim, k = k)$clustering)
+  if (obj == TRUE) {
+    return(pam(dsim, k = k)$objective[2])
+  } else {
+    return(pam(dsim, k = k)$clustering)
+  }
 }
 
-hl_pam <- function(df, k, user = TRUE) {
+hl_pam <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     n_u <- nrow(df)
 
@@ -123,10 +127,14 @@ hl_pam <- function(df, k, user = TRUE) {
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")
 
-  return(pam(dsim, k = k)$clustering)
+  if (obj == TRUE) {
+    return(pam(dsim, k = k)$objective[2])
+  } else {
+    return(pam(dsim, k = k)$clustering)
+  }
 }
 
-kprototypes <- function(df, k, user = TRUE) {
+kprototypes <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -148,10 +156,14 @@ kprototypes <- function(df, k, user = TRUE) {
     df$runtime <- unit_var_normalise(df$runtime)
   }
 
-  return(kproto(df, k)$cluster)
+  if (obj == TRUE) {
+    return(kproto(df, k)$tot.withinss)
+  } else {
+    return(kproto(df, k)$cluster)
+  }
 }
 
-mixed_k <- function(df, k, user = TRUE) {
+mixed_k <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -178,13 +190,20 @@ mixed_k <- function(df, k, user = TRUE) {
                     idnum = 2:3, idbin = 6:24, idcat = c(1, 4, 5))
   }
 
-  return(fastkmed(dist, k)$cluster)
+  if (obj == TRUE) {
+    clust <- fastkmed(dist, k)
+    withinss <- 0
+    for (i in 1:k) {
+      withinss <- withinss + sum(dist[clust$cluster == i, clust$medoid[i]])
+    }
+    return(withinss)
+  } else {
+    return(fastkmed(dist, k)$cluster)
+  }
 }
 
-mskmeans <- function(df, k, user = TRUE) {
+mskmeans <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
-    # variance normalise age
-    df$age <- unit_var_normalise(df$age)
 
     # dummy code gender and occupation variable
     df <- dummy_cols(df, select_columns = "gender")
@@ -193,12 +212,12 @@ mskmeans <- function(df, k, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
 
-    return(gmsClust(df[1:2], df[3:24], k)$results$cluster)
-
+    if (obj == TRUE) {
+      return(gmsClust(df[1:2], df[3:24], k)$results$tot.withinss)
+    } else {
+      return(gmsClust(df[1:2], df[3:24], k)$results$cluster)
+    }
   } else {
-    # variance normalise continuous variables
-    df$year <- unit_var_normalise(df$year)
-    df$runtime <- unit_var_normalise(df$runtime)
 
     # dummy code title type
     df <- dummy_cols(df, select_columns = "titleType")
@@ -212,11 +231,15 @@ mskmeans <- function(df, k, user = TRUE) {
     df <- dummy_cols(df, select_columns = "writer")
     df$writer <- NULL
 
-    return(gmsClust(df[c(1, 2)], df[3:84], k)$results$cluster)
+    if (obj == TRUE) {
+      return(gmsClust(df[c(1, 2)], df[3:84], k)$results$tot.withinss)
+    } else {
+      return(gmsClust(df[c(1, 2)], df[3:84], k)$results$cluster)
+    }
   }
 }
 
-famd <- function(df, k, p, user = TRUE) {
+famd <- function(df, k, p, user = TRUE, obj = FALSE, var = FALSE) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -236,12 +259,20 @@ famd <- function(df, k, p, user = TRUE) {
     df$runtime <- unit_var_normalise(df$runtime)
   }
 
-  pca <- FAMD(df, p, graph = FALSE)$ind$coord
+  pca <- FAMD(df, p, graph = FALSE)
 
-  return(kmeans(pca, k)$cluster)
+  if (var == TRUE) {
+    return(pca$eig)
+  }
+
+  if (obj == TRUE) {
+    return(kmeans(pca$ind$coord, k)$tot.withinss)
+  } else {
+    return(kmeans(pca$ind$coord, k)$cluster)
+  }
 }
 
-mrkmeans <- function(df, k, user = TRUE) {
+mrkmeans <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -271,10 +302,14 @@ mrkmeans <- function(df, k, user = TRUE) {
     df$writer <- NULL
   }
 
+  if (obj == TRUE) {
+    return(cluspca(df, k, k - 1)$criterion)
+  } else {
   return(cluspca(df, k, k - 1)$cluster) # nolint
+  }
 }
 
-kamila_clust <- function(df, k, user = TRUE) {
+kamila_clust <- function(df, k, user = TRUE, obj = FALSE) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -283,8 +318,11 @@ kamila_clust <- function(df, k, user = TRUE) {
     df$gender <- as.factor(df$gender)
     df$occupation <- as.factor(df$occupation)
 
-    return(kamila(df[1], df[2:3], k, 10)$finalMemb)
-
+    if (obj == TRUE) {
+      return(kamila(df[1], df[2:3], k, 10)$finalObj)
+    } else{
+      return(kamila(df[1], df[2:3], k, 10)$finalMemb)
+    }
   } else {
     # factorise categorical variables
     df$titleType <- as.factor(df$titleType)
@@ -295,6 +333,10 @@ kamila_clust <- function(df, k, user = TRUE) {
     df$year <- unit_var_normalise(df$year)
     df$runtime <- unit_var_normalise(df$runtime)
 
-    return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalMemb)
+    if (obj == TRUE) {
+      return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalObj)
+    } else {
+      return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalMemb)
+    }
   }
 }

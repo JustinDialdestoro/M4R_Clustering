@@ -1,186 +1,72 @@
+# load packages
+library("scales")
+library("Rtsne")
+
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
-udem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
+ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
 
-ml100k_feat_a <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
+ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
 
 # call functions
-library("viridis")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering.r")
 
-nrange <- seq(from = 2, to = 10)
+# initialise evaluation fixed variables
+krange <- krange <- seq(from = 10, to = 100, by = 10)
+n_range <- 2:15
 
-# euc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-#                                    gen_euc_sim, weighted_sum, gow_pam)
-euc_scores_hl <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-                                  gen_euc_sim, weighted_sum, hl_pam)
-euc_scores_kproto <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-                                      gen_euc_sim, weighted_sum, kprototypes)
-euc_scores_mix <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-                                   gen_euc_sim, weighted_sum, mixed_k)
-euc_scores_famd <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-                                    gen_euc_sim, weighted_sum, famd)
-euc_scores_kam <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-                                   gen_euc_sim, weighted_sum, kamila_clust)
+# find optimal number of principal components to retain for FAMD
+ml100k_dem_pca <- famd(ml100k_dem, 2, 22, TRUE, FALSE, TRUE)
+cumvar <- ml100k_dem_pca[, 3]
+plot(cumvar, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(2)[1], xlab = "Principal components",
+     ylab = "Cumulative explained variance")
 
-library("viridis")
+gow_obj_u <- best_n(ml100k_dem, n_range, gow_pam)
+hl_obj_u <- best_n(ml100k_dem, n_range, hl_pam)
+kproto_obj_u <- best_n(ml100k_dem, n_range, kprototypes)
+mk_obj_u <- best_n(ml100k_dem, n_range, mixed_k)
+msk_obj_u <- best_n(ml100k_dem, n_range, mskmeans)
+famd_obj_u <- best_n_famd(ml100k_dem, n_range, 5)
+mr_obj_u <- best_n(ml100k_dem, n_range, mrkmeans)
+kam_obj_u <- best_n(ml100k_dem, n_range, kamila_clust)
 
-scores <- rbind(euc_scores_gow, euc_scores_hl, euc_scores_kproto,
-                euc_scores_mix, euc_scores_famd, euc_scores_kam)
+mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, kproto_obj_u, mk_obj_u, msk_obj_u,
+                      famd_obj_u, mr_obj_u, kam_obj_u)
+colnames(mclust_obj_u) <- c("gowpam", "hlpam", "kprototypes", "mixed kmeans",
+                            "ms kmeans", "famd", "mr kmeans", "kamila")
+write.csv(mclust_obj_u, file = "M4R_Clustering/Results/mclust_obj_u.csv",
+          row.names = FALSE)
 
-ymax <- max(scores$rmse)
-ymin <- min(scores$rmse)
-ygap <- 0.2 * (ymax - ymin)
+for (i in 1:8) {
+  plot(n_range, mclust_obj_u[, i], lty = 1, type = "l", lwd = 2,
+       col = hue_pal()(8)[i], xlab = "n clusters",
+       ylab = "Clustering objective function")
+}
 
-plot(nrange, euc_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(6)[1], xlab = "n clusters", ylab = "RMSE",
-     ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, euc_scores_hl$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[2])
-lines(nrange, euc_scores_kproto$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[3])
-lines(nrange, euc_scores_mix$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[4])
-lines(nrange, euc_scores_famd$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[5])
-lines(nrange, euc_scores_kam$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[6])
-legend("bottomright", c("Gower PAM", "HL Pam", "K-Prototypes", "Mixed K-Means",
-                        "FAMD", "KAMILA"),
-       col = viridis(6), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+# find optimal number of principal components to retain for FAMD
+ml100k_feat_pca <- famd(ml100k_feat, 2, 24, FALSE, FALSE, TRUE)
+cumvar <- ml100k_feat_pca[, 3]
+plot(cumvar, lty = 1, type = "l", lwd = 2,
+     col = hue_pal()(2)[1], xlab = "Principal components",
+     ylab = "Cumulative explained variance")
 
-ymax <- max(scores$mae)
-ymin <- min(scores$mae)
-ygap <- 0.2 * (ymax - ymin)
+gow_obj_i <- best_n(ml100k_feat, n_range, gow_pam, FALSE)
+hl_obj_i <- best_n(ml100k_feat, n_range, hl_pam, FALSE)
+kproto_obj_i <- best_n(ml100k_feat, n_range, kprototypes, FALSE)
+mk_obj_i <- best_n(ml100k_feat, n_range, mixed_k, FALSE)
+msk_obj_i <- best_n(ml100k_feat, n_range, mskmeans, FALSE)
+famd_obj_i <- best_n_famd(ml100k_feat, n_range, 5, FALSE)
+mr_obj_i <- best_n(ml100k_feat, n_range, mrkmeans, FALSE)
+kam_obj_i <- best_n(ml100k_feat, n_range, kamila_clust, FALSE)
 
-plot(nrange, euc_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(6)[1], xlab = "n clusters", ylab = "MAE",
-     ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, euc_scores_hl$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[2])
-lines(nrange, euc_scores_kproto$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[3])
-lines(nrange, euc_scores_mix$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[4])
-lines(nrange, euc_scores_famd$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[5])
-lines(nrange, euc_scores_kam$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[6])
-legend("bottomright", c("Gower PAM", "HL Pam", "K-Prototypes", "Mixed K-Means",
-                        "FAMD", "KAMILA"),
-       col = viridis(6), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-ymax <- max(scores$r2)
-ymin <- min(scores$r2)
-ygap <- 0.2 * (ymax - ymin)
-
-plot(nrange, euc_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-     col = viridis(6)[1], xlab = "n clusters", ylab = "R2",
-     ylim = c(ymin - ygap, ymax + ygap))
-lines(nrange, euc_scores_hl$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[2])
-lines(nrange, euc_scores_kproto$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[3])
-lines(nrange, euc_scores_mix$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[4])
-lines(nrange, euc_scores_famd$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[5])
-lines(nrange, euc_scores_kam$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-      col = viridis(6)[6])
-legend("bottomright", c("Gower PAM", "HL Pam", "K-Prototypes", "Mixed K-Means",
-                        "FAMD", "KAMILA"),
-       col = viridis(6), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-# cos_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 40, nrange,
-#                                    gen_cos_sim, weighted_sum, gow_pam)
-# acos_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-#                                     gen_acos_sim, weighted_sum, gow_pam)
-# pcc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 40, nrange,
-#                                    gen_pcc_sim, weighted_sum, gow_pam)
-# jacc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-#                                     gen_jacc_sim, weighted_sum, gow_pam)
-# euc_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-#                                    gen_euc_sim, weighted_sum, gow_pam)
-# mhat_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 20, nrange,
-#                                     gen_mhat_sim, weighted_sum, gow_pam)
-# cheb_scores_gow <- cval_mixed_clust(ml100k, udem, 10, 30, nrange,
-#                                     gen_cheb_sim, weighted_sum, gow_pam)
-
-# library("viridis")
-
-# scores <- rbind(cos_scores_gow, acos_scores_gow, pcc_scores_gow,
-#                 jacc_scores_gow, euc_scores_gow, mhat_scores_gow,
-#                 cheb_scores_gow)
-
-# ymax <- max(scores$rmse)
-# ymin <- min(scores$rmse)
-# ygap <- 0.2 * (ymax - ymin)
-
-# plot(nrange, cos_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "RMSE",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores_gow$rmse, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-# ymax <- max(scores$mae)
-# ymin <- min(scores$mae)
-# ygap <- 0.2 * (ymax - ymin)
-
-# plot(nrange, cos_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "MAE",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores_gow$mae, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("bottomright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                         "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
-
-# ymax <- max(scores$r2)
-# ymin <- min(scores$r2)
-# ygap <- 0.2 * (ymax - ymin)
-
-# plot(nrange, cos_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#      col = viridis(7)[1], xlab = "n clusters", ylab = "R2",
-#      ylim = c(ymin - ygap, ymax + ygap))
-# lines(nrange, acos_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[2])
-# lines(nrange, pcc_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[3])
-# lines(nrange, jacc_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[4])
-# lines(nrange, euc_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[5])
-# lines(nrange, mhat_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[6])
-# lines(nrange, cheb_scores_gow$r2, lty = 2, type = "b", pch = 4, lwd = 2,
-#       col = viridis(7)[7])
-# legend("topright", c("cosine", "adjusted cosine", "pearson's correlation",
-#                      "jaccard", "euclidean", "manhattan", "chebyshev"),
-#        col = viridis(7), lty = 2, pch = 4, lwd = 2, cex = 0.8)
+mclust_obj_i <- cbind(gow_obj_i, hl_obj_i, kproto_obj_i, mk_obj_i, msk_obj_i,
+                      famd_obj_i, mr_obj_i, kam_obj_i)
+colnames(mclust_obj_i) <- c("gowpam", "hlpam", "kprototypes", "mixed kmeans",
+                            "ms kmeans", "famd", "mr kmeans", "kamila")
+write.csv(mclust_obj_i, file = "M4R_Clustering/Results/mclust_obj_i.csv",
+          row.names = FALSE)

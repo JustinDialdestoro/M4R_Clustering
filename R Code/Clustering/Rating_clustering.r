@@ -20,7 +20,7 @@ rating_clust <- function(ui, n, user = TRUE) {
     old_labels <- rep(0, nu)
 
     # compute distance from each point to each centre
-    dist <- euc_clust(ui, centres, n)
+    dist <- euc_clust(ui, centres, n) # nolint
     # assign each point to closest centre
     new_labels <- max.col(dist)
 
@@ -41,7 +41,7 @@ rating_clust <- function(ui, n, user = TRUE) {
         }
       }
       # compute distance from each point to each centre
-      dist <- euc_clust(ui, centres, n)
+      dist <- euc_clust(ui, centres, n) # nolint
       # assign each point to closest centre
       new_labels <- max.col(dist)
       j <- j + 1
@@ -64,7 +64,7 @@ rating_clust <- function(ui, n, user = TRUE) {
     old_labels <- rep(0, ni)
 
     # compute distance from each point to each centre
-    dist <- euc_clust(ui, centres, n, user)
+    dist <- euc_clust(ui, centres, n, user) # nolint
     # assign each point to closest centre
     new_labels <- max.col(dist)
 
@@ -85,7 +85,7 @@ rating_clust <- function(ui, n, user = TRUE) {
         }
       }
       # compute distance from each point to each centre
-      dist <- euc_clust(ui, centres, n, user)
+      dist <- euc_clust(ui, centres, n, user) # nolint
       # assign each point to closest centre
       new_labels <- max.col(dist)
       j <- j + 1
@@ -110,7 +110,7 @@ best_n <- function(ui, n_range, user = TRUE) {
     if (user == TRUE) {
       for (j in 1:n_range[i]) {
         # compute within cluster sum of squares
-        disim <- 1 / gen_euc_sim(ui[labels == j, ]) - 1
+        disim <- 1 / gen_euc_sim(ui[labels == j, ]) - 1 # nolint
         withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
       }
       withinss[i] <- withinss[i] / nrow(ui)
@@ -118,7 +118,7 @@ best_n <- function(ui, n_range, user = TRUE) {
     } else {
       for (j in 1:n_range[i]) {
         # compute within cluster sum of squares
-        disim <- 1 / gen_euc_sim(ui[, labels == j], FALSE) - 1
+        disim <- 1 / gen_euc_sim(ui[, labels == j], FALSE) - 1 # nolint
         withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
       }
       withinss[i] <- withinss[i] / ncol(ui)

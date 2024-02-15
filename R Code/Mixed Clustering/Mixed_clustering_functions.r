@@ -239,7 +239,7 @@ mskmeans <- function(df, k, user = TRUE, obj = FALSE) {
   }
 }
 
-famd <- function(df, k, p, user = TRUE, obj = FALSE, var = FALSE) {
+famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 5) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)

@@ -48,28 +48,28 @@ colnames(mclust_obj_u) <- c("gowpam", "hlpam", "kprototypes", "mixed kmeans",
 write.csv(mclust_obj_u, file = "M4R_Clustering/Results/mclust_obj_u.csv",
           row.names = FALSE)
 
-plot(2:25, gow_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:25, gow_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[1], xlab = "n clusters",
      ylab = "Clustering objective function")
-plot(2:25, hl_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:25, hl_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[2], xlab = "n clusters",
      ylab = "Clustering objective function")
-plot(2:15, kproto_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:15, kproto_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[3], xlab = "n clusters",
      ylab = "Total within cluster sum of squares")
-plot(2:15, mk_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:15, mk_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[4], xlab = "n clusters",
      ylab = "Total within cluster sum of squares")
-plot(2:15, msk_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:15, msk_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[5], xlab = "n clusters",
      ylab = "Total within cluster sum of squares")
-plot(2:25, famd_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:25, famd_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[6], xlab = "n clusters",
      ylab = "Total within cluster sum of squares")
-plot(2:15, mr_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:15, mr_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[7], xlab = "n clusters",
      ylab = "Clustering objective function")
-plot(2:15, kam_obj_u, lty = 1, type = "l", lwd = 2,
+plot(2:15, kam_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[8], xlab = "n clusters",
      ylab = "Clustering objective function")
 

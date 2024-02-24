@@ -26,7 +26,8 @@ pred_acos <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
                    pred_acos)
 
 # write user predictor results into file
-write.csv(pred_acos, file = "M4R_Clustering/Results/pred_acos.csv",
+write.csv(pred_acos,
+          file = "M4R_Clustering/Results/Collaborative Filtering/pred_acos.csv",
           row.names = FALSE)
 
 ymax <- max(pred_acos$rmse)
@@ -106,7 +107,8 @@ pred_ups <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
                   pred_ups)
 
 # write user predictor results into file
-write.csv(pred_ups, file = "M4R_Clustering/Results/pred_ups.csv",
+write.csv(pred_ups,
+          file = "M4R_Clustering/Results/Collaborative Filtering/pred_ups.csv",
           row.names = FALSE)
 
 ymax <- max(pred_ups$rmse)
@@ -185,7 +187,8 @@ pred_i <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
                               rep("z score", n), rep("discrete", n)), pred_i)
 
 # write item predictor results into file
-write.csv(pred_i, file = "M4R_Clustering/Results/pred_i.csv",
+write.csv(pred_i,
+          file = "M4R_Clustering/Results/Collaborative Filtering/pred_i.csv",
           row.names = FALSE)
 
 ymax <- max(pred_i$rmse)

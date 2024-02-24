@@ -31,7 +31,8 @@ sim_u <- cbind(metric = c(rep("cosine", n), rep("acosine", n),
                           rep("chebyshev", n), rep("ups", n)), sim_u)
 
 # write user similarity results into file
-write.csv(sim_u, file = "M4R_Clustering/Results/sim_u.csv",
+write.csv(sim_u,
+          file = "M4R_Clustering/Results/Collaborative Filtering/sim_u.csv",
           row.names = FALSE)
 
 ymax <- max(sim_u$rmse)
@@ -152,7 +153,8 @@ sim_i <- cbind(metric = c(rep("cosine", n), rep("acosine", n),
                           rep("chebyshev", n), rep("ups", n)), sim_i)
 
 # write user similarity results into file
-write.csv(sim_i, file = "M4R_Clustering/Results/sim_i.csv",
+write.csv(sim_i,
+          file = "M4R_Clustering/Results/Collaborative Filtering/sim_i.csv",
           row.names = FALSE)
 
 ymax <- max(sim_i$rmse)

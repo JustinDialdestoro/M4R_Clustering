@@ -44,7 +44,9 @@ mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, full1, full2, full3,
                       famd_obj_u, mrk_obj_u, full4)
 colnames(mclust_obj_u) <- c("gow", "hl", "kproto", "mk",
                             "msk", "famd", "mrk", "kam")
-write.csv(mclust_obj_u, file = "M4R_Clustering/Results/mclust_obj_u.csv",
+write.csv(mclust_obj_u,
+          file = paste("M4R_Clustering/Results/Mixed clustering/One-sided/",
+                       "mclust_obj_u.csv", sep = ""),
           row.names = FALSE)
 
 plot(2:25, gow_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
@@ -95,7 +97,8 @@ mclust_u <- cbind(method = c(rep("gow", 10), rep("hl", 10), rep("kproto", 10),
                              rep("mrk", 10), rep("kamila", 10)),
                   mclust_u)
 # write user mixed clustering results into file
-write.csv(mclust_u, file = "M4R_Clustering/Results/mclust_u.csv",
+write.csv(mclust_u, file =
+            "M4R_Clustering/Results/Mixed clustering/One-sided/mclust_u.csv",
           row.names = FALSE)
 
 # load unclustered performance results
@@ -202,5 +205,7 @@ mclust_obj_i <- cbind(gow_obj_i, hl_obj_i, kproto_obj_i, mk_obj_i, msk_obj_i,
                       famd_obj_i, mrk_obj_i, kam_obj_i)
 colnames(mclust_obj_i) <- c("gowpam", "hlpam", "kprototypes", "mixed kmeans",
                             "ms kmeans", "famd", "mr kmeans", "kamila")
-write.csv(mclust_obj_i, file = "M4R_Clustering/Results/mclust_obj_i.csv",
+write.csv(mclust_obj_i,
+          file = paste("M4R_Clustering/Results/Mixed clustering/One-sided/",
+                       "mclust_obj_i.csv", sep = ""),
           row.names = FALSE)

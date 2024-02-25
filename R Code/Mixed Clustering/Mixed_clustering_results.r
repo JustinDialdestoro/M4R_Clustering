@@ -17,31 +17,31 @@ source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering.r")
 
 # initialise evaluation fixed variables
 krange <- krange <- seq(from = 10, to = 300, by = 10)
-n_range <- 2:15
 
 # find optimal number of principal components to retain for FAMD
 ml100k_dem_pca <- famd(ml100k_dem, 2, TRUE, FALSE, TRUE, 22)
-cumvar <- ml100k_dem_pca[, 3]
-plot(cumvar, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(2)[1], xlab = "Principal components",
-     ylab = "Cumulative explained variance")
+var <- ml100k_dem_pca[, 2]
+plot(var, pch = 16, col = hue_pal()(2)[1], xlab = "Principal components",
+     cex = 1.5, ylab = "Explained variance")
+abline(h = 4.545455, lty = 2, col = hue_pal()(2)[1])
 
 gow_obj_u <- best_n(ml100k_dem, 2:25, gow_pam)
 hl_obj_u <- best_n(ml100k_dem, 2:25, hl_pam)
 kproto_obj_u <- best_n(ml100k_dem, 2:15, kprototypes)
 mk_obj_u <- best_n(ml100k_dem, 2:15, mixed_k)
 msk_obj_u <- best_n(ml100k_dem, 2:15, mskmeans)
-famd_obj_u <- best_n_famd(ml100k_dem, 2:25, 5)
-mrk_obj_u <- best_n(ml100k_dem, 2:25, mrkmeans)
+famd_obj_u <- best_n(ml100k_dem, 2:25, famd)
+mrk_obj_u <- best_n(ml100k_dem, 2:15, mrkmeans)
 kam_obj_u <- best_n(ml100k_dem, 2:15, kamila_clust)
 
 full1 <- c(kproto_obj_u, rep(0, 10))
 full2 <- c(mk_obj_u, rep(0, 10))
 full3 <- c(msk_obj_u, rep(0, 10))
-full4 <- c(kam_obj_u, rep(0, 10))
+full4 <- c(mrk_obj_u, rep(0, 10))
+full5 <- c(kam_obj_u, rep(0, 10))
 
 mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, full1, full2, full3,
-                      famd_obj_u, mrk_obj_u, full4)
+                      famd_obj_u, full4, full5)
 colnames(mclust_obj_u) <- c("gow", "hl", "kproto", "mk",
                             "msk", "famd", "mrk", "kam")
 write.csv(mclust_obj_u,
@@ -67,26 +67,26 @@ plot(2:15, msk_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
 plot(2:25, famd_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[6], xlab = "n clusters",
      ylab = "Total within cluster sum of squares")
-plot(2:25, mrk_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
+plot(2:15, mrk_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[7], xlab = "n clusters",
      ylab = "Clustering objective function")
 plot(2:15, kam_obj_u, lty = 1, type = "o", lwd = 2, pch = 20,
      col = hue_pal()(8)[8], xlab = "n clusters",
      ylab = "Clustering objective function")
 
-gow_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 12, krange, gen_acos_sim,
+gow_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 7, krange, gen_acos_sim,
                           mean_centered, gow_pam)
-hl_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 8, krange, gen_acos_sim,
+hl_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 5, krange, gen_acos_sim,
                          mean_centered, hl_pam)
 kproto_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 5, krange, gen_acos_sim,
                              mean_centered, kprototypes)
-mk_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 5, krange, gen_acos_sim,
+mk_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 4, krange, gen_acos_sim,
                          mean_centered, mixed_k)
 msk_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 7, krange, gen_acos_sim,
                           mean_centered, mskmeans)
-famd_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 12, krange, gen_acos_sim,
+famd_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 7, krange, gen_acos_sim,
                            mean_centered, famd)
-mrk_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 21, krange, gen_acos_sim,
+mrk_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 4, krange, gen_acos_sim,
                           mean_centered, mrkmeans)
 kam_u <- cval_mixed_clust(ml100k, ml100k_dem, 10, 5, krange, gen_acos_sim,
                           mean_centered, kamila_clust)

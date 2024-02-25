@@ -239,7 +239,7 @@ mskmeans <- function(df, k, user = TRUE, obj = FALSE) {
   }
 }
 
-famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 5) {
+famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 3) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -272,7 +272,7 @@ famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 5) {
   }
 }
 
-mrkmeans <- function(df, k, user = TRUE, obj = FALSE) {
+mrkmeans <- function(df, k, user = TRUE, obj = FALSE, p = 3) {
   if (user == TRUE) {
     # variance normalise age
     df$age <- unit_var_normalise(df$age)
@@ -303,9 +303,9 @@ mrkmeans <- function(df, k, user = TRUE, obj = FALSE) {
   }
 
   if (obj == TRUE) {
-    return(cluspca(df, k, k - 1)$criterion)
+    return(cluspca(df, k, p)$criterion)
   } else {
-  return(cluspca(df, k, k - 1)$cluster) # nolint
+  return(cluspca(df, k, p)$cluster) # nolint
   }
 }
 

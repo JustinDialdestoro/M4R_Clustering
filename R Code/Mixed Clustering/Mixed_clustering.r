@@ -13,18 +13,6 @@ best_n <- function(df, n_range, clust_func, user = TRUE) {
   return(scores)
 }
 
-best_n_famd <- function(df, n_range, p, user = TRUE) {
-  scores <- rep(0, length(n_range))
-
-  # loop over each n clusters
-  for (i in seq_along(n_range)) {
-    print(paste("Computing objective for", n_range[i], "clusters"))
-    scores[i] <- scores[i] + famd(df, n_range[i], user, TRUE, FALSE, p) # nolint
-  }
-  return(scores)
-}
-
-
 cval_mixed_clust <- function(df, df_feat, t, n, k_range, metric, pred_func,
                              clust_func, user = TRUE) {
   nk <- length(k_range)

@@ -68,3 +68,12 @@ wsum_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "weighted sum", ][2:6]
 mcent_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "mean centred", ][2:6]
 zscore_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "z score", ][2:6]
 disc_ups_c <- pref_clust_ups[pref_clust_ups$predictor == "discrete", ][2:6]
+
+a <- read.csv("M4R_Clustering/Results/Mixed clustering/One-sided/mclust_obj_u.csv")
+
+gow_obj_u <- a$gow
+hl_obj_u <- a$hl
+kproto_obj_u <- a$kproto[1:14]
+mk_obj_u <- a$mk[1:14]
+msk_obj_u <- a$msk[1:14]
+kam_obj_u <- a$kam[1:14]

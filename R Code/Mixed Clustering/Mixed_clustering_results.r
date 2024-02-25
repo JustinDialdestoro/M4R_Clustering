@@ -84,7 +84,7 @@ clust_labels_u[[4]] <- mixed_k(ml100k_dem, 4)
 clust_labels_u[[5]] <- mskmeans(ml100k_dem, 7)
 clust_labels_u[[6]] <- famd(ml100k_dem, 7)
 clust_labels_u[[7]] <- mrkmeans(ml100k_dem, 4)
-clust_labels_u[[8]] <- kamila(ml100k_dem, 5)
+clust_labels_u[[8]] <- kamila_clust(ml100k_dem, 5)
 
 # prepare data to create TSNE plot
 df <- ml100k_dem
@@ -96,7 +96,7 @@ df$gender <- NULL
 df <- dummy_cols(df, select_columns = "occupation")
 df$occupation <- NULL
 
-tsne <- Rtsne(df, check_duplicates = FALSE, partial_pca = TRUE)
+tsne <- Rtsne(as.matrix(df), check_duplicates = FALSE, partial_pca = TRUE)
 # TSNE plots
 for (i in 1:8) {
   plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
@@ -278,14 +278,14 @@ plot(2:15, kam_obj_i, lty = 1, type = "o", lwd = 2, pch = 20,
 
 # cluster items
 clust_labels_i <- rep(c(), 8)
-clust_labels_i[[1]] <- gow_pam(ml100k_dem, 3, FALSE)
-clust_labels_i[[2]] <- hl_pam(ml100k_dem, 4, FALSE)
-clust_labels_i[[3]] <- kprototypes(ml100k_dem, 5, FALSE)
-clust_labels_i[[4]] <- mixed_k(ml100k_dem, 6, FALSE)
-clust_labels_i[[5]] <- mskmeans(ml100k_dem, 5, FALSE)
-clust_labels_i[[6]] <- famd(ml100k_dem, 7, FALSE)
-clust_labels_i[[7]] <- mrkmeans(ml100k_dem, 5, FALSE)
-clust_labels_i[[8]] <- kamila(ml100k_dem, 5, FALSE)
+clust_labels_i[[1]] <- gow_pam(ml100k_feat, 3, FALSE)
+clust_labels_i[[2]] <- hl_pam(ml100k_feat, 4, FALSE)
+clust_labels_i[[3]] <- kprototypes(ml100k_feat, 5, FALSE)
+clust_labels_i[[4]] <- mixed_k(ml100k_feat, 6, FALSE)
+clust_labels_i[[5]] <- mskmeans(ml100k_feat, 5, FALSE)
+clust_labels_i[[6]] <- famd(ml100k_feat, 7, FALSE)
+clust_labels_i[[7]] <- mrkmeans(ml100k_feat, 5, FALSE)
+clust_labels_i[[8]] <- kamila_clust(ml100k_feat, 5, FALSE)
 
 # prepare data to create TSNE plot
 df <- ml100k_feat

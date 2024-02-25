@@ -77,3 +77,13 @@ kproto_obj_u <- a$kproto[1:14]
 mk_obj_u <- a$mk[1:14]
 msk_obj_u <- a$msk[1:14]
 kam_obj_u <- a$kam[1:14]
+
+mclust_u <- read.csv("M4R_Clustering/Results/Mixed clustering/One-sided/mclust_u.csv")
+mclust_u$method <- c(rep("gow", 30), rep("hl", 30), rep("kproto", 30),
+                             rep("mk", 30), rep("msk", 30), rep("famd", 30),
+                             rep("mrk", 30), rep("kamila", 30))
+
+mclust_i <- read.csv("M4R_Clustering/Results/Mixed clustering/One-sided/mclust_i.csv")
+mclust_i$method <- c(rep("gow", 30), rep("hl", 30), rep("kproto", 30),
+                             rep("mk", 30), rep("msk", 30), rep("famd", 30),
+                             rep("mrk", 30), rep("kamila", 30))

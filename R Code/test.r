@@ -87,3 +87,16 @@ m2[5, ] <- c(1, NA, NA, NA, 2, NA, NA, NA, 2)
 # mclust_i$method <- c(rep("gow", 30), rep("hl", 30), rep("kproto", 30),
 #                              rep("mk", 30), rep("msk", 30), rep("famd", 30),
 #                              rep("mrk", 30), rep("kamila", 30))
+
+# m <- cbind(c(1, 1, 2, 2, 3, 3, 4, 4, 9, 9, 10, 10, 8, 8, 9, 9, 4, 7, 8, 5, 5),
+#            c(1, 2, 1, 2, 9, 10, 9, 10, 5, 6, 5, 6, 1, 2, 1, 2, 7, 8, 3, 2, 5))
+# test <- fuzzy_c_means(m, 2, 2)
+# plot(m, type = "n")
+# text(m)
+# text(test$centroids, col = "red", cex = 1.5)
+
+# test <- fuzzy_c_means(m, 3, 2)
+# text(test$centroids, col = "blue", cex = 1.5)
+
+# test <- fuzzy_c_means(m, 4, 2)
+# text(test$centroids, col = "green", cex = 1.5)

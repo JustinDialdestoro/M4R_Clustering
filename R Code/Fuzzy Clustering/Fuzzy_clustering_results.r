@@ -3,6 +3,8 @@ library("scales")
 
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
+ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
+ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
 
 # call functions
 source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")

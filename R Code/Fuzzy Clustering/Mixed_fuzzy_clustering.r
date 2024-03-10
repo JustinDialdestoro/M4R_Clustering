@@ -5,54 +5,57 @@ fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-5) {
   n <- nrow(df)
 
   # transform data
-  x <- gow_df(df, user) # nolint
+  x <- as.matrix(gow_df(df, user)) # nolint
 
-  # compute gower disimilarity matrix
-  d <- as.matrix(daisy(x, metric = "gower"))**(1 / (m - 1)) # nolint
+  # function to compute loss
+  loss <- function(v) {
+    # reshape parameters into matrix
+    v <- t(matrix(v, ncol = c))
+
+    # compute dissimilarity matrix
+    d <- as.matrix(daisy(rbind(x, v), metric = "gower"))**(1 / (m - 1)) # nolint
+
+    return(sum(u_old**m %*% d[1:n, (n + 1):(n + c)]))
+  }
 
   # initialise cluster memberships u^(0)
   u_old <- matrix(runif(n * c), nrow = c)
   u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
 
-  # compute loss
-  loss <- u_old**m %*% d
-  # find minimisers of loss and set to v^(1)
-  ind <- which(loss[1, ] == min(loss[1, ]))[1]
-  v_new <- x[ind, ]
-  for (i in 2:c) {
-    # ensure centroids are unique
-    inds <- which(loss[i, ] == min(loss[i, -ind]))
-    ind <- c(ind, inds[which(!(inds %in% ind))[1]])
-    v_new <- rbind(v_new, x[ind[i], ])
-  }
+  # numerically find minimisers of loss and set to v^(1)
+  v_old <- matrix(t(x[sample(n, c), ]), nrow = 1)
+  v_new <- t(matrix(optim(v_old, loss)$par, ncol = c))
+
+  # compute gower disimilarity matrix
+  d <- as.matrix(daisy(rbind(x, v_new), metric = "gower"))** # nolint
+    (1 / (m - 1))
 
   # update u^(1)
-  u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+  u_new <- 1 / t(t(d[(n + 1):(n + c), 1:n]) *
+                   colSums(1 / d[(n + 1):(n + c), 1:n], na.rm = TRUE))
   u_new[is.na(u_new)] <- 1
 
   # iterate until convergence
   while (norm(u_old - u_new, type = "F") > e) {
     u_old <- u_new
 
-    # compute loss
-    loss <- u_new**m %*% d
-    # find minimisers of loss and set to v^(1)
-    ind <- which(loss[1, ] == min(loss[1, ]))[1]
-    v_new <- x[ind, ]
-    for (i in 2:c) {
-      # ensure centroids are unique
-      inds <- which(loss[i, ] == min(loss[i, -ind]))
-      ind <- c(ind, inds[which(!(inds %in% ind))[1]])
-      v_new <- rbind(v_new, x[ind[i], ])
-    }
+    # numerically find minimisers of loss to update v^(l+1)
+    v_old <- matrix(t(v_new), nrow = 1)
+    v_new <- t(matrix(optim(v_old, loss)$par, ncol = c))
 
-    # update u^(1)
-    u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+    # compute gower disimilarity matrix
+    d <- as.matrix(daisy(rbind(x, v_new), metric = "gower"))** # nolint
+      (1 / (m - 1))
+
+    # update u^(l+1)
+    u_new <- 1 / t(t(d[(n + 1):(n + c), 1:n]) *
+                     colSums(1 / d[(n + 1):(n + c), 1:n], na.rm = TRUE))
     u_new[is.na(u_new)] <- 1
   }
+
   # compute loss
-  loss <- u_new**m %*% d**2
-  return(list(u = u_new, centroids = v_new, loss = loss))
+  final_loss <- loss(matrix(t(v_new), nrow = 1))
+  return(list(u = u_new, centroids = v_new, loss = sum(final_loss)))
 }
 
 fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
@@ -60,52 +63,32 @@ fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
   n <- nrow(df)
 
   # transform data
-  x <- hl_df(df, user) # nolint
-
-  # compute gower disimilarity matrix
-  d <- as.matrix(daisy(x, metric = "euclidean"))**(1 / (m - 1)) # nolint
+  x <- as.matrix(hl_df(df, user)) # nolint
 
   # initialise cluster memberships u^(0)
   u_old <- matrix(runif(n * c), nrow = c)
   u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
 
-  # compute loss
-  loss <- u_old**m %*% d
-  # find minimisers of loss and set to v^(1)
-  ind <- which(loss[1, ] == min(loss[1, ]))[1]
-  v_new <- x[ind, ]
-  for (i in 2:c) {
-    # ensure centroids are unique
-    inds <- which(loss[i, ] == min(loss[i, -ind]))
-    ind <- c(ind, inds[which(!(inds %in% ind))[1]])
-    v_new <- rbind(v_new, x[ind[i], ])
-  }
+  # initialise centroids v^(1)
+  v_new <- (u_old**m %*% x) / rowSums(u_old**m, na.rm = TRUE)
 
   # update u^(1)
-  u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
-  u_new[is.na(u_new)] <- 1
+  d <- euc_dsim(x, v_new, c)**(2 / (m - 1)) # nolint
+  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
   # iterate until convergence
   while (norm(u_old - u_new, type = "F") > e) {
     u_old <- u_new
 
-    # compute loss
-    loss <- u_new**m %*% d
-    # find minimisers of loss and set to v^(1)
-    ind <- which(loss[1, ] == min(loss[1, ]))[1]
-    v_new <- x[ind, ]
-    for (i in 2:c) {
-      # ensure centroids are unique
-      inds <- which(loss[i, ] == min(loss[i, -ind]))
-      ind <- c(ind, inds[which(!(inds %in% ind))[1]])
-      v_new <- rbind(v_new, x[ind[i], ])
-    }
+    # update v^(l+1)
+    v_new <- (u_new**m %*% x) / rowSums(u_new**m, na.rm = TRUE)
 
-    # update u^(1)
-    u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
-    u_new[is.na(u_new)] <- 1
+    # update u^(l+1)
+    d <- euc_dsim(x, v_new, c)**(2 / (m - 1)) # nolint
+    u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
   }
+
   # compute loss
-  loss <- u_new**m %*% d**2
-  return(list(u = u_new, centroids = v_new, loss = loss))
+  loss <- sum(diag(u_new**m %*% t(d**2)))
+  return(list(u = u_new, centroids = v_new, loss = sum(loss)))
 }

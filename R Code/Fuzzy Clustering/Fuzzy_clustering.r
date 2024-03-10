@@ -38,15 +38,16 @@ fuzzy_c_means <- function(df, c, m, e = 1e-5) {
   # iterate until convergence
   while (norm(u_old - u_new, type = "F") > e) {
     u_old <- u_new
+
     # update v^(l+1)
     v_new <- (u_new**m %*% df0) / rowSums(u_new**m, na.rm = TRUE)
 
     # update u^(l+1)
     d <- euc_dsim(df, v_new, c)**(2 / (m - 1))
     u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
-
-    # compute loss
-    loss <- sum(diag(u_new**m %*% t(d**2)))
   }
+
+  # compute loss
+  loss <- sum(diag(u_new**m %*% t(d**2)))
   return(list(u = u_new, centroids = v_new, loss = loss))
 }

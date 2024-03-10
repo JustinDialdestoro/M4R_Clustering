@@ -37,8 +37,7 @@ gow_df <- function(df, user = TRUE) {
     df$gender <- as.numeric(df$gender == "M")
 
     # dummy code occupation variable
-    df <- dummy_cols(df, select_columns = "occupation")
-    df$occupation <- NULL
+    df$occupation <- as.factor(df$occupation)
 
   } else {
     # range normalise continuous variables
@@ -152,7 +151,7 @@ kproto_df <- function(df, user = TRUE) {
     df$age <- unit_var_normalise(df$age)
 
     # binarise gender variable
-    df$gender <- as.numeric(df$gender == "M")
+    df$gender <- as.factor(df$gender == "M")
 
     # dummy code occupation variable
     df$occupation <- as.factor(df$occupation)
@@ -162,6 +161,10 @@ kproto_df <- function(df, user = TRUE) {
     df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
+
+    for (i in 6:24) {
+      df[i] <- as.factor(df[i] == 1)
+    }
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)

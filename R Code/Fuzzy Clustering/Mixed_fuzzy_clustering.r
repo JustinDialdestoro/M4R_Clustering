@@ -89,6 +89,90 @@ fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
   }
 
   # compute loss
-  loss <- sum(diag(u_new**m %*% t(d**2)))
+  loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2)))) # nolint
+  return(list(u = u_new, centroids = v_new, loss = sum(loss)))
+}
+
+kproto_dsim <- function(df, v, c, pr) {
+  n <- nrow(df)
+  p <- ncol(df)
+
+  dsim_mat <- matrix(NA, nrow = c, ncol = n)
+
+  for (i in 1:c) {
+    for (j in 1:n) {
+      dsim_mat[i, j] <- norm(v[i, 1:pr] - df[j, 1:pr], type = "2")**2 +
+        0.6655 * sum(!(v[i, (pr + 1):p] == as.numeric(df[j, (pr + 1):p])))
+    }
+  }
+  return(dsim_mat)
+}
+
+fuzzy_k_prototypes <- function(df, c, m, user = TRUE, e = 1e-5) {
+  # initialise number of data points
+  n <- nrow(df)
+
+  # transform data
+  x <- kproto_df(df, user) # nolint
+
+  # initialise number of continuous and categorical variables
+  pr <- 1
+  p <- ncol(x)
+
+  # initialise cluster memberships u^(0)
+  u_old <- matrix(runif(n * c), nrow = c)
+  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
+
+  # initialise centroids v^(1) continuous variables
+  v_cont <- (u_old**m %*% x[, 1:pr]) / rowSums(u_old**m, na.rm = TRUE)
+  # initialise centroids v^(1) categorical variables
+  v_cat <- NULL
+  for (i in (pr + 1):p) {
+    loss <- NULL
+    for (level in unique(x[, i])) {
+      loss <- cbind(loss, u_old**m %*% as.numeric(!(x[, i] == level)))
+    }
+    best_level <- NULL
+    for (j in 1:c) {
+      best_level <- rbind(best_level,
+                          unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
+    }
+    v_cat <- cbind(v_cat, best_level)
+  }
+  v_new <- cbind(v_cont, v_cat)
+
+  # update u^(1)
+  d <- kproto_dsim(x, v_new, c, pr)**(1 / (m - 1)) # nolint
+  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+
+  # iterate until convergence
+  while (norm(u_old - u_new, type = "F") > e) {
+    u_old <- u_new
+
+    # update continuous variables of v^(l+1)
+    v_cont <- (u_new**m %*% x[, 1:pr]) / rowSums(u_new**m, na.rm = TRUE)
+    # initialise centroids v^(1) categorical variables
+    v_cat <- NULL
+    for (i in (pr + 1):p) {
+      loss <- NULL
+      for (level in unique(x[, i])) {
+        loss <- cbind(loss, u_old**m %*% as.numeric(!(x[, i] == level)))
+      }
+      best_level <- NULL
+      for (j in 1:c) {
+        best_level <- rbind(best_level,
+                            unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
+      }
+      v_cat <- cbind(v_cat, best_level)
+    }
+    v_new <- cbind(v_cont, v_cat)
+
+    # update u^(l+1)
+  d <- kproto_dsim(x, v_new, c, pr)**(1 / (m - 1)) # nolint
+  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+  }
+
+  # compute final loss
+  loss <- sum(diag(u_new**m %*% t(d)))
   return(list(u = u_new, centroids = v_new, loss = sum(loss)))
 }

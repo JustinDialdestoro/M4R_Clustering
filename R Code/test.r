@@ -1,8 +1,14 @@
+# read in the data
+ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
+ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
+ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
+
+# call functions
+source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")
+source("M4R_Clustering/R Code/Fuzzy Clustering/Mixed_fuzzy_clustering.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
-
-ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 
 # t1 <- Sys.time()
 # f_ind <- t_fold_index(ml100k, 10)
@@ -32,12 +38,12 @@ ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 # m[4, ] <- c(3, 3, 1, 5, 4)
 # m[5, ] <- c(1, 5, 5, 2, 1)
 
-m2 <- matrix(NA, 5, 9)
-m2[1, ] <- c(1, 2, NA, 3, 2, NA, 2, NA, NA)
-m2[2, ] <- c(2, 4, 4, NA, 4, NA, NA, 2, 3)
-m2[3, ] <- c(5, 5, NA, 4, NA, 4, 3, NA, 4)
-m2[4, ] <- c(5, NA, 5, 4, 4, NA, 4, 4, NA)
-m2[5, ] <- c(1, NA, NA, NA, 2, NA, NA, NA, 2)
+# m2 <- matrix(NA, 5, 9)
+# m2[1, ] <- c(1, 2, NA, 3, 2, NA, 2, NA, NA)
+# m2[2, ] <- c(2, 4, 4, NA, 4, NA, NA, 2, 3)
+# m2[3, ] <- c(5, 5, NA, 4, NA, 4, 3, NA, 4)
+# m2[4, ] <- c(5, NA, 5, 4, 4, NA, 4, 4, NA)
+# m2[5, ] <- c(1, NA, NA, NA, 2, NA, NA, NA, 2)
 
 # print(t2 - t1)
 
@@ -100,3 +106,13 @@ m2[5, ] <- c(1, NA, NA, NA, 2, NA, NA, NA, 2)
 
 # test <- fuzzy_c_means(m, 4, 2)
 # text(test$centroids, col = "green", cex = 1.5)
+
+df <- data.frame(age = c(20, 21, 20, 45, 50, 48, 20),
+                 gender = c("M", "M", "M", "F", "F", "F", "M"),
+                 occupation = c("student", "student", "student",
+                                "programmer", "programmer", "programmer",
+                                "programmer"))
+
+test <- fuzzy_gow(ml100k_dem, 2, 2)
+print(test$u)
+print(test$centroids)

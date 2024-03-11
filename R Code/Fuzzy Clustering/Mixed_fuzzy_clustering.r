@@ -3,105 +3,59 @@ source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
 fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-5) {
   # initialise number of data points
   n <- nrow(df)
-  p <- ncol(df)
-
-  pr <- 1
 
   # transform data
   x <- gow_df(df, user) # nolint
 
-  # function to compute loss
-  loss_fn <- function(v) {
-    # reshape parameters into matrix
-    v <- t(matrix(v, ncol = c))
-    colnames(v) <- colnames(x[1:pr])
-
-    # compute dissimilarity matrix
-    d <- as.matrix(daisy(rbind(x[1:pr], v), metric = "gower"))**(1 / (m - 1)) # nolint
-
-    return(sum(u_old**m %*% d[1:n, (n + 1):(n + c)]))
-  }
-
-  # initialise cluster memberships u^(0)
-  u_old <- matrix(runif(n * c), nrow = c)
-  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
-
-  # initialise centroids v^(1) continuous variables
-  v_old <- matrix(t(x[sample(n, c), ][1:pr]), nrow = 1)
-  v_con <- t(matrix(optim(v_old, loss_fn)$par, ncol = c))
-  colnames(v_con) <- colnames(x[1:pr])
-
-  # initialise centroids v^(1) categorical variables
-  v_cat <- NULL
-  # loop over each categorical variable
-  for (i in (pr + 1):p) {
-    # compute loss when each level is used
-    loss <- NULL
-    for (level in unique(x[, i])) {
-      loss <- cbind(loss, u_old**m %*% as.numeric(!(x[, i] == level)))
-    }
-    # find best level
-    best_level <- NULL
-    for (j in 1:c) {
-      best_level <- rbind(best_level,
-                          as.character(unique(x[, i])
-                                       [which(loss[j, ] == min(loss[j, ]))]))
-    }
-    v_cat <- cbind(v_cat, best_level)
-  }
-  colnames(v_cat) <- colnames(x[(pr + 1):p])
-  v_new <- cbind(v_con, v_cat)
-
   # compute gower disimilarity matrix
-  d <- as.matrix(daisy(gow_df(rbind(x, v_new)), metric = "gower"))** # nolint
-    (1 / (m - 1))
+  d <- as.matrix(daisy(x, metric = "gower"))**(1 / (m - 1)) # nolint
+
+  # initalise v^(0)
+  ind <- sample.int(n, c)
 
   # update u^(1)
-  u_new <- 1 / t(t(d[(n + 1):(n + c), 1:n]) *
-                   colSums(1 / d[(n + 1):(n + c), 1:n], na.rm = TRUE))
+  u_old <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+  u_old[is.na(u_old)] <- 1
+
+  # compute loss
+  loss <- u_old**m %*% d
+  # find minimisers of loss and set to v^(1)
+  ind <- which(loss[1, ] == min(loss[1, ]))[1]
+  v_new <- x[ind, ]
+  for (i in 2:c) {
+    # ensure centroids are unique
+    inds <- which(loss[i, ] == min(loss[i, -ind]))
+    ind <- c(ind, inds[which(!(inds %in% ind))[1]])
+    v_new <- rbind(v_new, x[ind[i], ])
+  }
+
+  # update u^(2)
+  u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
   u_new[is.na(u_new)] <- 1
 
   # iterate until convergence
   while (norm(u_old - u_new, type = "F") > e) {
     u_old <- u_new
 
-    # numerically find minimisers of loss to update v^(l+1)
-    v_con <- matrix(t(v_con), nrow = 1)
-    v_con <- t(matrix(optim(v_con, loss_fn)$par, ncol = c))
-    colnames(v_con) <- colnames(x[1:pr])
-
-    # initialise centroids v^(1) categorical variables
-    v_cat <- NULL
-    # loop over each categorical variable
-    for (i in (pr + 1):p) {
-      # compute loss when each level is used
-      loss <- NULL
-      for (level in unique(x[, i])) {
-        loss <- cbind(loss, u_new**m %*% as.numeric(!(x[, i] == level)))
-      }
-      # find best level
-      best_level <- NULL
-      for (j in 1:c) {
-        best_level <- rbind(best_level,
-                            as.character(unique(x[, i])
-                                         [which(loss[j, ] == min(loss[j, ]))]))
-      }
-      v_cat <- cbind(v_cat, best_level)
+    # compute loss
+    loss <- u_new**m %*% d
+    # find minimisers of loss and set to v^(l)
+    ind <- which(loss[1, ] == min(loss[1, ]))[1]
+    v_new <- x[ind, ]
+    for (i in 2:c) {
+      # ensure centroids are unique
+      inds <- which(loss[i, ] == min(loss[i, -ind]))
+      ind <- c(ind, inds[which(!(inds %in% ind))[1]])
+      v_new <- rbind(v_new, x[ind[i], ])
     }
-    colnames(v_cat) <- colnames(x[(pr + 1):p])
-    v_new <- cbind(v_con, v_cat)
 
-    # compute gower disimilarity matrix
-    d <- as.matrix(daisy(gow_df(rbind(x, v_new)), metric = "gower"))** # nolint
-      (1 / (m - 1))
-
-    # update u^(1)
-    u_new <- 1 / t(t(d[(n + 1):(n + c), 1:n]) *
-                     colSums(1 / d[(n + 1):(n + c), 1:n], na.rm = TRUE))
+    # update u^(l+1)
+    u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
     u_new[is.na(u_new)] <- 1
   }
-
-  return(list(u = u_new, centroids = v_new))
+  # compute loss
+  loss <- u_new**m %*% d**2
+  return(list(u = u_new, centroids = v_new, loss = loss))
 }
 
 fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {

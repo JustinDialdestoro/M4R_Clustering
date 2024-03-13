@@ -54,8 +54,8 @@ fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-5) {
     u_new[is.na(u_new)] <- 1
   }
   # compute loss
-  loss <- u_new**m %*% d**2
-  return(list(u = u_new, centroids = v_new, loss = loss))
+  loss <- u_new**m %*% d[, ind]**2
+  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
 }
 
 fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
@@ -100,11 +100,12 @@ kproto_dsim <- function(df, v, c, pr, lambda) {
   dsim_mat <- matrix(NA, nrow = c, ncol = n)
 
   for (i in 1:c) {
-    for (j in 1:n) {
-      dsim_mat[i, j] <- norm(v[i, 1:pr] - df[j, 1:pr], type = "2")**2 +
-        lambda * sum(!(v[i, (pr + 1):p] == as.numeric(df[j, (pr + 1):p])))
-    }
+    dsim_mat[i, ] <- rowSums(t(t(as.matrix(df[, 1:pr])) -
+                                 as.numeric(v[i, 1:pr]))**2) +
+      lambda * rowSums(t(!(t(as.matrix(df[, (pr + 1):p]) ==
+                               as.vector(v[i, (pr + 1):p])))))
   }
+
   return(dsim_mat)
 }
 
@@ -116,31 +117,33 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
   x <- kproto_df(df, user) # nolint
 
   # initialise number of continuous and categorical variables
+  p <- ncol(x)
   if (user == TRUE) {
     pr <- 1
   } else {
-    pr <- 2
+    pr <- 21
     # swap columns to have continuous variables first
-    x[, c(1, 2, 3)] <- x[, c(2, 3, 1)]
-    colnames(x) <- c("year", "runtime", "titleType", colnames(x[, 4:24]))
+    x <- x[, c(2, 3, 6:24, 1, 4, 5)]
   }
-  p <- ncol(x)
 
   # initialise variable weights
   lambda <- lambdaest(x) # nolint
 
-  # initialise cluster memberships u^(0)
-  u_old <- matrix(runif(n * c), nrow = c)
-  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
+  # initalise v^(0)
+  ind <- sample.int(n, c)
+
+  # update u^(1)
+  d <- kproto_dsim(x, x[ind, ], c, pr, lambda)**(2 / (m - 1)) # nolint
+  u_old <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
   # initialise centroids v^(1) continuous variables
-  v_cont <- (u_old**m %*% as.matrix(x[, 1:pr])) /
+  v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
     rowSums(u_old**m, na.rm = TRUE)
 
   # initialise centroids v^(1) categorical variables
   v_cat <- NULL
   # loop over each categorical variable
-  for (i in (pr + 1):(pr + 3)) {
+  for (i in (pr + 1):p) {
     # compute loss when each level is used
     loss <- NULL
     for (level in unique(x[, i])) {
@@ -150,44 +153,29 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
     best_level <- NULL
     for (j in 1:c) {
       best_level <- rbind(best_level,
-                          unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
+                          as.character(unique(x[, i])
+                                       [which(loss[j, ] == min(loss[j, ]))]))
     }
     v_cat <- cbind(v_cat, best_level)
   }
-  # loop over each genre variable
-  for (i in (pr + 4):p) {
-    count <- table(x[, i])
-    scale <- count[2] / count[1]
-    # compute loss when each level is used
-    loss <- u_old**m %*% as.numeric(!(x[, i] == TRUE))
-    loss <- cbind(loss, u_old**m %*%
-                    (scale * as.numeric(x[, i] == FALSE)))
-    # find best level
-    best_level <- NULL
-    for (j in 1:c) {
-      best_level <- rbind(best_level,
-                          unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
-    }
-    v_cat <- cbind(v_cat, best_level)
-  }
-  v_new <- cbind(v_cont, v_cat)
+  v_new <- data.frame(v_con, v_cat)
 
-  # update u^(1)
-  d <- kproto_dsim(x, v_new, c, pr, lambda)**(1 / (m - 1)) # nolint
+  # update u^(2)
+  d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1)) # nolint
   u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
   # iterate until convergence
   while (norm(u_old - u_new, type = "F") > e) {
     u_old <- u_new
 
-    # update continuous variables of v^(l+1)
-    v_cont <- (u_new**m %*% as.matrix(x[, 1:pr])) /
-      rowSums(u_new**m, na.rm = TRUE)
+    # update centroids v^(l+1) continuous variables
+    v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
+      rowSums(u_old**m, na.rm = TRUE)
 
-    # initialise centroids v^(1) categorical variables
+    # update centroids v^(l+1) categorical variables
     v_cat <- NULL
     # loop over each categorical variable
-    for (i in (pr + 1):(pr + 3)) {
+    for (i in (pr + 1):p) {
       # compute loss when each level is used
       loss <- NULL
       for (level in unique(x[, i])) {
@@ -197,34 +185,19 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
       best_level <- NULL
       for (j in 1:c) {
         best_level <- rbind(best_level,
-                            unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
+                            as.character(unique(x[, i])
+                                         [which(loss[j, ] == min(loss[j, ]))]))
       }
       v_cat <- cbind(v_cat, best_level)
     }
-    # loop over each genre variable
-    for (i in (pr + 4):p) {
-      count <- table(x[, i])
-      scale <- count[2] / count[1]
-      # compute loss when each level is used
-      loss <- u_old**m %*% as.numeric(!(x[, i] == TRUE))
-      loss <- cbind(loss, u_old**m %*%
-                      (scale * as.numeric(x[, i] == FALSE)))
-      # find best level
-      best_level <- NULL
-      for (j in 1:c) {
-        best_level <- rbind(best_level,
-                            unique(x[, i])[which(loss[j, ] == min(loss[j, ]))])
-      }
-      v_cat <- cbind(v_cat, best_level)
-    }
-    v_new <- cbind(v_cont, v_cat)
+    v_new <- data.frame(v_con, v_cat)
 
-    # update u^(l+1)
-  d <- kproto_dsim(x, v_new, c, pr, lambda)**(1 / (m - 1)) # nolint
-  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+    # update u^(2)
+    d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1)) # nolint
+    u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
   }
+  # compute loss
+  loss <- u_new**m %*% t(d**((m - 1) / 2))
 
-  # compute final loss
-  loss <- sum(diag(u_new**m %*% t(d)))
-  return(list(u = u_new, centroids = v_new, loss = sum(loss)))
+  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
 }

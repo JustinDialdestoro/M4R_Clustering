@@ -1,2 +1,2 @@
 # M4R_Clustering
-Code used for M4R thesis on clustering-based film recommendation systems.
+Reposotory for MSci thesis on clustering-based collaborative filtering film recommendation systems.

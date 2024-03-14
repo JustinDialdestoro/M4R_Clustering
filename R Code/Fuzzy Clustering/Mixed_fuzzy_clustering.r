@@ -267,26 +267,42 @@ fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-5) {
   return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
 }
 
-mskmeans_dsim <- function(df, v, c, pr, gamma) {
+mskmeans_dsim <- function(df, v, c, pr, gamma, ratio = FALSE) {
   n <- nrow(df)
   p <- ncol(df)
 
-  dsim_mat_con <- matrix(NA, nrow = c, ncol = n)
+  if (ratio == TRUE) {
+    # continuous dissimilarities
+    dsim_mat_con <- rowSums(t(t(df[, 1:pr]) - v[1:pr])**2)
 
-  for (i in 1:c) {
-    dsim_mat_con[i, ] <- rowSums(t(t(as.matrix(df[, 1:pr])) -
-                                     as.numeric(v[i, 1:pr]))**2)
+    # categorical dissimilarities
+    dsim_mat_cat <- gamma * as.matrix(df[, (pr + 1):p]) %*%
+      as.matrix(v[(pr + 1):p]) /
+      (sqrt(rowSums(as.matrix(df[, (pr + 1):p])**2)) *
+         sqrt(rowSums(t(as.matrix(v[(pr + 1):p])**2))))
+
+    return(list(con = dsim_mat_con, cat = as.vector(dsim_mat_cat)))
+
+  } else {
+    # continuous dissimilarities
+    dsim_mat_con <- matrix(NA, nrow = c, ncol = n)
+    for (i in 1:c) {
+      dsim_mat_con[i, ] <- rowSums(t(t(as.matrix(df[, 1:pr])) -
+                                       as.numeric(v[i, 1:pr]))**2)
+    }
+
+    # categorical dissimilarities
+    dsim_mat_cat <- gamma * as.matrix(df[, (pr + 1):p]) %*%
+      t(as.matrix(v[, (pr + 1):p])) /
+      outer(sqrt(rowSums(as.matrix(df[, (pr + 1):p])**2)),
+            sqrt(rowSums(as.matrix(v[, (pr + 1):p])**2)))
+
+    return(dsim_mat_con + t(dsim_mat_cat))
   }
-
-  dsim_mat_cat <- gamma * as.matrix(df[, (pr + 1):p]) %*%
-    t(as.matrix(v[, (pr + 1):p])) /
-    outer(sqrt(rowSums(as.matrix(df[, (pr + 1):p])**2)),
-          sqrt(rowSums(as.matrix(v[, (pr + 1):p])**2)))
-
-  return(dsim_mat_con + t(dsim_mat_cat))
 }
 
-fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
+fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5,
+                           gammas = seq(0.125, 1, 0.125)) {
   # initialise number of data points
   n <- nrow(df)
 
@@ -301,30 +317,20 @@ fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
     pr <- 2
   }
 
-  gamma <- 1
+  # initialise full data centroids
+  cbar <- c(colMeans(as.matrix(x[, 1:pr])),
+            colSums(as.matrix(x[, (pr + 1):p])) /
+              sqrt(sum(colSums(as.matrix(x[, (pr + 1):p])**2))))
 
-  # initialise cluster memberships u^(0)
-  u_old <- matrix(runif(n * c), nrow = c)
-  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
+  # initialise best q
+  best_q <- Inf
 
-  # initialise centroids v^(1) continuous variables
-  v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
-    rowSums(u_old**m, na.rm = TRUE)
+  for (gamma in gammas) {
+    # initialise cluster memberships u^(0)
+    u_old <- matrix(runif(n * c), nrow = c)
+    u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
 
-  v_cat <- t(t(u_old**m) / sqrt(rowSums(x[, (pr + 1):p]**2))) %*%
-    as.matrix(x[, (pr + 1):p])
-  v_cat <- v_cat / sqrt(rowSums(v_cat**2))
-  v_new <- data.frame(v_con, v_cat)
-
-  # update u^(2)
-  d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
-  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
-
-  # iterate until convergence
-  while (norm(u_old - u_new, type = "F") > e) {
-    u_old <- u_new
-
-    # update centroids v^(l+1) continuous variables
+    # initialise centroids v^(1) continuous variables
     v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
       rowSums(u_old**m, na.rm = TRUE)
 
@@ -333,12 +339,42 @@ fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
     v_cat <- v_cat / sqrt(rowSums(v_cat**2))
     v_new <- data.frame(v_con, v_cat)
 
-    # update u^(l+1)
+    # update u^(2)
     d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
     u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
-  }
-  # compute loss
-  loss <- u_new**m %*% t(d**((m - 1) / 2))
 
-  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+    # iterate until convergence
+    while (norm(u_old - u_new, type = "F") > e) {
+      u_old <- u_new
+
+      # update centroids v^(l+1) continuous variables
+      v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
+        rowSums(u_old**m, na.rm = TRUE)
+
+      v_cat <- t(t(u_old**m) / sqrt(rowSums(x[, (pr + 1):p]**2))) %*%
+        as.matrix(x[, (pr + 1):p])
+      v_cat <- v_cat / sqrt(rowSums(v_cat**2))
+      v_new <- data.frame(v_con, v_cat)
+
+      # update u^(l+1)
+      d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
+      u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+    }
+
+    # compute within cluster distortion
+    gam <- diag(u_new**m %*% t(d**((m - 1) / 2)))
+
+    # compute between cluster distortion
+    del_d <- mskmeans_dsim(x, cbar, 1, pr, gamma, TRUE)
+
+    q <- gam[1] / (sum(del_d$con) - gam[1]) *
+      gam[2] / (sum(del_d$cat) - gam[2])
+
+    if (q < best_q) {
+      best_q <- q
+      out <- list(u = u_new, centroids = v_new, loss = sum(gam), gamma = gamma)
+    }
+  }
+
+  return(out)
 }

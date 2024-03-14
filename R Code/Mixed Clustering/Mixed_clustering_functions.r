@@ -186,7 +186,7 @@ mixed_k_df <- function(df, user = TRUE) {
     df$age <- unit_var_normalise(df$age)
 
     # numericise gender variable
-    df$gender <- as.numeric(df$gender == "M")
+    df$gender <- as.factor(df$gender == "M")
 
     # factorise occupation variable
     df$occupation <- as.factor(df$occupation)
@@ -230,6 +230,9 @@ mixed_k <- function(df, k, user = TRUE, obj = FALSE) {
 
 mskmeans_df <- function(df, user = TRUE) {
   if (user == TRUE) {
+    # variance normalise age
+    df$age <- unit_var_normalise(df$age)
+
     # dummy code gender and occupation variable
     df <- dummy_cols(df, select_columns = "gender")
     df$gender <- NULL
@@ -237,7 +240,14 @@ mskmeans_df <- function(df, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
 
+    # normalise categorical variables
+    df[2:24] <- df[2:24] / rowSums(df[2:24])
+
   } else {
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
+
     # dummy code title type
     df <- dummy_cols(df, select_columns = "titleType")
     df$titleType <- NULL
@@ -249,6 +259,9 @@ mskmeans_df <- function(df, user = TRUE) {
     # dummy code writer type
     df <- dummy_cols(df, select_columns = "writer")
     df$writer <- NULL
+
+    # normalise categorical variables
+    df[3:84] <- df[3:84] / rowSums(df[3:84])
   }
   return(df)
 }

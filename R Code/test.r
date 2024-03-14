@@ -107,12 +107,12 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 # test <- fuzzy_c_means(m, 4, 2)
 # text(test$centroids, col = "green", cex = 1.5)
 
-df <- data.frame(age = c(20, 21, 20, 45, 50, 48, 20),
-                 gender = c("M", "M", "M", "F", "F", "F", "M"),
-                 occupation = c("student", "student", "student",
-                                "programmer", "programmer", "programmer",
-                                "programmer"))
+# df <- data.frame(age = c(20, 21, 20, 45, 50, 48, 20),
+#                  gender = c("M", "M", "M", "F", "F", "F", "M"),
+#                  occupation = c("student", "student", "student",
+#                                 "programmer", "programmer", "programmer",
+#                                 "programmer"))
 
-test <- fuzzy_gow(ml100k_dem, 2, 2)
-print(test$u)
-print(test$centroids)
+# test <- fuzzy_gow(ml100k_dem, 2, 2)
+# print(test$u)
+# print(test$centroids)

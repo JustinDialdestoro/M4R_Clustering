@@ -161,7 +161,7 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
   v_new <- data.frame(v_con, v_cat)
 
   # update u^(2)
-  d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1)) # nolint
+  d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1))
   u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
   # iterate until convergence
@@ -193,7 +193,148 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
     v_new <- data.frame(v_con, v_cat)
 
     # update u^(2)
-    d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1)) # nolint
+    d <- kproto_dsim(x, v_new, c, pr, lambda)**(2 / (m - 1))
+    u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+  }
+  # compute loss
+  loss <- u_new**m %*% t(d**((m - 1) / 2))
+
+  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+}
+
+fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-5) {
+  # initialise number of data points
+  n <- nrow(df)
+
+  # transform data
+  x <- mixed_k_df(df, user) # nolint
+
+  if (user == TRUE) {
+    # compute gower disimilarity matrix
+    d <- as.matrix(distmix(x, method = "ahmad", idnum = 1, # nolint
+                           idbin = 2, idcat = 3))**(1 / (m - 1))
+  } else {
+    # compute gower disimilarity matrix
+    d <- as.matrix(distmix(x, method = "ahmad", idnum = 2:3, # nolint
+                           idbin = 6:24, idcat = c(1, 4, 5)))**(1 / (m - 1))
+  }
+
+  # initalise v^(0)
+  ind <- sample.int(n, c)
+
+  # update u^(1)
+  u_old <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+  u_old[is.na(u_old)] <- 1
+
+  # compute loss
+  loss <- u_old**m %*% d
+  # find minimisers of loss and set to v^(1)
+  ind <- which(loss[1, ] == min(loss[1, ]))[1]
+  v_new <- x[ind, ]
+  for (i in 2:c) {
+    # ensure centroids are unique
+    inds <- which(loss[i, ] == min(loss[i, -ind]))
+    ind <- c(ind, inds[which(!(inds %in% ind))[1]])
+    v_new <- rbind(v_new, x[ind[i], ])
+  }
+
+  # update u^(2)
+  u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+  u_new[is.na(u_new)] <- 1
+
+  # iterate until convergence
+  while (norm(u_old - u_new, type = "F") > e) {
+    u_old <- u_new
+
+    # compute loss
+    loss <- u_new**m %*% d
+    # find minimisers of loss and set to v^(l)
+    ind <- which(loss[1, ] == min(loss[1, ]))[1]
+    v_new <- x[ind, ]
+    for (i in 2:c) {
+      # ensure centroids are unique
+      inds <- which(loss[i, ] == min(loss[i, -ind]))
+      ind <- c(ind, inds[which(!(inds %in% ind))[1]])
+      v_new <- rbind(v_new, x[ind[i], ])
+    }
+
+    # update u^(l+1)
+    u_new <- 1 / t(t(d[ind, ]) * colSums(1 / d[ind, ], na.rm = TRUE))
+    u_new[is.na(u_new)] <- 1
+  }
+  # compute loss
+  loss <- u_new**m %*% d[, ind]**2
+  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+}
+
+mskmeans_dsim <- function(df, v, c, pr, gamma) {
+  n <- nrow(df)
+  p <- ncol(df)
+
+  dsim_mat_con <- matrix(NA, nrow = c, ncol = n)
+
+  for (i in 1:c) {
+    dsim_mat_con[i, ] <- rowSums(t(t(as.matrix(df[, 1:pr])) -
+                                     as.numeric(v[i, 1:pr]))**2)
+  }
+
+  dsim_mat_cat <- gamma * as.matrix(df[, (pr + 1):p]) %*%
+    t(as.matrix(v[, (pr + 1):p])) /
+    outer(sqrt(rowSums(as.matrix(df[, (pr + 1):p])**2)),
+          sqrt(rowSums(as.matrix(v[, (pr + 1):p])**2)))
+
+  return(dsim_mat_con + t(dsim_mat_cat))
+}
+
+fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
+  # initialise number of data points
+  n <- nrow(df)
+
+  # transform data
+  x <- mskmeans_df(df, user) # nolint
+
+  # initialise number of continuous and categorical variables
+  p <- ncol(x)
+  if (user == TRUE) {
+    pr <- 1
+  } else {
+    pr <- 2
+  }
+
+  gamma <- 1
+
+  # initialise cluster memberships u^(0)
+  u_old <- matrix(runif(n * c), nrow = c)
+  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
+
+  # initialise centroids v^(1) continuous variables
+  v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
+    rowSums(u_old**m, na.rm = TRUE)
+
+  v_cat <- t(t(u_old**m) / sqrt(rowSums(x[, (pr + 1):p]**2))) %*%
+    as.matrix(x[, (pr + 1):p])
+  v_cat <- v_cat / sqrt(rowSums(v_cat**2))
+  v_new <- data.frame(v_con, v_cat)
+
+  # update u^(2)
+  d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
+  u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+
+  # iterate until convergence
+  while (norm(u_old - u_new, type = "F") > e) {
+    u_old <- u_new
+
+    # update centroids v^(l+1) continuous variables
+    v_con <- (u_old**m %*% as.matrix(x[, 1:pr])) /
+      rowSums(u_old**m, na.rm = TRUE)
+
+    v_cat <- t(t(u_old**m) / sqrt(rowSums(x[, (pr + 1):p]**2))) %*%
+      as.matrix(x[, (pr + 1):p])
+    v_cat <- v_cat / sqrt(rowSums(v_cat**2))
+    v_new <- data.frame(v_con, v_cat)
+
+    # update u^(l+1)
+    d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
     u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
   }
   # compute loss

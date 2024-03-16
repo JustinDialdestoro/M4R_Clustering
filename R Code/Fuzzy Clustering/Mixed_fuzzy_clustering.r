@@ -90,7 +90,7 @@ fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
   }
 
   # compute loss
-  loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2)))) # nolint
+  loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2))))
   return(list(u = u_new, centroids = v_new, loss = sum(loss)))
 }
 
@@ -412,7 +412,57 @@ fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-5, p = 3) {
   }
 
   # compute loss
-  loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2)))) # nolint
+  loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2))))
 
   return(list(u = u_new, centroids = v_new, loss = sum(loss)))
+}
+
+fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = 3) {
+  # initialise number of data points
+  n <- nrow(df)
+
+  # transform data
+  x <- as.matrix(mrkmeans_df(df, user)) # nolint
+
+  # initialise loss
+  loss_old <- Inf
+
+  # initialise cluster memberships u^(0)
+  u_old <- matrix(runif(n * c), nrow = c)
+  u_old <- t(t(u_old) / colSums(u_old, na.rm = TRUE))
+
+  # initalise projection matrix p^(0)
+  p_new <- t(u_old**m) %*% (u_old**m / rowSums(u_old**m))
+
+  # initalise loadings matrix b^(0)
+  b_new <- eigen(t(x) %*% p_new %*% x, symmetric = TRUE)$vectors[, 1:p]
+
+  # update u^(1)
+  u_new <- fuzzy_c_means(x %*% b_new, c, m)$u # nolint
+
+  # compute loss
+  loss_new <- norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F")
+
+  # iterate until convergence
+  while (abs(loss_new - loss_old) > e) {
+    u_old <- u_new
+    loss_old <- loss_new
+
+    # update projection matrix p^(l+1)
+    p_new <- t(u_new**m) %*% (u_new**m / rowSums(u_new**m))
+
+    # update loadings matrix b^(l+1)
+    b_new <- eigen(t(x) %*% p_new %*% x, symmetric = TRUE)$vectors[, 1:p]
+
+    # update u^(l+1)
+    u_new <- fuzzy_c_means(x %*% b_new, c, m)$u # nolint
+
+    # update loss
+    loss_new <- norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F")
+  }
+
+  # compute final centroids
+  v <- (u_new**m / rowSums(u_new**m)) %*% x %*% b_new
+
+  return(list(u = u_new, centroids = v, loss = loss_new))
 }

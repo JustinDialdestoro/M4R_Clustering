@@ -327,9 +327,6 @@ famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 3) {
 
 mrkmeans_df <- function(df, user = TRUE) {
   if (user == TRUE) {
-    # variance normalise age
-    df$age <- unit_var_normalise(df$age)
-
     # dummy code gender and occupation variable
     df <- dummy_cols(df, select_columns = "gender")
     df$gender <- NULL
@@ -337,11 +334,11 @@ mrkmeans_df <- function(df, user = TRUE) {
     df <- dummy_cols(df, select_columns = "occupation")
     df$occupation <- NULL
 
-  } else {
-    # variance normalise continuous variables
-    df$year <- unit_var_normalise(df$year)
-    df$runtime <- unit_var_normalise(df$runtime)
+    for (i in 1:ncol(df)) { # nolint
+      df[, i] <- unit_var_normalise(df[, i])
+    }
 
+  } else {
     # dummy code title type
     df <- dummy_cols(df, select_columns = "titleType")
     df$titleType <- NULL
@@ -353,6 +350,10 @@ mrkmeans_df <- function(df, user = TRUE) {
     # dummy code writer type
     df <- dummy_cols(df, select_columns = "writer")
     df$writer <- NULL
+
+    for (i in 1:ncol(df)) { # nolint
+      df[, i] <- unit_var_normalise(df[, i])
+    }
   }
   return(df)
 }

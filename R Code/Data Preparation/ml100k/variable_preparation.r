@@ -100,3 +100,79 @@ ml100k_full_feat$runtime[ind_na] <-
 # write new item features data into file
 write.csv(ml100k_full_feat, file = "M4R_Clustering/Data/ml100k_feat_a.csv",
           row.names = FALSE)
+
+# read 100k item full feature data
+ml100k_full_feat <- read.csv("M4R_Clustering/Data/ml100k_full_feat.csv")
+
+# remove adult variable
+ml100k_full_feat$adult <- NULL
+# remove titleType variable
+ml100k_full_feat$titleType <- NULL
+
+# indices of items with multiple directors and no director
+ind_dir <- which(nchar(ml100k_full_feat$director) > 9)
+ind_na <- which(ml100k_full_feat$director == "\\N")
+
+# list of directors credited as sole director
+directors <- ml100k_full_feat$director[-c(ind_dir, ind_na)]
+
+# add all directors credited as a co-director
+for (i in ind_dir) {
+  directors <- c(directors, strsplit(ml100k_full_feat$director[i], ",")[[1]])
+}
+
+# count number of credits for each director
+d_count <- table(directors)
+
+for (i in 1:nrow(ml100k_full_feat)) { # nolint
+  d <- ml100k_full_feat$director[i]
+
+  # check if multiple directors
+  if (nchar(d) > 9) {
+    # split into separate directors
+    d_list <- strsplit(d, ",")[[1]]
+    # update director to the most prolific director
+    d_list_count <- d_count[which(names(d_count) %in% d_list)]
+    ml100k_full_feat$director[i] <-
+      names(which(d_list_count == max(d_list_count)))[1]
+
+  }
+}
+
+# indices of items with multiple writers and no writer
+ind_wri <- which(nchar(ml100k_full_feat$writer) > 9)
+ind_na <- which(ml100k_full_feat$writer == "\\N")
+
+# list of writers credited as sole writer
+writers <- ml100k_full_feat$writer[-c(ind_wri, ind_na)]
+
+# add all writers credited as a co-writer
+for (i in ind_wri) {
+  writers <- c(writers, strsplit(ml100k_full_feat$writer[i], ",")[[1]])
+}
+
+# count number of credits for each director
+w_count <- table(writers)
+
+for (i in 1:nrow(ml100k_full_feat)) { # nolint
+  w <- ml100k_full_feat$writer[i]
+
+  # check if multiple writer
+  if (nchar(w) > 9) {
+    # split into separate writers
+    w_list <- strsplit(w, ",")[[1]]
+    # update write to the most prolific writer
+    w_list_count <- w_count[which(names(w_count) %in% w_list)]
+    ml100k_full_feat$writer[i] <-
+      names(which(w_list_count == max(w_list_count)))[1]
+  }
+}
+
+# impute missing values in runtime
+ind_na <- which(ml100k_full_feat$runtime == "\\N")
+ml100k_full_feat$runtime[ind_na] <-
+  mean(as.numeric(ml100k_full_feat$runtime[-ind_na]))
+
+# write new item features data into file
+write.csv(ml100k_full_feat, file = "M4R_Clustering/Data/ml100k_feat_b.csv",
+          row.names = FALSE)

@@ -417,6 +417,26 @@ fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-5, p = 3) {
   return(list(u = u_new, centroids = v_new, loss = sum(loss)))
 }
 
+optim_uv <- function(u, b, x, c, m, e) {
+  u_new <- u
+  u_old <- 0
+
+  while (norm(u_new - u_old, type = "F") > e) {
+    u_old <- u_new
+    v <- solve(u_old %*% t(u_old)) %*% u_old %*% x %*% b
+
+    u_new <- NULL
+    for (i in 1:c) {
+      d <- t(b) %*% (t(x) - b %*% t(v) %*% u_old)
+      u <- 1 / colSums(((rep(1, c) %*% t(v[i, ]) %*% d) /
+                          (v %*% d))**(1 / (m - 1)))
+      u_new <- rbind(u_new, u)
+    }
+  }
+
+  return(u_new)
+}
+
 fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = 3) {
   # initialise number of data points
   n <- nrow(df)

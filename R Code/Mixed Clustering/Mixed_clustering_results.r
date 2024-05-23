@@ -4,10 +4,10 @@ library("Rtsne")
 
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
-
 ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
-
-ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
+ml100k_feat_b <- read.csv("M4R_Clustering/Data/ml100k_feat_b.csv")
+ml100k_feat_c <- read.csv("M4R_Clustering/Data/ml100k_feat_c.csv")
+ml100k_feat_d <- read.csv("M4R_Clustering/Data/ml100k_feat_d.csv")
 
 # call functions
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
@@ -19,8 +19,8 @@ source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering.r")
 krange <- seq(from = 10, to = 300, by = 10)
 
 # find optimal number of principal components to retain for FAMD
-ml100k_dem_pca <- famd(ml100k_dem, 2, TRUE, FALSE, TRUE, 22)
-var <- ml100k_dem_pca[, 2]
+user_pcs <- famd(ml100k_dem, 2, TRUE, 22)
+var <- user_pcs$variance[, 2]
 plot(var, pch = 16, col = hue_pal()(2)[1], xlab = "Principal components",
      cex = 1.5, ylab = "Explained variance")
 abline(h = 4.545455, lty = 2, col = hue_pal()(2)[1])

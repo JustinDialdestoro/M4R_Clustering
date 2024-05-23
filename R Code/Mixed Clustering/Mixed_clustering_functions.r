@@ -45,25 +45,26 @@ gow_df <- function(df, user = TRUE) {
     df$runtime <- range_normalise(df$runtime)
 
     # factorise nominal variables
-    df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
+    df[5:23] <- lapply(df[5:23], as.factor)
+
   }
   return(df)
 }
 
-gow_pam <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset B
+gow_pam <- function(df, k, user = TRUE) {
   # transform data
   df <- gow_df(df, user)
 
   # gower dissimilarity matrix
   dsim <- daisy(df, metric = "gower")
 
-  if (obj == TRUE) {
-    return(pam(dsim, k = k)$objective[2])
-  } else {
-    return(pam(dsim, k = k)$clustering)
-  }
+  out <- pam(dsim, k = k)
+
+  return(list(full = out, clusters = out$clustering, loss = out$objective[2],
+              centroids = df[out$medoids, ]))
 }
 
 hl_df <- function(df, user = TRUE) {
@@ -99,50 +100,24 @@ hl_df <- function(df, user = TRUE) {
 
     # compute scaling factor for genre
     genre_fac <- distancefactor(19, n_i)
-    df[6:24] <- df[6:24] * genre_fac
+    df[3:21] <- df[3:21] * genre_fac
 
-    # dummy code title type
-    df <- dummy_cols(df, select_columns = "titleType")
-    # compute scaling factor
-    n_type <- length(unique(df$titleType))
-    df$titleType <- NULL
-    type_fac <- distancefactor(n_type, n_i)
-    # scale title type variable
-    df[24:29] <- df[24:29] * type_fac
-
-    # dummy code director
-    df <- dummy_cols(df, select_columns = "director")
-    # compute scaling factor
-    n_dir <- length(unique(df$director))
-    df$director <- NULL
-    dir_fac <- distancefactor(n_dir, n_i)
-    # scale director variable
-    df[29:59] <- df[29:59] * dir_fac
-
-    # dummy code writer
-    df <- dummy_cols(df, select_columns = "writer")
-    # compute scaling factor
-    n_wri <- length(unique(df$writer))
-    df$writer <- NULL
-    wri_fac <- distancefactor(n_wri, n_i)
-    # scale writer variable
-    df[59:84] <- df[59:84] * wri_fac
   }
   return(df)
 }
 
-hl_pam <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset D
+hl_pam <- function(df, k, user = TRUE) {
   # transform data
   df <- hl_df(df, user)
 
   # euclidean dissimilarity matrix
   dsim <- daisy(df, metric = "euclidean")
 
-  if (obj == TRUE) {
-    return(pam(dsim, k = k)$objective[2])
-  } else {
-    return(pam(dsim, k = k)$clustering)
-  }
+  out <- pam(dsim, k = k)
+
+  return(list(full = out, clusters = out$clustering, loss = out$objective[2],
+              centroids = df[out$medoids, ]))
 }
 
 kproto_df <- function(df, user = TRUE) {
@@ -158,26 +133,27 @@ kproto_df <- function(df, user = TRUE) {
 
   } else {
     # factorise categorical variables
-    df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
+    df[5:23] <- lapply(df[5:23], as.factor)
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)
     df$runtime <- unit_var_normalise(df$runtime)
+
   }
   return(df)
 }
 
-kprototypes <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset B
+kprototypes <- function(df, k, user = TRUE) {
   # transform data
   df <- kproto_df(df, user)
+  lambda <- lambdaest(df)
 
-  if (obj == TRUE) {
-    return(kproto(df, k)$tot.withinss)
-  } else {
-    return(kproto(df, k)$cluster)
-  }
+  out <- kproto(df, k, lambda)
+  return(list(full = out, clusters = out$cluster, loss = out$tot.withinss,
+              centroids = out$centers))
 }
 
 mixed_k_df <- function(df, user = TRUE) {
@@ -193,39 +169,38 @@ mixed_k_df <- function(df, user = TRUE) {
 
   } else {
     # factorise categorical variables
-    df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
+    df$genre <- as.factor(df$genre)
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)
     df$runtime <- unit_var_normalise(df$runtime)
+
   }
   return(df)
 }
 
-mixed_k <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset C
+mixed_k <- function(df, k, user = TRUE) {
   # transform data
-  df <- mixed_k(df, user)
+  df <- mixed_k_df(df, user)
 
   if (user == TRUE) {
     dist <- distmix(df, method = "ahmad", idnum = 1, idbin = 2, idcat = 3)
 
   } else {
-    dist <- distmix(df, method = "ahmad",
-                    idnum = 2:3, idbin = 6:24, idcat = c(1, 4, 5))
+    dist <- distmix(df, method = "ahmad", idnum = 1:2, idcat = 3:5)
   }
 
-  if (obj == TRUE) {
-    clust <- fastkmed(dist, k)
-    withinss <- 0
-    for (i in 1:k) {
-      withinss <- withinss + sum(dist[clust$cluster == i, clust$medoid[i]])
-    }
-    return(withinss)
-  } else {
-    return(fastkmed(dist, k)$cluster)
+  out <- fastkmed(dist, k)
+  withinss <- 0
+  for (i in 1:k) {
+    withinss <- withinss + sum(dist[out$cluster == i, out$medoid[i]])
   }
+
+  return(list(full = out, clusters = out$cluster, loss = withinss,
+              centroids = df[out$medoid, ]))
 }
 
 mskmeans_df <- function(df, user = TRUE) {
@@ -248,42 +223,27 @@ mskmeans_df <- function(df, user = TRUE) {
     df$year <- unit_var_normalise(df$year)
     df$runtime <- unit_var_normalise(df$runtime)
 
-    # dummy code title type
-    df <- dummy_cols(df, select_columns = "titleType")
-    df$titleType <- NULL
-
-    # dummy code director type
-    df <- dummy_cols(df, select_columns = "director")
-    df$director <- NULL
-
-    # dummy code writer type
-    df <- dummy_cols(df, select_columns = "writer")
-    df$writer <- NULL
-
     # normalise categorical variables
-    df[3:84] <- df[3:84] / rowSums(df[3:84])
+    df[3:24] <- df[3:21] / rowSums(df[3:21])
   }
   return(df)
 }
 
-mskmeans <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset D
+mskmeans <- function(df, k, user = TRUE) {
   # transform data
   df <- mskmeans_df(df, user)
 
   if (user == TRUE) {
-    if (obj == TRUE) {
-      return(gmsClust(df[1:2], df[3:24], k)$results$tot.withinss)
-    } else {
-      return(gmsClust(df[1:2], df[3:24], k)$results$cluster)
-    }
-
+    out <- gmsClust(df[1:2], df[3:24], k)
   } else {
-    if (obj == TRUE) {
-      return(gmsClust(df[c(1, 2)], df[3:84], k)$results$tot.withinss)
-    } else {
-      return(gmsClust(df[c(1, 2)], df[3:84], k)$results$cluster)
-    }
+    out <- gmsClust(df[1:2], df[3:21], k)
   }
+  results <- out$results
+
+  return(list(full = out, clusters = results$cluster,
+              loss = results$tot.withinss,
+              centroids = cbind(results$conCenters, results$catCenters)))
 }
 
 famd_df <- function(df, user = TRUE) {
@@ -297,9 +257,7 @@ famd_df <- function(df, user = TRUE) {
 
   } else {
     # factorise categorical variables
-    df$titleType <- as.factor(df$titleType)
-    df$director <- as.factor(df$director)
-    df$writer <- as.factor(df$writer)
+    df[3:21] <- lapply(df[3:21], as.factor)
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)
@@ -308,21 +266,17 @@ famd_df <- function(df, user = TRUE) {
   return(df)
 }
 
-famd <- function(df, k, user = TRUE, obj = FALSE, var = FALSE, p = 3) {
+# dataset D
+famd <- function(df, k, user = TRUE, p = k) {
   # transform data
   df <- famd_df(df, user)
-
+  # conduct PCA step
   pca <- FAMD(df, p, graph = FALSE)
 
-  if (var == TRUE) {
-    return(pca$eig)
-  }
+  out <- kmeans(pca$ind$coord, k)
 
-  if (obj == TRUE) {
-    return(kmeans(pca$ind$coord, k)$tot.withinss)
-  } else {
-    return(kmeans(pca$ind$coord, k)$cluster)
-  }
+  return(list(full = out, clusters = out$cluster, loss = out$tot.withinss,
+              centroids = out$centers, variance = pca$eig))
 }
 
 mrkmeans_df <- function(df, user = TRUE) {
@@ -339,34 +293,27 @@ mrkmeans_df <- function(df, user = TRUE) {
     }
 
   } else {
-    # dummy code title type
-    df <- dummy_cols(df, select_columns = "titleType")
-    df$titleType <- NULL
+    # variance normalise continuous variables
+    df$year <- unit_var_normalise(df$year)
+    df$runtime <- unit_var_normalise(df$runtime)
 
-    # dummy code director type
-    df <- dummy_cols(df, select_columns = "director")
-    df$director <- NULL
-
-    # dummy code writer type
-    df <- dummy_cols(df, select_columns = "writer")
-    df$writer <- NULL
-
-    for (i in 1:ncol(df)) { # nolint
-      df[, i] <- unit_var_normalise(df[, i])
+    # variance normalise categorical variables
+    for (i in 3:21) { # nolint
+      df[, i] <- (df[, i] - mean(df[, i])) / sqrt(sum(df[, i]))
     }
   }
   return(df)
 }
 
-mrkmeans <- function(df, k, user = TRUE, obj = FALSE, p = 3) {
+# dataset D
+mrkmeans <- function(df, k, user = TRUE, p = k - 1) {
   # transform data
   df <- mrkmeans_df(df, user)
 
-  if (obj == TRUE) {
-    return(cluspca(df, k, p)$criterion)
-  } else {
-    return(cluspca(df, k, p)$cluster)
-  }
+  out <- cluspca(df, k, p)
+
+  return(list(full = out, clusters = out$cluster, loss = out$criterion,
+              centroids = out$centroid))
 }
 
 kamila_df <- function(df, user = TRUE) {
@@ -380,32 +327,29 @@ kamila_df <- function(df, user = TRUE) {
 
   } else {
     # factorise categorical variables
-    df$titleType <- as.factor(df$titleType)
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
+    df[5:23] <- lapply(df[5:23], as.factor)
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)
     df$runtime <- unit_var_normalise(df$runtime)
+
   }
   return(df)
 }
 
-kamila_clust <- function(df, k, user = TRUE, obj = FALSE) {
+# dataset B
+kamila_clust <- function(df, k, user = TRUE) {
   # transform data
   df <- kamila_df(df, user)
 
   if (user == TRUE) {
-    if (obj == TRUE) {
-      return(kamila(df[1], df[2:3], k, 10)$finalObj)
-    } else{
-      return(kamila(df[1], df[2:3], k, 10)$finalMemb)
-    }
+    out <- kamila(df[1], df[2:3], k, 10)
   } else {
-    if (obj == TRUE) {
-      return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalObj)
-    } else {
-      return(kamila(df[c(2, 3, 6:24)], df[c(1, 4, 5)], k, 10)$finalMemb)
-    }
+    out <- kamila(df[c(1, 2)], df[c(5:23)], k, 10)
   }
+
+  return(list(clusters = out$finalMemb, loss = out$finalObj,
+              centroids = out$finalCenters))
 }

@@ -176,3 +176,40 @@ ml100k_full_feat$runtime[ind_na] <-
 # write new item features data into file
 write.csv(ml100k_full_feat, file = "M4R_Clustering/Data/ml100k_feat_b.csv",
           row.names = FALSE)
+
+# new genre variable
+ml100k_full_feat[, "genre"] <- NA
+# get all genre names
+genres <- names(ml100k_full_feat[5:23])
+# tally up all genre counts
+genre_count <- colSums(ml100k_full_feat[5:23])
+
+for (i in 1:nrow(ml100k_full_feat)) { # nolint
+  # find which genres are labelled
+  genre_ind <- which(ml100k_full_feat[i, 5:23] == 1)
+  # find least common genre
+  least <- min(genre_count[genre_ind])
+  # set genre to the least common genre
+  ml100k_full_feat$genre[i] <- genres[which(genre_count == least)]
+}
+
+# remove genre binary variables
+ml100k_feat_c <- ml100k_full_feat
+ml100k_feat_c[5:23] <- NULL
+
+# write new item features data into file
+write.csv(ml100k_feat_c, file = "M4R_Clustering/Data/ml100k_feat_c.csv",
+          row.names = FALSE)
+
+# remove genre binary variables
+ml100k_feat_d <- ml100k_full_feat
+# remove director variable
+ml100k_feat_d$director <- NULL
+# remove writer variable
+ml100k_feat_d$writer <- NULL
+# remove genre variable
+ml100k_feat_d$genre <- NULL
+
+# write new item features data into file
+write.csv(ml100k_feat_d, file = "M4R_Clustering/Data/ml100k_feat_d.csv",
+          row.names = FALSE)

@@ -3,6 +3,8 @@ ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
 ml100k_feat <- read.csv("M4R_Clustering/Data/ml100k_feat_a.csv")
 ml100k_feat_b <- read.csv("M4R_Clustering/Data/ml100k_feat_b.csv")
+ml100k_feat_c <- read.csv("M4R_Clustering/Data/ml100k_feat_c.csv")
+ml100k_feat_d <- read.csv("M4R_Clustering/Data/ml100k_feat_d.csv")
 
 # call functions
 source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")

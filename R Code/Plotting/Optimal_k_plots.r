@@ -1,3 +1,6 @@
+# load packages
+library("scales")
+
 loc <- "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_obj_u.csv"
 mclust_obj_u <- read.csv(loc)
 

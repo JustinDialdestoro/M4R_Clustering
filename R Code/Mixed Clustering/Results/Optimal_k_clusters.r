@@ -19,8 +19,8 @@ mrk_obj_u <- best_n(ml100k_dem, 2:15, mrkmeans)
 kam_obj_u <- best_n(ml100k_dem, 2:15, kamila_clust)
 
 # write results into a file
-mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, full1, full2, full3,
-                      famd_obj_u, full4, full5)
+mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, kproto_obj_u, mk_obj_u, msk_obj_i,
+                      famd_obj_u, mrk_obj_u, kam_obj_u)
 colnames(mclust_obj_u) <- c("gow", "hl", "kproto", "mk",
                             "msk", "famd", "mrk", "kam")
 loc <- "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_obj_u.csv"

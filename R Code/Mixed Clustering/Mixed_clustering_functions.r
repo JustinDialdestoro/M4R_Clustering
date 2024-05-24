@@ -56,7 +56,7 @@ gow_df <- function(df, user = TRUE) {
 # dataset B
 gow_pam <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- gow_df(df, user)
@@ -112,7 +112,7 @@ hl_df <- function(df, user = TRUE) {
 # dataset D
 hl_pam <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- hl_df(df, user)
@@ -154,7 +154,7 @@ kproto_df <- function(df, user = TRUE) {
 # dataset B
 kprototypes <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- kproto_df(df, user)
@@ -193,7 +193,7 @@ mixed_k_df <- function(df, user = TRUE) {
 # dataset C
 mixed_k <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- mixed_k_df(df, user)
@@ -244,7 +244,7 @@ mskmeans_df <- function(df, user = TRUE) {
 # dataset D
 mskmeans <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- mskmeans_df(df, user)
@@ -284,7 +284,7 @@ famd_df <- function(df, user = TRUE) {
 # dataset D
 famd <- function(df, k, user = TRUE, p = k - 1) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- famd_df(df, user)
@@ -326,7 +326,7 @@ mrkmeans_df <- function(df, user = TRUE) {
 # dataset D
 mrkmeans <- function(df, k, user = TRUE, p = k - 1) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- mrkmeans_df(df, user)
@@ -363,7 +363,7 @@ kamila_df <- function(df, user = TRUE) {
 # dataset B
 kamila_clust <- function(df, k, user = TRUE) {
   # set seed
-  set.seed(0)
+  set.seed(01848521)
 
   # transform data
   df <- kamila_df(df, user)

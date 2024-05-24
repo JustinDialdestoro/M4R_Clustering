@@ -3,10 +3,41 @@ library("scales")
 library("Rtsne")
 
 # read in the data
+ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
 ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
 ml100k_feat_b <- read.csv("M4R_Clustering/Data/ml100k_feat_b.csv")
 ml100k_feat_c <- read.csv("M4R_Clustering/Data/ml100k_feat_c.csv")
 ml100k_feat_d <- read.csv("M4R_Clustering/Data/ml100k_feat_d.csv")
+
+# call functions
+source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
+source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
+source("M4R_Clustering/R Code/Clustering/Rating_clustering.r")
+
+# create user item matrix
+ui <- gen_ui_matrix(ml100k, ml100k)
+
+# cluster users
+clust_labels <- rating_clust(ui, 6)
+# generate TSNE points using appropriate similarity
+sim <- gen_euc_sim(ui)
+sim[is.na(sim)] <- 0
+# TSNE plot
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(6)[clust_labels], 0.4))
+
+# cluster items
+clust_labels <- rating_clust(ui, 5, FALSE)
+# generate TSNE points using appropriate similarity
+sim <- gen_euc_sim(ui, FALSE)
+sim[is.na(sim)] <- 0
+# TSNE plot
+tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
+              is.distance = TRUE)
+plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
+     ylab = "Second dimension", col = alpha(hue_pal()(5)[clust_labels], 0.4))
 
 # cluster users
 clust_labels_u <- rep(c(), 8)
@@ -27,8 +58,8 @@ ml100k_dem$gender <- NULL
 ml100k_dem <- dummy_cols(ml100k_dem, select_columns = "occupation")
 ml100k_dem$occupation <- NULL
 
-tsne <- Rtsne(as.matrix(ml100k_dem), check_duplicates = FALSE)
 # TSNE plots
+tsne <- Rtsne(as.matrix(ml100k_dem), check_duplicates = FALSE)
 for (i in 1:8) {
   plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
        ylab = "Second dimension",
@@ -50,8 +81,8 @@ clust_labels_i[[8]] <- kamila_clust(ml100k_feat_b, 5, FALSE)
 ml100k_feat_d$year <- unit_var_normalise(ml100k_feat_d$year)
 ml100k_feat_d$runtime <- unit_var_normalise(ml100k_feat_d$runtime)
 
-tsne <- Rtsne(as.matrix(ml100k_feat_d), check_duplicates = FALSE)
 # TSNE plots
+tsne <- Rtsne(as.matrix(ml100k_feat_d), check_duplicates = FALSE)
 for (i in 1:8) {
   plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
        ylab = "Second dimension",

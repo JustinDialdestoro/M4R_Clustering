@@ -8,7 +8,7 @@ best_n <- function(df, n_range, clust_func, user = TRUE) {
   # loop over each n clusters
   for (i in seq_along(n_range)) {
     print(paste("Computing objective for", n_range[i], "clusters"))
-    scores[i] <- scores[i] + clust_func(df, n_range[i], user, TRUE)
+    scores[i] <- scores[i] + clust_func(df, n_range[i], user)$loss
   }
   return(scores)
 }

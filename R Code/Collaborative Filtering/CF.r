@@ -1,5 +1,5 @@
 t_fold_index <- function(df, t, user = TRUE) {
-  set.seed(1)
+  set.seed(01848521)
   # empty vector to contain each fold
   fold_ind <- replicate(t, c())
 

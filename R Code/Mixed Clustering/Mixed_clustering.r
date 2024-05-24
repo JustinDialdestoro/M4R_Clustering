@@ -2,14 +2,23 @@ source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
 
-best_n <- function(df, n_range, clust_func, user = TRUE) {
+best_n <- function(df, n_range, clust_func, user = TRUE, p = FALSE) {
   scores <- rep(0, length(n_range))
 
-  # loop over each n clusters
-  for (i in seq_along(n_range)) {
-    print(paste("Computing objective for", n_range[i], "clusters"))
-    scores[i] <- scores[i] + clust_func(df, n_range[i], user)$loss
+  if (p == FALSE) {
+    # loop over each n clusters
+    for (i in seq_along(n_range)) {
+      print(paste("Computing objective for", n_range[i], "clusters"))
+      scores[i] <- scores[i] + clust_func(df, n_range[i], user)$loss
+    }
+  } else {
+    # loop over each n clusters
+    for (i in seq_along(n_range)) {
+      print(paste("Computing objective for", n_range[i], "clusters"))
+      scores[i] <- scores[i] + clust_func(df, n_range[i], user, p)$loss
+    }
   }
+
   return(scores)
 }
 
@@ -21,7 +30,7 @@ cval_mixed_clust <- function(df, df_feat, t, n, k_range, metric, pred_func,
                        offline = rep(0, t), online = rep(0, nk))
 
   # t-fold creation
-  cval_f_i <- t_fold_index(df, t) # nolint
+  cval_f_i <- t_fold_index(df, t, user) # nolint
   cval_f <- t_fold(df, cval_f_i) # nolint
 
   # loop over each fold

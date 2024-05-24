@@ -14,8 +14,8 @@ hl_obj_u <- best_n(ml100k_dem, 2:15, hl_pam)
 kproto_obj_u <- best_n(ml100k_dem, 2:15, kprototypes)
 mk_obj_u <- best_n(ml100k_dem, 2:15, mixed_k)
 msk_obj_u <- best_n(ml100k_dem, 2:15, mskmeans)
-famd_obj_u <- best_n(ml100k_dem, 2:15, famd)
-mrk_obj_u <- best_n(ml100k_dem, 2:15, mrkmeans)
+famd_obj_u <- best_n(ml100k_dem, 2:15, famd, TRUE, 3)
+mrk_obj_u <- best_n(ml100k_dem, 2:15, mrkmeans, TRUE, 3)
 kam_obj_u <- best_n(ml100k_dem, 2:15, kamila_clust)
 
 # write results into a file
@@ -32,8 +32,8 @@ hl_obj_i <- best_n(ml100k_feat_d, 2:15, hl_pam, FALSE)
 kproto_obj_i <- best_n(ml100k_feat_b, 2:15, kprototypes, FALSE)
 mk_obj_i <- best_n(ml100k_feat_c, 2:15, mixed_k, FALSE)
 msk_obj_i <- best_n(ml100k_feat_d, 2:15, mskmeans, FALSE)
-famd_obj_i <- best_n(ml100k_feat_d, 2:15, famd, FALSE)
-mrk_obj_i <- best_n(ml100k_feat_d, 2:15, mrkmeans, FALSE)
+famd_obj_i <- best_n(ml100k_feat_d, 2:15, famd, FALSE, 8)
+mrk_obj_i <- best_n(ml100k_feat_d, 2:15, mrkmeans, FALSE, 8)
 kam_obj_i <- best_n(ml100k_feat_b, 2:15, kamila_clust, FALSE)
 
 # write results into a file

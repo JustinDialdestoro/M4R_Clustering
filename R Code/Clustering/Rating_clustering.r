@@ -4,7 +4,7 @@ source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
 rating_clust <- function(ui, n, user = TRUE) {
-  set.seed(1)
+  set.seed(01848521)
 
   if (user == TRUE) {
     # choose n random points
@@ -49,7 +49,7 @@ rating_clust <- function(ui, n, user = TRUE) {
         break
       }
     }
-    return(new_labels)
+
   } else {
     # choose n random points
     ni <- ncol(ui)
@@ -93,8 +93,9 @@ rating_clust <- function(ui, n, user = TRUE) {
         break
       }
     }
-    return(new_labels)
   }
+
+  return(new_labels)
 }
 
 best_n <- function(ui, n_range, user = TRUE) {
@@ -134,7 +135,7 @@ cval_clust <- function(df, t, n, k_range, metric, pred_func, user = TRUE) {
                        offline = rep(0, t), online = rep(0, nk))
 
   # t-fold creation
-  cval_f_i <- t_fold_index(df, t) # nolint
+  cval_f_i <- t_fold_index(df, t, user) # nolint
   cval_f <- t_fold(df, cval_f_i) # nolint
 
   # loop over each fold

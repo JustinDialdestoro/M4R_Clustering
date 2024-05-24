@@ -1,11 +1,24 @@
-t_fold_index <- function(df, t) {
+t_fold_index <- function(df, t, user = TRUE) {
   set.seed(1)
   # empty vector to contain each fold
   fold_ind <- replicate(t, c())
+
+  # set ids to users or films
+  if (user == TRUE) {
+    ids <- df$userID
+  } else {
+    ids <- df$filmID
+  }
+
   # iterate through each unique user id to partition each users rating evenly
-  for (i in unique(df$userID)) {
+  for (i in unique(ids)) {
     # find the indices of user i's ratings and permute them
-    i_perm <- sample(which(df$userID == i))
+    id_i <- which(ids == i)
+    if (length(id_i) > 1) {
+      i_perm <- sample(id_i)
+    } else {
+      i_perm <- id_i
+    }
 
     # number of ratings in each fold
     n <- length(i_perm)
@@ -13,16 +26,21 @@ t_fold_index <- function(df, t) {
     r <- n %% t
 
     # add the partitioned indices into each fold
-    for (j in 1:t) {
-      fold_ind[[j]] <- c(fold_ind[[j]], i_perm[((j - 1) * k + 1):(j * k)])
+    if (k > 0) {
+      for (j in 1:t) {
+        fold_ind[[j]] <- c(fold_ind[[j]], i_perm[((j - 1) * k + 1):(j * k)])
+      }
     }
 
     # randomly assign remaining indices (from division) to a fold
     if (r > 0) {
-      f <- sample(1:t, 1)
-      fold_ind[[f]] <- c(fold_ind[[f]], i_perm[(t * k + 1):length(i_perm)])
+      for (l in 1:r) {
+        f <- sample(1:t, 1)
+        fold_ind[[f]] <- c(fold_ind[[f]], i_perm[t * k + l])
+      }
     }
   }
+
   return(fold_ind)
 }
 
@@ -95,7 +113,7 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
                        offline = rep(0, t), online = rep(0, n))
 
   # t-fold creation
-  cval_f_i <- t_fold_index(df, t)
+  cval_f_i <- t_fold_index(df, t, user)
   cval_f <- t_fold(df, cval_f_i)
 
   # loop over each fold

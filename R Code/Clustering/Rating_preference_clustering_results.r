@@ -29,7 +29,7 @@ for (b in beta_range) {
 
 # write beta comparison results into file
 write.csv(beta_acos, file =
-            "M4R_Clustering/Results/Rating clustering/One-sided/beta_acos.csv",
+            "M4R_Clustering/Results/Rating clustering/Crisp/beta_acos.csv",
           row.names = FALSE)
 
 ymax <- max(beta_acos$rmse)
@@ -129,7 +129,7 @@ pref_clust_acos <- cbind(predictor = c(rep("weighted sum", n),
 
 # write user preference clustering results into file
 write.csv(pref_clust_acos,
-          file = paste("M4R_Clustering/Results/Rating clustering/One-sided/",
+          file = paste("M4R_Clustering/Results/Rating clustering/Crisp/",
                        "pref_clust_acos.csv", sep = ""),
           row.names = FALSE)
 
@@ -259,7 +259,7 @@ for (b in beta_range) {
 
 # write beta comparison results into file
 write.csv(beta_ups, file =
-            "M4R_Clustering/Results/Rating clustering/One-sided/beta_ups.csv",
+            "M4R_Clustering/Results/Rating clustering/Crisp/beta_ups.csv",
           row.names = FALSE)
 
 ymax <- max(beta_ups$rmse)
@@ -357,7 +357,7 @@ pref_clust_ups <- cbind(predictor = c(rep("weighted sum", n),
 
 # write user preference clustering results into file
 write.csv(pref_clust_ups,
-          file = paste("M4R_Clustering/Results/Rating clustering/One-sided/",
+          file = paste("M4R_Clustering/Results/Rating clustering/Crisp/",
                        "pref_clust_ups.csv", sep = ""),
           row.names = FALSE)
 

@@ -19,7 +19,7 @@ n_range <- 2:15
 # user within cluster sum of squares
 clust_obj_u <- best_n(ui, n_range)
 write.csv(clust_obj_u,
-          "M4R_Clustering/Results/Rating clustering/One-sided/clust_obj_u.csv",
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_obj_u.csv",
           row.names = FALSE)
 plot(n_range, clust_obj_u, lty = 1, type = "l", lwd = 2,
      col = hue_pal()(2)[1], xlab = "n clusters",
@@ -39,14 +39,14 @@ plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
 # evaluate performance over a k range
 clust_u <- cval_clust(ml100k, 10, 6, krange, gen_acos_sim, mean_centered)
 write.csv(clust_u,
-          "M4R_Clustering/Results/Rating clustering/One-sided/clust_u.csv",
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_u.csv",
           row.names = FALSE)
 
 # load unclustered performance results
 loc <- "M4R_Clustering/Results/Collaborative Filtering/pred_ups.csv"
 pred_ups <- read.csv(loc)
 noclust_u <- pred_ups[pred_ups$predictor == "mean centred", ][2:6]
-loc <- "M4R_Clustering/Results/Rating clustering/One-sided/pref_clust_ups.csv"
+loc <- "M4R_Clustering/Results/Rating clustering/Crisp/pref_clust_ups.csv"
 pref_clust_ups <- read.csv(loc)
 pref_clust_u <- pref_clust_ups[pref_clust_ups$predictor ==
                                  "mean centred", ][2:6]
@@ -121,7 +121,7 @@ legend("bottom",
 # item within cluster sum of squares
 clust_obj_i <- best_n(ui, n_range, FALSE)
 write.csv(clust_obj_i,
-          "M4R_Clustering/Results/Rating clustering/One-sided/clust_obj_i.csv",
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_obj_i.csv",
           row.names = FALSE)
 plot(n_range, clust_obj_i, lty = 1, type = "l", lwd = 2,
      col = hue_pal()(2)[1], xlab = "n clusters",
@@ -141,7 +141,7 @@ plot(tsne$Y[, 1], tsne$Y[, 2], pch = 19, xlab = "First dimension",
 # evaluate performance over a k range
 clust_i <- cval_clust(ml100k, 10, 5, krange, gen_ups_sim, mean_centered, FALSE)
 write.csv(clust_i,
-          "M4R_Clustering/Results/Rating clustering/One-sided/clust_i.csv",
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_i.csv",
           row.names = FALSE)
 
 # load unclustered performance results

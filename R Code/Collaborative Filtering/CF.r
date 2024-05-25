@@ -82,7 +82,7 @@ pred_fold <- function(df, df_ind, ui, sim, pred_func, k, user = TRUE) {
     filmid <- df$filmID[p]
 
     # prediction
-    preds <- c(preds, pred_func(df, ui, sim, k, userid, filmid, user))
+    preds <- c(preds, pred_func(ui, sim, k, userid, filmid, user))
   }
   return(preds)
 }

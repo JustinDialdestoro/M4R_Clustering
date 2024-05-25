@@ -1,7 +1,6 @@
 library("cluster")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
-source("M4R_Clustering/R Code/Clustering/Rating_preference_clustering.r")
 
 rating_clust <- function(ui, n, user = TRUE) {
   set.seed(01848521)
@@ -128,6 +127,45 @@ best_n <- function(ui, n_range, user = TRUE) {
   return(withinss)
 }
 
+pred_fold_clust <- function(df, df_ind, uis, sims,
+                            pred_func, k, clusters, user = TRUE) {
+  preds <- c()
+
+  if (user == TRUE) {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
+
+      # find users cluster
+      c <- clusters[userid]
+      # within cluster user index
+      userind <- which(which(clusters == c) == userid)
+
+      # prediction
+      preds <- c(preds, pred_func(uis[[c]], sims[[c]], k, userind, filmid))
+    }
+  } else {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
+
+      # find films cluster
+      c <- clusters[filmid]
+      # within cluster film index
+      filmind <- which(which(clusters == c) == filmid)
+
+      # prediction
+      preds <- c(preds, pred_func(uis[[c]], sims[[c]], k, userid,
+                                  filmind, user))
+    }
+  }
+  return(preds)
+}
+
 cval_clust <- function(df, t, n, k_range, metric, pred_func, user = TRUE) {
   nk <- length(k_range)
   # initial scores table
@@ -193,5 +231,129 @@ cval_clust <- function(df, t, n, k_range, metric, pred_func, user = TRUE) {
     }
   }
   scores[c(1:3, 5)] <- scores[c(1:3, 5)] / t
+  return(scores)
+}
+
+pred_fold_clust_whole <- function(df, df_ind, uis, pred_func, clusters,
+                                  sims, user = TRUE) {
+  preds <- c()
+
+  if (user == TRUE) {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
+
+      # find users cluster
+      c <- clusters[userid]
+      # within cluster user index
+      userind <- which(which(clusters == c) == userid)
+
+      if (is.list(sims)) {
+        # prediction
+        preds <- c(preds, pred_func(uis[[c]], userind, filmid, sims[[c]]))
+      } else {
+        # prediction
+        preds <- c(preds, pred_func(uis[[c]], userind, filmid))
+      }
+    }
+
+  } else {
+    # compute rating prediction for every test case
+    for (p in df_ind) {
+      # target prediction id
+      userid <- df$userID[p]
+      filmid <- df$filmID[p]
+
+      # find films cluster
+      c <- clusters[filmid]
+      # within cluster user index
+      filmind <- which(which(clusters == c) == filmid)
+
+      if (is.list(sims)) {
+        # prediction
+        preds <- c(preds, pred_func(uis[[c]], userid, filmind, sims[[c]], user))
+      } else {
+        # prediction
+        preds <- c(preds, pred_func(uis[[c]], userid, filmind, user))
+      }
+    }
+  }
+  return(preds)
+}
+
+cval_clust_pred <- function(df, t, n_range, metric, pred_func, sim = TRUE,
+                            user = TRUE) {
+  nn <- length(n_range)
+  # initial scores table
+  scores <- data.frame(rmse = rep(0, nn), mae = rep(0, nn), r2 = rep(0, nn),
+                       offline = rep(0, nn), online = rep(0, nn))
+
+  # t-fold creation
+  cval_f_i <- t_fold_index(df, t, user) # nolint
+  cval_f <- t_fold(df, cval_f_i) # nolint
+
+  # loop over each fold
+  for (n in 1:length(n_range)) {
+    print(paste("Testing with", n_range[n], "clusters:"))
+
+    for (i in 1:t) {
+      print(paste("Offline phase for fold", i, ":"))
+      t1 <- Sys.time()
+
+      # ui and similarity matrix
+      ui <- gen_ui_matrix(df, cval_f[[i]]) # nolint
+
+      # create user clusters
+      clusters <- rating_clust(ui, n_range[n], user)
+
+      # segment user ratings matrix into the n clusters
+      uis <- replicate(n, c())
+
+      if (user == TRUE) {
+        for (j in 1:n_range[n]) {
+          uis[[j]] <- ui[which(clusters == j), ]
+        }
+      } else {
+        for (j in 1:n_range[n]) {
+          uis[[j]] <- ui[, which(clusters == j)]
+        }
+      }
+
+      if (sim == TRUE) {
+        # similarity matrix for each segmented ui matrix
+        sims <- replicate(n_range[n], c())
+        for (j in 1:n_range[n]) {
+          sims[[j]] <- metric(uis[[j]], user)
+        }
+      } else {
+        sims <- NA
+      }
+
+      time <- Sys.time() - t1
+      print(time)
+      scores$offline[n] <- scores$offline[n] + time
+
+      print(paste("Online phase:"))
+      t1 <- Sys.time()
+
+      r_pred <- pred_fold_clust_whole(df, cval_f_i[[i]], uis, pred_func,
+                                      clusters, sims, user)
+
+      r_true <- df$rating[cval_f_i[[i]]]
+
+      # error metrics
+      scores$rmse[n] <- scores$rmse[n] + rmse(r_pred, r_true) # nolint
+      scores$mae[n] <- scores$mae[n] + mae(r_pred, r_true) # nolint
+      scores$r2[n] <- scores$r2[n] + r2(r_pred, r_true) # nolint
+
+      time <- Sys.time() - t1
+      print(time)
+      scores$online[n] <- scores$online[n] + time
+
+    }
+  }
+  scores <- scores / t
   return(scores)
 }

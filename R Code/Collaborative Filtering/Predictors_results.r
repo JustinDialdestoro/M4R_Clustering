@@ -14,15 +14,17 @@ krange <- seq(from = 10, to = 300, by = 10)
 n <- length(krange)
 
 # evaluate adjusted cosine predictor performance
+mean_u <- cval(ml100k, 10, krange, gen_acos_sim, average)
 wsum_u <- cval(ml100k, 10, krange,  gen_acos_sim, weighted_sum)
 mcent_u <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered)
 zscore_u <- cval(ml100k, 10, krange,  gen_acos_sim, z_score)
 disc_u <- cval(ml100k, 10, krange,  gen_acos_sim, discrete)
 
-pred_u <- rbind(wsum_u, mcent_u, zscore_u, disc_u)
+pred_u <- rbind(mean_u, wsum_u, mcent_u, zscore_u, disc_u)
 
-pred_u <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
-                              rep("z score", n), rep("discrete", n)), pred_u)
+pred_u <- cbind(predictor = c(rep("mean", n), rep("weighted sum", n),
+                              rep("mean centred", n), rep("z score", n),
+                              rep("discrete", n)), pred_u)
 
 # write user predictor results into file
 write.csv(pred_u,
@@ -30,15 +32,17 @@ write.csv(pred_u,
           row.names = FALSE)
 
 # evaluate cosine, adjusted cosine, and pcc
+mean_i <- cval(ml100k, 10, krange, gen_acos_sim, average, FALSE)
 wsum_i <- cval(ml100k, 10, krange, gen_acos_sim, weighted_sum, FALSE)
-mean_i <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered, FALSE)
+mcent_i <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered, FALSE)
 zscore_i <- cval(ml100k, 10, krange,  gen_acos_sim, z_score, FALSE)
 disc_i <- cval(ml100k, 10, krange,  gen_acos_sim, discrete, FALSE)
 
-pred_i <- rbind(wsum_i, mean_i, zscore_i, disc_i)
+pred_i <- rbind(mean_i, wsum_i, mcent_i, zscore_i, disc_i)
 
-pred_i <- cbind(predictor = c(rep("weighted sum", n), rep("mean centred", n),
-                              rep("z score", n), rep("discrete", n)), pred_i)
+pred_i <- cbind(predictor = c(rep("mean", n), rep("weighted sum", n),
+                              rep("mean centred", n), rep("z score", n),
+                              rep("discrete", n)), pred_i)
 
 # write item predictor results into file
 write.csv(pred_i,

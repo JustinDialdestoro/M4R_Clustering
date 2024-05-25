@@ -39,17 +39,17 @@ write.csv(clust_pred_u,
           "M4R_Clustering/Results/Rating clustering/Crisp/clust_pred_u.csv",
           row.names = FALSE)
 
-# # item within cluster sum of squares
-# clust_obj_i <- best_n(ui, nrange, FALSE)
-# write.csv(clust_obj_i,
-#           "M4R_Clustering/Results/Rating clustering/Crisp/clust_obj_i.csv",
-#           row.names = FALSE)
+# item within cluster sum of squares
+clust_obj_i <- best_n(ui, nrange, FALSE)
+write.csv(clust_obj_i,
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_obj_i.csv",
+          row.names = FALSE)
 
-# # evaluate performance using optimum number of clusters
-# clust_i <- cval_clust(ml100k, 10, 5, krange, gen_ups_sim, mean_centered, FALSE)
-# write.csv(clust_i,
-#           "M4R_Clustering/Results/Rating clustering/Crisp/clust_i.csv",
-#           row.names = FALSE)
+# evaluate performance using optimum number of clusters
+clust_i <- cval_clust(ml100k, 10, 5, krange, gen_ups_sim, mean_centered, FALSE)
+write.csv(clust_i,
+          "M4R_Clustering/Results/Rating clustering/Crisp/clust_i.csv",
+          row.names = FALSE)
 
 avg_clust_i <- cval_clust_pred(ml100k, 10, nrange, gen_acos_sim, average_clust,
                                FALSE, TRUE)

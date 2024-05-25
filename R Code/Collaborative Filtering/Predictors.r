@@ -15,7 +15,22 @@ find_knn <- function(ui, sim, k, userid, filmid, user = TRUE) {
   return(na.omit(neighbours))
 }
 
-weighted_sum <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
+average <- function(ui, sim, k, userid, filmid, user = TRUE) {
+  # find nearest neighbours
+  neighbours <- find_knn(ui, sim, k, userid, filmid, user)
+
+  if (user == TRUE) {
+    # compute rating prediction
+    pred <- mean(ui[neighbours, filmid], na.rm = TRUE)
+  } else {
+    # compute rating prediction
+    pred <- mean(ui[userid, neighbours], na.rm = TRUE)
+  }
+
+  return(pred)
+}
+
+weighted_sum <- function(ui, sim, k, userid, filmid, user = TRUE) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 
@@ -32,7 +47,7 @@ weighted_sum <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
   return(num / denom)
 }
 
-mean_centered <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
+mean_centered <- function(ui, sim, k, userid, filmid, user = TRUE) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 
@@ -72,7 +87,7 @@ mean_centered <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
   }
 }
 
-z_score <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
+z_score <- function(ui, sim, k, userid, filmid, user = TRUE) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 
@@ -117,7 +132,7 @@ z_score <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
   }
 }
 
-discrete <- function(df, ui, sim, k, userid, filmid, user = TRUE) {
+discrete <- function(ui, sim, k, userid, filmid, user = TRUE) {
   # find nearest neighbours
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 

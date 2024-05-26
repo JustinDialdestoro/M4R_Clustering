@@ -1,6 +1,9 @@
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
+source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")
 
-fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-5) {
+fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-3) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -56,10 +59,12 @@ fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-5) {
   # compute loss
   loss <- u_new**m %*% d[, ind]**2
 
-  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+  return(list(clusters = u_new, loss = sum(diag(loss)), centroids = v_new))
 }
 
-fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
+fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-3) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -91,7 +96,7 @@ fuzzy_hl <- function(df, c, m, user = TRUE, e = 1e-5) {
 
   # compute loss
   loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2))))
-  return(list(u = u_new, centroids = v_new, loss = sum(loss)))
+  return(list(clusters = u_new, loss = sum(loss), centroids = v_new))
 }
 
 kproto_dsim <- function(df, v, c, pr, lambda) {
@@ -110,7 +115,8 @@ kproto_dsim <- function(df, v, c, pr, lambda) {
   return(dsim_mat)
 }
 
-fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
+fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-3) { # nolint
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -122,9 +128,7 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
   if (user == TRUE) {
     pr <- 1
   } else {
-    pr <- 21
-    # swap columns to have continuous variables first
-    x <- x[, c(2, 3, 6:24, 1, 4, 5)]
+    pr <- 2
   }
 
   # initialise variable weights
@@ -200,10 +204,12 @@ fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-5) { # nolint
   # compute loss
   loss <- u_new**m %*% t(d**((m - 1) / 2))
 
-  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+  return(list(clusters = u_new, loss = sum(diag(loss)), centroids = v_new))
 }
 
-fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-5) {
+fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-3) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -216,8 +222,8 @@ fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-5) {
                            idbin = 2, idcat = 3))**(1 / (m - 1))
   } else {
     # compute gower disimilarity matrix
-    d <- as.matrix(distmix(x, method = "ahmad", idnum = 2:3, # nolint
-                           idbin = 6:24, idcat = c(1, 4, 5)))**(1 / (m - 1))
+    d <- as.matrix(distmix(x, method = "ahmad", idnum = 1:2, # nolint
+                           idcat = 3:5))**(1 / (m - 1))
   }
 
   # initalise v^(0)
@@ -266,7 +272,7 @@ fuzzy_mixed_k <- function(df, c, m, user = TRUE, e = 1e-5) {
   # compute loss
   loss <- u_new**m %*% d[, ind]**2
 
-  return(list(u = u_new, centroids = v_new, loss = sum(diag(loss))))
+  return(list(clusters = u_new, loss = sum(diag(loss)), centroids = v_new))
 }
 
 mskmeans_dsim <- function(df, v, c, pr, gamma, ratio = FALSE) {
@@ -303,8 +309,10 @@ mskmeans_dsim <- function(df, v, c, pr, gamma, ratio = FALSE) {
   }
 }
 
-fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5,
+fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-3,
                            gammas = seq(0.125, 1, 0.125)) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -345,6 +353,7 @@ fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5,
     d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
     u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
+    count <- 0
     # iterate until convergence
     while (norm(u_old - u_new, type = "F") > e) {
       u_old <- u_new
@@ -361,6 +370,11 @@ fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5,
       # update u^(l+1)
       d <- mskmeans_dsim(x, v_new, c, pr, gamma)**(1 / (m - 1))
       u_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
+
+      count <- count + 1
+      if (count > 500) {
+        break
+      }
     }
 
     # compute within cluster distortion
@@ -374,14 +388,17 @@ fuzzy_mskmeans <- function(df, c, m, user = TRUE, e = 1e-5,
 
     if (q < best_q) {
       best_q <- q
-      out <- list(u = u_new, centroids = v_new, loss = sum(gam), gamma = gamma)
+      out <- list(clusters = u_new, loss = sum(gam), centroids = v_new,
+                  gamma = gamma)
     }
   }
 
   return(out)
 }
 
-fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-5, p = 3) {
+fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-3, p = max(c - 1, 2)) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
 
@@ -414,30 +431,12 @@ fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-5, p = 3) {
   # compute loss
   loss <- sum(diag(u_new**m %*% t(d**((m - 1) / 2))))
 
-  return(list(u = u_new, centroids = v_new, loss = sum(loss)))
+  return(list(clusters = u_new, loss = sum(loss), centroids = v_new))
 }
 
-optim_uv <- function(u, b, x, c, m, e) {
-  u_new <- u
-  u_old <- 0
+fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-3, p = max(c - 1, 2)) {
+  set.seed(01848521)
 
-  while (norm(u_new - u_old, type = "F") > e) {
-    u_old <- u_new
-    v <- solve(u_old %*% t(u_old)) %*% u_old %*% x %*% b
-
-    u_new <- NULL
-    for (i in 1:c) {
-      d <- t(b) %*% (t(x) - b %*% t(v) %*% u_old)
-      u <- 1 / colSums(((rep(1, c) %*% t(v[i, ]) %*% d) /
-                          (v %*% d))**(1 / (m - 1)))
-      u_new <- rbind(u_new, u)
-    }
-  }
-
-  return(u_new)
-}
-
-fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = 3) {
   # initialise number of data points
   n <- nrow(df)
 
@@ -458,11 +457,12 @@ fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = 3) {
   b_new <- eigen(t(x) %*% p_new %*% x, symmetric = TRUE)$vectors[, 1:p]
 
   # update u^(1)
-  u_new <- fuzzy_c_means(x %*% b_new, c, m)$u**m # nolint
+  u_new <- fuzzy_c_means(x %*% b_new, c, m, e)$clusters**m # nolint
 
   # compute loss
   loss_new <- norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F")
 
+  count <- 0
   # iterate until convergence
   while (abs(loss_new - loss_old) > e) {
     u_old <- u_new
@@ -475,14 +475,20 @@ fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = 3) {
     b_new <- eigen(t(x) %*% p_new %*% x, symmetric = TRUE)$vectors[, 1:p]
 
     # update u^(l+1)
-    u_new <- fuzzy_c_means(x %*% b_new, c, m)$u**m # nolint
+    u_new <- fuzzy_c_means(x %*% b_new, c, m, e)$clusters**m # nolint
 
     # update loss
     loss_new <- norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F")
+
+    count <- count + 1
+    print(count)
+    if (count > 10) {
+      break
+    }
   }
 
   # compute final centroids
   v <- (u_new / rowSums(u_new)) %*% x %*% b_new
 
-  return(list(u = u_new**0.5, centroids = v, loss = loss_new))
+  return(list(clusters = u_new**0.5, loss = loss_new, centroids = v))
 }

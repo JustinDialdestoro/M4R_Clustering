@@ -141,7 +141,7 @@ kproto_df <- function(df, user = TRUE) {
     # factorise categorical variables
     df$director <- as.factor(df$director)
     df$writer <- as.factor(df$writer)
-    df[5:23] <- lapply(df[5:23], as.factor)
+    df$genre <- as.factor(df$genre)
 
     # variance normalise continuous variables
     df$year <- unit_var_normalise(df$year)

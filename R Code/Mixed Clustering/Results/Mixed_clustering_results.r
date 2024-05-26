@@ -67,7 +67,7 @@ mclust_avg_u <- cbind(method = c(rep("gow", 9), rep("hl", 9), rep("kproto", 9),
 
 # write user clustering predictor results into file
 write.csv(mclust_avg_u,
-          "M4R_Clustering/Results/Rating clustering/Crisp/mclust_avg_u.csv",
+          "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_avg_u.csv",
           row.names = FALSE)
 
 gow_mcent_u <- cval_mixed_clust_pred(ml100k, ml100k_dem, 10, nrange, gen_acos_sim, mean_centered_clust, gow_pam, TRUE)
@@ -89,7 +89,7 @@ mclust_mcent_u <- cbind(method = c(rep("gow", 9), rep("hl", 9),
 
 # write user clustering predictor results into file
 write.csv(mclust_mcent_u,
-          "M4R_Clustering/Results/Rating clustering/Crisp/mclust_mcent_u.csv",
+          "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_mcent_u.csv",
           row.names = FALSE)
 
 best_n <- c(3, 4, 7, 5, 6, 8, 9, 3)
@@ -140,7 +140,7 @@ mclust_avg_i <- cbind(method = c(rep("gow", 9), rep("hl", 9), rep("kproto", 9),
 
 # write user clustering predictor results into file
 write.csv(mclust_avg_i,
-          "M4R_Clustering/Results/Rating clustering/Crisp/mclust_avg_i.csv",
+          "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_avg_i.csv",
           row.names = FALSE)
 
 gow_mcent_i <- cval_mixed_clust_pred(ml100k, ml100k_feat_b, 10, nrange, gen_acos_sim, mean_centered_clust, gow_pam, TRUE, FALSE)
@@ -162,5 +162,5 @@ mclust_mcent_i <- cbind(method = c(rep("gow", 9), rep("hl", 9),
 
 # write user clustering predictor results into file
 write.csv(mclust_mcent_i,
-          "M4R_Clustering/Results/Rating clustering/Crisp/mclust_mcent_i.csv",
+          "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_mcent_i.csv",
           row.names = FALSE)

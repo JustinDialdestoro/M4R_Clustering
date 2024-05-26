@@ -63,8 +63,8 @@ mean_centered <- function(ui, sim, k, userid, filmid, user = TRUE) {
     }
 
     # compute rating prediction
-    num <- sim[neighbours, userid] %*% (ui[neighbours, filmid] - mu_v)
-    denom <- sum(abs(sim[neighbours, userid])) + 1e-9
+    num <- sim[userid, neighbours] %*% (ui[neighbours, filmid] - mu_v)
+    denom <- sum(abs(sim[userid, neighbours])) + 1e-9
 
     return(mu_u + num / denom)
 
@@ -80,8 +80,8 @@ mean_centered <- function(ui, sim, k, userid, filmid, user = TRUE) {
     }
 
     # compute rating prediction
-    num <- sim[neighbours, filmid] %*% (ui[userid, neighbours] - mu_j)
-    denom <- sum(abs(sim[neighbours, filmid])) + 1e-9
+    num <- sim[filmid, neighbours] %*% (ui[userid, neighbours] - mu_j)
+    denom <- sum(abs(sim[filmid, neighbours])) + 1e-9
 
     return(mu_i + num / denom)
   }

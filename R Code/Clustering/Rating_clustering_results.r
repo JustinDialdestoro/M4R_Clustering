@@ -46,7 +46,7 @@ write.csv(clust_obj_i,
           row.names = FALSE)
 
 # evaluate performance using optimum number of clusters
-clust_i <- cval_clust(ml100k, 10, 5, krange, gen_ups_sim, mean_centered, FALSE)
+clust_i <- cval_clust(ml100k, 10, 5, krange, gen_acos_sim, mean_centered, FALSE)
 write.csv(clust_i,
           "M4R_Clustering/Results/Rating clustering/Crisp/clust_i.csv",
           row.names = FALSE)

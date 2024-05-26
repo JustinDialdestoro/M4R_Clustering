@@ -10,7 +10,7 @@ ml100k_feat_d <- read.csv("M4R_Clustering/Data/ml100k_feat_d.csv")
 
 # call functions
 source("M4R_Clustering/R Code/Fuzzy Clustering/Mixed_fuzzy_functions.r")
-source("M4R_Clustering/R Code/Fuzzy Clustering/Mixed_fuzzy_clustering.r")
+source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/CF.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Similarities.r")
 source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")

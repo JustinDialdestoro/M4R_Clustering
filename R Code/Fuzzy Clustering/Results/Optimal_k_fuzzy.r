@@ -6,7 +6,7 @@ ml100k_feat_d <- read.csv("M4R_Clustering/Data/ml100k_feat_d.csv")
 
 # call functions
 source("M4R_Clustering/R Code/Fuzzy Clustering/Mixed_fuzzy_functions.r")
-source("M4R_Clustering/R Code/Fuzzy Clustering/Mixed_fuzzy_clustering.r")
+source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy_clustering.r")
 
 # find best number of clusters
 gow_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_gow)

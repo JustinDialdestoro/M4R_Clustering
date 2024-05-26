@@ -19,7 +19,7 @@ mrk_obj_u <- best_n(ml100k_dem, 2:15, mrkmeans, TRUE, 3)
 kam_obj_u <- best_n(ml100k_dem, 2:15, kamila_clust)
 
 # write results into a file
-mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, kproto_obj_u, mk_obj_u, msk_obj_i,
+mclust_obj_u <- cbind(gow_obj_u, hl_obj_u, kproto_obj_u, mk_obj_u, msk_obj_u,
                       famd_obj_u, mrk_obj_u, kam_obj_u)
 colnames(mclust_obj_u) <- c("gow", "hl", "kproto", "mk",
                             "msk", "famd", "mrk", "kam")

@@ -58,9 +58,9 @@ mk_i <- cval_mixed_fclust(ml100k, ml100k_feat_c, 10, 4, 2, krange, gen_acos_sim,
                           mean_centered, fuzzy_mixed_k, FALSE)
 msk_i <- cval_mixed_fclust(ml100k, ml100k_feat_d, 10, 3, 2, krange,
                            gen_acos_sim, mean_centered, fuzzy_mskmeans, FALSE)
-famd_i <- cval_mixed_fclust(ml100k, ml100k_feat_d, 10, 3, 2, krange,
+famd_i <- cval_mixed_fclust(ml100k, ml100k_feat_d, 10, 8, 2, krange,
                             gen_acos_sim, mean_centered, fuzzy_famd, FALSE)
-mrk_i <- cval_mixed_fclust(ml100k, ml100k_feat_d, 10, 11, 2, krange,
+mrk_i <- cval_mixed_fclust(ml100k, ml100k_feat_d, 10, 8, 2, krange,
                            gen_acos_sim, mean_centered, fuzzy_mrkmeans, FALSE)
 
 # write user mixed clustering results into file

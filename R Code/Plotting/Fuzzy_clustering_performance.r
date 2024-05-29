@@ -2,9 +2,9 @@
 library("scales")
 
 # read in the data
-loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_u.csv"
+loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_split_u.csv"
 fclust_u <- read.csv(loc)
-loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_i.csv"
+loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_split_i.csv"
 fclust_i <- read.csv(loc)
 loc <- "M4R_Clustering/Results/Collaborative Filtering/pred_u.csv"
 pred_u <- read.csv(loc)

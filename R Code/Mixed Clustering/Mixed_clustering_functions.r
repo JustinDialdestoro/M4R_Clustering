@@ -371,7 +371,7 @@ kamila_clust <- function(df, k, user = TRUE) {
   if (user == TRUE) {
     out <- kamila(df[1], df[2:3], k, 10)
   } else {
-    out <- kamila(df[c(1, 2)], df[c(5:23)], k, 10)
+    out <- kamila(df[c(1, 2)], df[c(3:23)], k, 10)
   }
 
   return(list(clusters = out$finalMemb, loss = out$finalObj,

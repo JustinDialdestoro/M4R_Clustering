@@ -1,4 +1,5 @@
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
+source("M4R_Clustering/R Code/Fuzzy Clustering/Fuzzy KAMILA/KAMILA.r")
 
 euc_dsim <- function(df, v, c) {
   n <- nrow(df)
@@ -571,4 +572,19 @@ fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-3, p = max(c - 1, 2)) {
   v <- (u_new / rowSums(u_new)) %*% x %*% b_new
 
   return(list(clusters = u_new**0.5, loss = loss_new, centroids = v))
+}
+
+fuzzy_kamila <- function(df, c, m, user = TRUE, e = 1e-2) {
+  set.seed(01848521)
+
+  df <- kamila_df(df, user) # nolint
+
+  if (user == TRUE) {
+    out <- new_kamila(df[c(1)], df[c(2:3)], c, 10, e = e, m = m) # nolint
+  } else {
+    out <- new_kamila(df[c(1:2)], df[c(3:23)], c, 10, e = e, m = m) # nolint
+  }
+
+  return(list(clusters = t(out$finalWeights), loss = out$finalObj,
+              mu = out$finalCenters, theta = out$finalProbs))
 }

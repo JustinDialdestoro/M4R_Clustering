@@ -1,18 +1,25 @@
-library("devtools")
 library("KernSmooth")
-# install_github("cran/KernSmooth")
 
 jointProbs <- function(catVec, weights, numClust) {
+  # get unique levels of the variable
   levels <- unique(catVec)
+  
+  # initialise probability matrix
   catProbs <- matrix(NA, numClust, length(levels))
+  
+  # loop over each level
   for (l in 1:length(levels)) {
+    # find indices of level occurences
     ind <- which(catVec == levels[l])
+    
+    # sum weights
     if (length(ind) == 1) {
       catProbs[, l] <- weights[ind, ]
     } else {
       catProbs[, l] <- colSums(weights[ind, ])
     }
   }
+
   return(catProbs / colSums(weights))
 }
 
@@ -32,9 +39,11 @@ initMeans <- function(conVar,method,numClust) {
 }
 
 wnorm <- function(x) {
+  # modified kernel function
   return(x/sqrt(2*pi)*exp(-1/2*x**2))
 }
 
+# modified kbde function from KernSmooth package
 kam_bkde <- function(x, kernel = "normal", canonical = FALSE, bandwidth,
                  gridsize = 401L, range.x, truncate = TRUE)
 {
@@ -113,6 +122,7 @@ kam_bkde <- function(x, kernel = "normal", canonical = FALSE, bandwidth,
   list(x = gpoints, y = (Re(fft(kappa*gcounts, TRUE))/P)[1L:M])
 }
 
+# utilise KernSmooth package with modified bkde function
 environment(kam_bkde) <- asNamespace('KernSmooth')
 assignInNamespace("bkde", kam_bkde, ns = "KernSmooth")
 
@@ -170,35 +180,17 @@ radialKDE <- function(radii,evalPoints,pdim,returnFun=FALSE, kernel="normal") {
   return(list(kdes=kdes,resampler=resampler))
 }
 
-dptm <- function(pts, myMeans, wgts, ppDim, kkMean, nn) {
-  .Call('_kamila_dptm', PACKAGE = 'kamila', pts, myMeans, wgts, ppDim, kkMean, nn)
-}
-
+# row maximum function from KernSmooth package
 rowMax <- function(inMat) {
   .Call('_kamila_rowMax', PACKAGE = 'kamila', inMat)
 }
 
+# row minimum function from KernSmooth package
 rowMin <- function(inMat) {
   .Call('_kamila_rowMin', PACKAGE = 'kamila', inMat)
 }
 
-rowMaxInds <- function(inMat) {
-  .Call('_kamila_rowMaxInds', PACKAGE = 'kamila', inMat)
-}
-
-sumMatList <- function(x) {
-  .Call('_kamila_sumMatList', PACKAGE = 'kamila', x)
-}
-
+# categorical log probability function from KernSmooth package
 getIndividualLogProbs <- function(catFactorNum, catWeights, logProbsCond_i) {
   .Call('_kamila_getIndividualLogProbs', PACKAGE = 'kamila', catFactorNum, catWeights, logProbsCond_i)
 }
-
-aggregateMeans <- function(conVar, membNew, kk) {
-  .Call('_kamila_aggregateMeans', PACKAGE = 'kamila', conVar, membNew, kk)
-}
-
-jointTabSmoothedList <- function(catFactorNum, membNew, numLev, catBw, kk) {
-  .Call('_kamila_jointTabSmoothedList', PACKAGE = 'kamila', catFactorNum, membNew, numLev, catBw, kk)
-}
-

@@ -14,8 +14,8 @@ hl_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_hl)
 kproto_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 1.2, fuzzy_kproto)
 mk_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_mixed_k)
 msk_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_mskmeans)
-famd_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_famd, TRUE, 4)
-mrk_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_mrkmeans, TRUE, 4)
+famd_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_famd, TRUE, 3)
+mrk_obj_u <- best_n_fuzzy(ml100k_dem, 2:15, 2, fuzzy_mrkmeans, TRUE, 3)
 
 # write results into a file
 fclust_obj_u <- cbind(gow_obj_u, hl_obj_u, kproto_obj_u, mk_obj_u, msk_obj_u,
@@ -31,8 +31,8 @@ hl_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_hl, FALSE)
 kproto_obj_i <- best_n_fuzzy(ml100k_feat_c, 2:15, 1.2, fuzzy_kproto, FALSE)
 mk_obj_i <- best_n_fuzzy(ml100k_feat_c, 2:15, 2, fuzzy_mixed_k, FALSE)
 msk_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_mskmeans, FALSE)
-famd_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_famd, FALSE, 9)
-mrk_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_mrkmeans, FALSE, 9)
+famd_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_famd, FALSE, 8)
+mrk_obj_i <- best_n_fuzzy(ml100k_feat_d, 2:15, 2, fuzzy_mrkmeans, FALSE, 8)
 
 # write results into a file
 fclust_obj_i <- cbind(gow_obj_i, hl_obj_i, kproto_obj_i, mk_obj_i, msk_obj_i,

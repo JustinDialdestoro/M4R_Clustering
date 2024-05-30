@@ -17,22 +17,22 @@ source("M4R_Clustering/R Code/Collaborative Filtering/Predictors.r")
 
 # initialise evaluation fixed variables
 krange <- seq(from = 10, to = 300, by = 10)
-best_n_u <- c(5, 5, 6, 3, 4, 3, 11)
+best_n_u <- c(5, 5, 4, 4, 5, 4, 4)
 
 # evaluate mixed clustering over a k range
 gow_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_gow)
 hl_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_hl)
-kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 1.2, krange,
+kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 1.2, krange,
                                     gen_acos_sim, mean_centered, fuzzy_kproto)
-mk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 3, 2, krange,
+mk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_mixed_k)
-msk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
+msk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mskmeans)
-famd_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 3, 2, krange,
+famd_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
                                   gen_acos_sim, mean_centered, fuzzy_famd)
-mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 3, 2, krange,
+mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans)
 
 # write user mixed clustering results into file
@@ -46,35 +46,34 @@ write.csv(fclust_split_u, file =
             "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_split_u.csv",
           row.names = FALSE)
 
-best_n_i <- c(6, 5, 5, 4, 3, 3, 11)
+best_n_i <- c(5, 5, 5, 5, 5, 9, 9)
 
 # evaluate mixed clustering over a k range
-gow_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_b, 10, 6, 2, krange,
+gow_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_b, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_gow, FALSE)
 hl_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_hl, FALSE)
 kproto_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 1.2, krange,
                                     gen_acos_sim, mean_centered, fuzzy_kproto,
                                     FALSE)
-mk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 4, 2, krange,
+mk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_mixed_k,
                                 FALSE)
-msk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 3, 2, krange,
+msk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mskmeans,
                                  FALSE)
-famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 8, 2, krange,
+famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 9, 2, krange,
                                   gen_acos_sim, mean_centered, fuzzy_famd,
                                   FALSE)
-mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 8, 2, krange,
+mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 9, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans,
                                  FALSE)
 
 # write user mixed clustering results into file
-fclust_split_i <- rbind(gow_i, hl_i, kproto_i, mk_i, msk_i, famd_i, mrk_i)
+fclust_split_i <- rbind(gow_i, hl_i, kproto_i, mk_i, msk_i, famd_i)
 fclust_split_i <- cbind(method = c(rep("gow", 30), rep("hl", 30),
                                    rep("kproto", 30), rep("mk", 30),
-                                   rep("msk", 30), rep("famd", 30),
-                                   rep("mrk", 30)),
+                                   rep("msk", 30), rep("famd", 30)),
                         fclust_split_i)
 write.csv(fclust_split_i, file =
             "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_split_i.csv",

@@ -659,8 +659,8 @@ fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-2, p = max(c - 1, 2),
   return(list(clusters = best_u, centroids = best_v, losses = best_losses[-1]))
 }
 
-fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = max(c - 1, 2),
-                           inits = 10) {
+fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-1, p = max(c - 1, 2),
+                           inits = 5) {
   set.seed(01848521)
 
   # initialise number of data points
@@ -706,6 +706,7 @@ fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-2, p = max(c - 1, 2),
                   norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F"))
 
       count <- count + 1
+      print(count)
       if (count > 100) {
         break
       }

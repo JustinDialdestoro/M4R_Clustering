@@ -5,13 +5,13 @@ best_n_fuzzy <- function(df, n_range, m, clust_func, user = TRUE, p = FALSE) {
     # loop over each n clusters
     for (i in seq_along(n_range)) {
       print(paste("Computing objective for", n_range[i], "clusters"))
-      scores[i] <- scores[i] + clust_func(df, n_range[i], m, user)$loss
+      scores[i] <- scores[i] + tail(clust_func(df, n_range[i], m, user)$losses, 1)
     }
   } else {
     # loop over each n clusters
     for (i in seq_along(n_range)) {
       print(paste("Computing objective for", n_range[i], "clusters"))
-      scores[i] <- scores[i] + clust_func(df, n_range[i], m, user, p)$loss
+      scores[i] <- scores[i] + tail(clust_func(df, n_range[i], m, user, p)$losses, 1)
     }
   }
 

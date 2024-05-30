@@ -24,7 +24,7 @@ gow_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_gow)
 hl_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_hl)
-kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 2, krange,
+kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 1.2, krange,
                                     gen_acos_sim, mean_centered, fuzzy_kproto)
 mk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 3, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_mixed_k)
@@ -53,7 +53,7 @@ gow_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_b, 10, 6, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_gow, FALSE)
 hl_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_hl, FALSE)
-kproto_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 2, krange,
+kproto_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 1.2, krange,
                                     gen_acos_sim, mean_centered, fuzzy_kproto,
                                     FALSE)
 mk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 4, 2, krange,

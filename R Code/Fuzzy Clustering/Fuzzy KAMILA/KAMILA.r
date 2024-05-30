@@ -71,7 +71,7 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       pis_i <- colSums(weights_new**m) / numObs
       
       # compute distances from each point to each mean
-      dist_i <- dptmCpp(pts=conVar,myMeans=means_i,wgts=conWeights)
+      dist_i <- dptmCpp(pts = conVar, myMeans = means_i, wgts = conWeights)
       
       # extract minimum distances to each mean
       minDist_i <- rowMin(dist_i)
@@ -84,10 +84,10 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       logDistRadDens_i <- matrix(logDistRadDens_vec, nrow = numObs, ncol = numClust)
 
       # compute weighted RKDE for weight mean updates
-      WDistRadDens_vec <- radialKDE(radii=minDist_i, evalPoints=c(dist_i), pdim=numConVar, 
+      WDistRadDens_vec <- radialKDE(radii = minDist_i, evalPoints = c(dist_i), pdim = numConVar, 
                                     returnFun = returnResampler, kernel = "wnormal")$kdes
       # convert into a matrix
-      WDistRadDens_i <- matrix(WDistRadDens_vec, nrow=numObs, ncol=numClust)
+      WDistRadDens_i <- matrix(WDistRadDens_vec, nrow = numObs, ncol = numClust)
       
       # compute omega weights for mean computation
       omega_i <- WDistRadDens_i / (exp(logDistRadDens_i) * bw.nrd0(minDist_i) * dist_i**2) +
@@ -124,6 +124,7 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       }
       
       weights_new <- 1 / (clustLogLiks**(1 / (m - 1)) * rowSums(1 / clustLogLiks**(1 / (m - 1))))
+      weights_new[is.na(weights_new)] <- 1
       
       totLogLiks_old <- totLogLiks_new
       totLogLiks_new <- sum(weights_new**m * clustLogLiks)
@@ -140,7 +141,7 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
                               dimnames = list(cluster=paste("Clust", 1:nrow(means_i)), 
                                               variableMean=paste("Mean",1:numConVar)))
       # rescale by weights
-      finalProbs <- lapply(logProbsCond_i,exp)
+      finalProbs <- lapply(logProbsCond_i, exp)
       names(finalProbs) <- paste("Categorical Variable", 1:numCatVar)
     }
   }

@@ -706,7 +706,6 @@ fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-1, p = max(c - 1, 2),
                   norm(x - p_new %*% x %*% b_new %*% t(b_new), type = "F"))
 
       count <- count + 1
-      print(count)
       if (count > 100) {
         break
       }

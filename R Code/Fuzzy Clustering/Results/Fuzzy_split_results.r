@@ -30,9 +30,9 @@ mk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
                                 gen_acos_sim, mean_centered, fuzzy_mixed_k)
 msk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mskmeans)
-famd_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
+famd_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
                                   gen_acos_sim, mean_centered, fuzzy_famd)
-mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
+mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans)
 
 # write user mixed clustering results into file
@@ -46,7 +46,7 @@ write.csv(fclust_split_u, file =
             "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_split_u.csv",
           row.names = FALSE)
 
-best_n_i <- c(5, 5, 5, 5, 5, 9, 9)
+best_n_i <- c(5, 5, 5, 5, 5, 5, 5)
 
 # evaluate mixed clustering over a k range
 gow_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_b, 10, 5, 2, krange,
@@ -62,10 +62,10 @@ mk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 2, krange,
 msk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mskmeans,
                                  FALSE)
-famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 9, 2, krange,
+famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                   gen_acos_sim, mean_centered, fuzzy_famd,
                                   FALSE)
-mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 9, 2, krange,
+mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans,
                                  FALSE)
 

@@ -1,5 +1,6 @@
 # load packages
 library("scales")
+library("ggplot2")
 
 # read in the data
 sim_u <- read.csv("M4R_Clustering/Results/Collaborative Filtering/sim_u.csv")
@@ -9,92 +10,76 @@ pred_i <- read.csv("M4R_Clustering/Results/Collaborative Filtering/pred_i.csv")
 
 # initialise plotting variables
 krange <- seq(from = 10, to = 300, by = 10)
-metric_labels <- c("RMSE", "MAE", "R2", "Time (seconds)")
-index <- c(2, 3, 4, 6)
-titles <- c("Average RMSE", "Average MAE", "Average R2", "Online Phase")
-
-for (i in 1:4) {
-  ymax <- max(sim_u[, index[i]])
-  ymin <- min(sim_u[, index[i]])
-  ygap <- 0.1 * (ymax - ymin)
-
-  plot(krange, sim_u[1:30, index[i]], lty = 1, type = "l", lwd = 2,
-       col = hue_pal()(10)[1], xlab = "k neighbours", ylab = metric_labels[i],
-       ylim = c(ymin - 1.75 * ygap, ymax + ygap), main = titles[i],
-       panel.first = grid(col = "#dddddd", lty = 1))
-
-  for (j in 1:4) {
-    lines(krange, sim_u[(j * 30 + 1):((j + 1) * 30), index[i]],
-          lty = 1, type = "l", lwd = 2, col = hue_pal()(10)[j + 1])
-  }
-
-  legend("bottom",
-         c("Cosine", "Adjusted Cosine", "PCC", "Euclidean", "Manhattan"),
-         col = c(hue_pal()(10)), ncol = 5,
-         lty = 1, lwd = 2, cex = 0.7)
+labels <- c("Cosine", "Adjusted Cosine", "PCC", "Euclidean", "Manhattan")
+limits <- c("cosine", "acosine", "pcc", "euclidean", "manhattan")
+colors <- c(hue_pal()(10)[1])
+for (i in 2:5) {
+  colors <- c(colors, hue_pal()(10)[i])
 }
 
-for (i in 1:4) {
-  ymax <- max(sim_i[, index[i]])
-  ymin <- min(sim_i[, index[i]])
-  ygap <- 0.1 * (ymax - ymin)
+sim_u$k <- rep(krange, 5)
+sim_i$k <- rep(krange, 5)
 
-  plot(krange, sim_i[1:30, index[i]], lty = 1, type = "l", lwd = 2,
-       col = hue_pal()(10)[1], xlab = "k neighbours", ylab = metric_labels[i],
-       ylim = c(ymin - 1.5 * ygap, ymax + ygap), main = titles[i],
-       panel.first = grid(col = "#dddddd", lty = 1))
+for (s in list(sim_u, sim_i)) {
+  print(ggplot(s, aes(x = k, y = rmse, color = metric)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("RMSE") +
+          ggtitle("Average RMSE") + scale_color_manual(values = colors,
+                                                       labels = labels,
+                                                       limits = limits))
 
-  for (j in 1:4) {
-    lines(krange, sim_i[(j * 30 + 1):((j + 1) * 30), index[i]],
-          lty = 1, type = "l", lwd = 2, col = hue_pal()(10)[j + 1])
-  }
+  print(ggplot(s, aes(x = k, y = mae, color = metric)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("MAE") +
+          ggtitle("Average MAE") + scale_color_manual(labels = labels,
+                                                      limits = limits,
+                                                      values = colors))
 
-  legend("bottom",
-         c("Cosine", "Adjusted Cosine", "PCC", "Euclidean", "Manhattan"),
-         col = c(hue_pal()(10)), ncol = 5,
-         lty = 1, lwd = 2, cex = 0.7)
+  print(ggplot(s, aes(x = k, y = r2, color = metric)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("R2") +
+          ggtitle("Average R2") + scale_color_manual(labels = labels,
+                                                     limits = limits,
+                                                     values = colors))
+
+  print(ggplot(s, aes(x = k, y = online, color = metric)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") +
+          ylab("Time (seconds)") +
+          ggtitle("Online Phase") + scale_color_manual(labels = labels,
+                                                       limits = limits,
+                                                       values = colors))
 }
 
-titles <- c("Average RMSE", "Average MAE", "Average R2", "Online Phase")
-
-for (i in 1:4) {
-  ymax <- max(pred_u[, index[i]])
-  ymin <- min(pred_u[, index[i]])
-  ygap <- 0.1 * (ymax - ymin)
-
-  plot(krange, pred_u[1:30, index[i]], lty = 1, type = "l", lwd = 2,
-       col = hue_pal()(10)[6], xlab = "k neighbours", ylab = metric_labels[i],
-       ylim = c(ymin - 1.5 * ygap, ymax + ygap), main = titles[i],
-       panel.first = grid(col = "#dddddd", lty = 1))
-
-  for (j in 1:4) {
-    lines(krange, pred_u[(j * 30 + 1):((j + 1) * 30), index[i]],
-          lty = 1, type = "l", lwd = 2, col = hue_pal()(10)[j + 6])
-  }
-
-  legend("bottom",
-         c("Mean", "Weighted Mean", "Mean Centred", "Z-Score", "Discrete"),
-         col = c(hue_pal()(10)[6:10]), ncol = 5,
-         lty = 1, lwd = 2, cex = 0.7)
+labels <- c("Mean", "Weighted Mean", "Mean-Centred", "Z-Score", "Discrete")
+limits <- c("mean", "weighted sum", "mean centred", "z score", "discrete")
+colors <- c(hue_pal()(10)[6])
+for (i in 7:10) {
+  colors <- c(colors, hue_pal()(10)[i])
 }
 
-for (i in 1:4) {
-  ymax <- max(pred_i[, index[i]])
-  ymin <- min(pred_i[, index[i]])
-  ygap <- 0.1 * (ymax - ymin)
+pred_u$k <- rep(krange, 5)
+pred_i$k <- rep(krange, 5)
 
-  plot(krange, pred_i[1:30, index[i]], lty = 1, type = "l", lwd = 2,
-       col = hue_pal()(10)[6], xlab = "k neighbours", ylab = metric_labels[i],
-       ylim = c(ymin - 1.5 * ygap, ymax + ygap), main = titles[i],
-       panel.first = grid(col = "#dddddd", lty = 1))
+for (s in list(pred_u, pred_i)) {
+  print(ggplot(s, aes(x = k, y = rmse, color = predictor)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("RMSE") +
+          ggtitle("Average RMSE") + scale_color_manual(labels = labels,
+                                                       limits = limits,
+                                                       values = colors))
 
-  for (j in 1:4) {
-    lines(krange, pred_i[(j * 30 + 1):((j + 1) * 30), index[i]],
-          lty = 1, type = "l", lwd = 2, col = hue_pal()(10)[j + 6])
-  }
+  print(ggplot(s, aes(x = k, y = mae, color = predictor)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("MAE") +
+          ggtitle("Average MAE") + scale_color_manual(labels = labels,
+                                                      limits = limits,
+                                                      values = colors))
 
-  legend("bottom",
-         c("Mean", "Weighted Mean", "Mean Centred", "Z-Score", "Discrete"),
-         col = c(hue_pal()(10)[6:10]), ncol = 5,
-         lty = 1, lwd = 2, cex = 0.7)
+  print(ggplot(s, aes(x = k, y = r2, color = predictor)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") + ylab("R2") +
+          ggtitle("Average R2") + scale_color_manual(labels = labels,
+                                                     limits = limits,
+                                                     values = colors))
+
+  print(ggplot(s, aes(x = k, y = online, color = predictor)) + geom_line() +
+          labs(color = "Similarity") + xlab("N Neighbours") +
+          ylab("Time (seconds)") +
+          ggtitle("Online Phase") + scale_color_manual(labels = labels,
+                                                       limits = limits,
+                                                       values = colors))
 }

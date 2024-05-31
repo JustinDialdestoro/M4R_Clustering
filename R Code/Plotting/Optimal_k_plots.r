@@ -1,5 +1,6 @@
 # load packages
 library("scales")
+library("ggplot2")
 
 # read in the data
 loc <- "M4R_Clustering/Results/Rating clustering/Crisp/clust_obj_u.csv"
@@ -16,42 +17,67 @@ loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fclust_obj_i.csv"
 fclust_obj_i <- read.csv(loc)
 
 # initialise plotting variables
-n_range <- 2:15
+nrange <- 2:15
+colors <- c(hue_pal()(10)[1])
+for (i in 2:10) {
+  colors <- c(colors, hue_pal()(10)[i])
+}
 
-# plot user clustering objective
-plot(n_range, clust_obj_u$x, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(2)[1], xlab = "n clusters",
-     ylab = "Average within-cluster sum of squares")
+clust_obj_u <- data.frame(n = nrange, clust_obj_u)
+clust_obj_i <- data.frame(n = nrange, clust_obj_i)
 
-# plot item clustering objective
-plot(n_range, clust_obj_i$x, lty = 1, type = "l", lwd = 2,
-     col = hue_pal()(2)[1], xlab = "n clusters",
-     ylab = "Average within-cluster sum of squares")
+ggplot(clust_obj_u, aes(x = n, y = x)) +
+  geom_line(color = colors[2]) +
+  geom_point(color = colors[2]) +
+  theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
+  ggtitle("User Cluster Elbow")
 
-# plot user mixed clustering objectives
+ggplot(clust_obj_i, aes(x = n, y = x)) +
+  geom_line(color = colors[2]) +
+  geom_point(color = colors[2]) +
+  theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
+  ggtitle("Item Cluster Elbow")
+
+mclust_obj_u$n <- nrange
+mclust_obj_i$n <- nrange
+
+labels <- c("kproto", "gow", "hl", "mk", "msk", "famd", "mrk", "kam")
+titles <- c("k-Prototypes", "Gower", "Hennig-Liao", "Mixed k-Means",
+            "Modha-Spangler k-Means", "FAMD", "Mixed Reduced k-Means", "KAMILA")
+obj <- c("Loss", "Loss", "Loss", "Loss", "Loss", "WCSS", "WCSS",
+         "Log-Likelihood")
+
 for (i in 1:8) {
-  plot(2:15, mclust_obj_u[, i], lty = 1, type = "o", lwd = 2, pch = 20,
-       col = hue_pal()(8)[i], xlab = "n clusters",
-       ylab = "Objective")
+  print(ggplot(mclust_obj_u, aes(x = n, y = .data[[labels[i]]])) +
+          geom_line(color = colors[i + 2]) +
+          geom_point(color = colors[i + 2]) +
+          theme(legend.position = "none") + xlab("k Clusters") + ylab(obj[i]) +
+          ggtitle(titles[i]))
 }
 
-# plot item mixed clustering objectives
 for (i in 1:8) {
-  plot(2:15, mclust_obj_i[, i], lty = 1, type = "o", lwd = 2, pch = 20,
-       col = hue_pal()(8)[i], xlab = "n clusters",
-       ylab = "Objective")
+  print(ggplot(mclust_obj_i, aes(x = n, y = .data[[labels[i]]])) +
+          geom_line(color = colors[i + 2]) +
+          geom_point(color = colors[i + 2]) +
+          theme(legend.position = "none") + xlab("k Clusters") + ylab(obj[i]) +
+          ggtitle(titles[i]))
 }
 
-# plot user fuzzy mixed clustering objectives
+fclust_obj_u$n <- nrange
+fclust_obj_i$n <- nrange
+
 for (i in 1:7) {
-  plot(2:15, fclust_obj_u[, i], lty = 1, type = "o", lwd = 2, pch = 20,
-       col = hue_pal()(8)[i], xlab = "n clusters",
-       ylab = "Objective")
+  print(ggplot(fclust_obj_u, aes(x = n, y = .data[[labels[i]]])) +
+          geom_line(color = colors[i + 2]) +
+          geom_point(color = colors[i + 2]) +
+          theme(legend.position = "none") + xlab("k Clusters") + ylab(obj[i]) +
+          ggtitle(titles[i]))
 }
 
-# plot item fuzzy mixed clustering objectives
 for (i in 1:7) {
-  plot(2:15, fclust_obj_i[, i], lty = 1, type = "o", lwd = 2, pch = 20,
-       col = hue_pal()(8)[i], xlab = "n clusters",
-       ylab = "Objective")
+  print(ggplot(fclust_obj_i, aes(x = n, y = .data[[labels[i]]])) +
+          geom_line(color = colors[i + 2]) +
+          geom_point(color = colors[i + 2]) +
+          theme(legend.position = "none") + xlab("k Clusters") + ylab(obj[i]) +
+          ggtitle(titles[i]))
 }

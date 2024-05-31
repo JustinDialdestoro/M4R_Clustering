@@ -26,17 +26,17 @@ for (i in 2:10) {
 clust_obj_u <- data.frame(n = nrange, clust_obj_u)
 clust_obj_i <- data.frame(n = nrange, clust_obj_i)
 
-ggplot(clust_obj_u, aes(x = n, y = x)) +
-  geom_line(color = colors[2]) +
-  geom_point(color = colors[2]) +
-  theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
-  ggtitle("User Cluster Elbow")
+print(ggplot(clust_obj_u, aes(x = n, y = x)) +
+        geom_line(color = colors[2]) +
+        geom_point(color = colors[2]) +
+        theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
+        ggtitle("User Cluster Elbow"))
 
-ggplot(clust_obj_i, aes(x = n, y = x)) +
-  geom_line(color = colors[2]) +
-  geom_point(color = colors[2]) +
-  theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
-  ggtitle("Item Cluster Elbow")
+print(ggplot(clust_obj_i, aes(x = n, y = x)) +
+        geom_line(color = colors[2]) +
+        geom_point(color = colors[2]) +
+        theme(legend.position = "none") + xlab("k Clusters") + ylab("WCSS") +
+        ggtitle("Item Cluster Elbow"))
 
 mclust_obj_u$n <- nrange
 mclust_obj_i$n <- nrange

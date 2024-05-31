@@ -34,9 +34,9 @@ sim[is.na(sim)] <- 0
 # TSNE plot
 tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
               is.distance = TRUE)
-ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
-  geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
-  ylab("Second Dimension") + ggtitle("User Rating Clustering TSNE")
+print(ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
+        geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
+        ylab("Second Dimension") + ggtitle("User Rating Clustering TSNE"))
 
 # cluster items
 clust_labels <- rating_clust(ui, 5, FALSE)
@@ -46,9 +46,9 @@ sim[is.na(sim)] <- 0
 # TSNE plot
 tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
               is.distance = TRUE)
-ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
-  geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
-  ylab("Second Dimension") + ggtitle("Item Rating Clustering TSNE")
+print(ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
+        geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
+        ylab("Second Dimension") + ggtitle("Item Rating Clustering TSNE"))
 
 # cluster users
 clust_labels_u <- rep(c(), 8)

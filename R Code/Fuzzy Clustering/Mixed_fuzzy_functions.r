@@ -735,6 +735,6 @@ fuzzy_kamila <- function(df, c, m, user = TRUE, e = 1e-2, inits = 10) {
     out <- new_kamila(df[c(1:2)], df[c(3:21)], c, inits, e = e, m = m) # nolint
   }
 
-  return(list(clusters = t(out$finalWeights), loss = out$finalObj,
+  return(list(clusters = t(out$finalWeights), losses = out$finalLosses,
               mu = out$finalCenters, theta = out$finalProbs))
 }

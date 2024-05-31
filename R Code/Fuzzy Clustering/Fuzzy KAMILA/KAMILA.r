@@ -51,24 +51,70 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
   
   # loop over each initialization
   for (init in 1:numInit) {
-    # initialize means: matrix size numClust x numConVar
-    means_i <- initMeans(conVar=conVar,method=conInitMethod,numClust=numClust)
-    
     # initialize new weights: matrix size numObs x numClust
     weights_i <- matrix(runif(numObs * numClust), numObs, numClust)
     weights_new <- weights_i / rowSums(weights_i)
+
+    # initialize cluster weights
+    pis_i <- runif(numClust)
+    pis_i <- pis_i / sum(pis_i)
+
+    # initialize means: matrix size numClust x numConVar
+    means_i <- initMeans(conVar = conVar, method = conInitMethod, numClust = numClust)
+
+    # initialise continuous log likelihood
+
+    # compute distances from each point to each mean
+    dist_i <- dptmCpp(pts = conVar, myMeans = means_i, wgts = conWeights)
+    
+    # extract minimum distances to each mean
+    minDist_i <- rowMin(dist_i)
+    
+    # compute log RKDE of minimum distances
+    logDistRadDens_vec <- log(radialKDE(radii = minDist_i ,evalPoints = c(dist_i),
+                                        pdim = numConVar, returnFun = returnResampler, 
+                                        kernel = "normal")$kdes)
+    # convert into a matrix
+    logDistRadDens_i <- matrix(logDistRadDens_vec, nrow = numObs, ncol = numClust)
+
+    # initialise categorical log likelihood
+
+    # compute empirical probabilities of each categorical level
+    jointProbsList <- replicate(numCatVar, c())
+    for (i in 1:numCatVar) {
+      jointProbsList[[i]] <- jointProbs(catFactorNumeric[, i], weights_new**m, numClust)
+    }
+    # update categorical parameters
+    logProbsCond_i <- lapply(jointProbsList, FUN=function(xx) log(xx))
+    
+    # get individual categorical log probabilities
+    individualLogProbs <- getIndividualLogProbs(catFactorNum = catFactorNumeric, 
+                                                catWeights = catWeights,
+                                                logProbsCond_i = logProbsCond_i)
+
+    # compute categorical log likelihood
+    catLogLiks_i <- Reduce(f = "+", x = individualLogProbs)
+
+    # initialise total log likelihoods
+
+    # total log likelihoods: matrix size numObs x numClust
+    allLogLiks_i <- logDistRadDens_i + catLogLiks_i
+    clustLogLiks_i <- t(t(allLogLiks_i) + log(pis_i))
+    totLogLiks_new <- sum(weights_new**m * clustLogLiks_i)
     
     # initialize iteration variables
-    numIter <- 0
-    totLogLiks_new <- 0
+    numIter <- 1
     totLogLiks_old <- 0
+    losses <- c(0, totLogLiks_new)
     
     # Loop until convergence
     while((abs(totLogLiks_new - totLogLiks_old) > e) | numIter < 2) { 
       numIter <- numIter + 1
-      
-      # update cluster probabilities
-      pis_i <- colSums(weights_new**m) / numObs
+
+      # update cluster membership weights
+      weights_old <- weights_new
+      weights_new <- 1 / (clustLogLiks_i**round(1 / (m - 1)) * rowSums(1 / clustLogLiks_i**round(1 / (m - 1))))
+      weights_new[is.na(weights_new)] <- 1
       
       # compute distances from each point to each mean
       dist_i <- dptmCpp(pts = conVar, myMeans = means_i, wgts = conWeights)
@@ -93,6 +139,11 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       omega_i <- WDistRadDens_i / (exp(logDistRadDens_i) * bw.nrd0(minDist_i) * dist_i**2) +
         (numConVar - 1) / (dist_i**2)
       
+      if (length(which(is.nan(omega_i))) > 0) {
+        weights_new <- weights_old
+        break
+      }
+      
       # update means: matrix size numClust X p_con
       means_i <- t((weights_new**m) * omega_i) %*% as.matrix(conVar) / colSums((weights_new**m) * omega_i)
       
@@ -110,24 +161,19 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
                                                   logProbsCond_i = logProbsCond_i)
 
       # compute categorical log likelihood
-      catLogLiks <- Reduce(f = "+", x = individualLogProbs)
+      catLogLiks_i <- Reduce(f = "+", x = individualLogProbs)
+
+      # update cluster probabilities
+      pis_i <- colSums(weights_new**m) / sum(weights_new**m)
       
       # total log likelihoods: matrix size numObs x numClust
-      allLogLiks <- logDistRadDens_i + catLogLiks
-      
-      # update cluster membership weights
-      clustLogLiks <- t(t(allLogLiks) + log(pis_i))
-      # weights_new <- exp(t(clustLogLiks) - log(colSums(exp(clustLogLiks))))
-      
-      if (length(which(is.infinite(clustLogLiks))) > 0) {
-        break
-      }
-      
-      weights_new <- 1 / (clustLogLiks**(1 / (m - 1)) * rowSums(1 / clustLogLiks**(1 / (m - 1))))
-      weights_new[is.na(weights_new)] <- 1
+      allLogLiks_i <- logDistRadDens_i + catLogLiks_i
+      clustLogLiks_i <- t(t(allLogLiks_i) + log(pis_i))
       
       totLogLiks_old <- totLogLiks_new
-      totLogLiks_new <- sum(weights_new**m * clustLogLiks)
+      totLogLiks_new <- sum(weights_new**m * clustLogLiks_i)
+
+      losses <- c(losses, totLogLiks_new)
     }
     
     # store log likelihood for each initialization
@@ -143,6 +189,7 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       # rescale by weights
       finalProbs <- lapply(logProbsCond_i, exp)
       names(finalProbs) <- paste("Categorical Variable", 1:numCatVar)
+      finalLosses <- losses[-1]
     }
   }
   
@@ -152,6 +199,7 @@ new_kamila <- function(conVar, catFactor, numClust, numInit,
       ,finalObj = finalObj
       ,finalCenters = finalCenters
       ,finalProbs = finalProbs
+      ,finalLosses = finalLosses
     )
   )
 }

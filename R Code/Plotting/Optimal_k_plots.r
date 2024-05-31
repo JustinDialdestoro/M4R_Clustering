@@ -66,7 +66,7 @@ for (i in 1:8) {
 fclust_obj_u$n <- nrange
 fclust_obj_i$n <- nrange
 
-for (i in 1:7) {
+for (i in 1:8) {
   print(ggplot(fclust_obj_u, aes(x = n, y = .data[[labels[i]]])) +
           geom_line(color = colors[i + 2]) +
           geom_point(color = colors[i + 2]) +
@@ -74,7 +74,7 @@ for (i in 1:7) {
           ggtitle(titles[i]))
 }
 
-for (i in 1:7) {
+for (i in 1:8) {
   print(ggplot(fclust_obj_i, aes(x = n, y = .data[[labels[i]]])) +
           geom_line(color = colors[i + 2]) +
           geom_point(color = colors[i + 2]) +

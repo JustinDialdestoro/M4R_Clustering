@@ -1,6 +1,7 @@
 # load packages
 library("scales")
 library("Rtsne")
+library("ggplot2")
 
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")

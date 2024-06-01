@@ -21,30 +21,26 @@ sim_u$k <- rep(krange, 5)
 sim_i$k <- rep(krange, 5)
 
 for (s in list(sim_u, sim_i)) {
-  print(ggplot(s, aes(x = k, y = rmse, color = metric)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("RMSE") +
-          ggtitle("Average RMSE") + scale_color_manual(values = colors,
-                                                       labels = labels,
-                                                       limits = limits))
+  print(ggplot(s, aes(x = k, y = rmse, color = metric)) +
+          geom_line(linewidth = 0.8) + labs(color = "Similarity") +
+          xlab("N Neighbours") + ylab("RMSE") + ggtitle("Average RMSE") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = mae, color = metric)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("MAE") +
-          ggtitle("Average MAE") + scale_color_manual(labels = labels,
-                                                      limits = limits,
-                                                      values = colors))
+  print(ggplot(s, aes(x = k, y = mae, color = metric)) +
+          geom_line(linewidth = 0.8) + labs(color = "Similarity") +
+          xlab("N Neighbours") + ylab("MAE") + ggtitle("Average MAE") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = r2, color = metric)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("R2") +
-          ggtitle("Average R2") + scale_color_manual(labels = labels,
-                                                     limits = limits,
-                                                     values = colors))
+  print(ggplot(s, aes(x = k, y = r2, color = metric)) +
+          geom_line(linewidth = 0.8) + labs(color = "Similarity") +
+          xlab("N Neighbours") + ylab("R2") + ggtitle("Average R2") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = online, color = metric)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") +
-          ylab("Time (seconds)") +
-          ggtitle("Online Phase") + scale_color_manual(labels = labels,
-                                                       limits = limits,
-                                                       values = colors))
+  print(ggplot(s, aes(x = k, y = online, color = metric)) +
+          geom_line(linewidth = 0.8) + labs(color = "Similarity") +
+          xlab("N Neighbours") + ylab("Time (seconds)") +
+          ggtitle("Online Phase") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 }
 
 labels <- c("Mean", "Weighted Mean", "Mean-Centred", "Z-Score", "Discrete")
@@ -58,28 +54,24 @@ pred_u$k <- rep(krange, 5)
 pred_i$k <- rep(krange, 5)
 
 for (s in list(pred_u, pred_i)) {
-  print(ggplot(s, aes(x = k, y = rmse, color = predictor)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("RMSE") +
-          ggtitle("Average RMSE") + scale_color_manual(labels = labels,
-                                                       limits = limits,
-                                                       values = colors))
+  print(ggplot(s, aes(x = k, y = rmse, color = predictor)) +
+          geom_line(linewidth = 0.8) + labs(color = "Predictor") +
+          xlab("N Neighbours") + ylab("RMSE") + ggtitle("Average RMSE") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = mae, color = predictor)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("MAE") +
-          ggtitle("Average MAE") + scale_color_manual(labels = labels,
-                                                      limits = limits,
-                                                      values = colors))
+  print(ggplot(s, aes(x = k, y = mae, color = predictor)) +
+          geom_line(linewidth = 0.8) + labs(color = "Predictor") +
+          xlab("N Neighbours") + ylab("MAE") + ggtitle("Average MAE") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = r2, color = predictor)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") + ylab("R2") +
-          ggtitle("Average R2") + scale_color_manual(labels = labels,
-                                                     limits = limits,
-                                                     values = colors))
+  print(ggplot(s, aes(x = k, y = r2, color = predictor)) +
+          geom_line(linewidth = 0.8) + labs(color = "Predictor") +
+          xlab("N Neighbours") + ylab("R2") + ggtitle("Average R2") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 
-  print(ggplot(s, aes(x = k, y = online, color = predictor)) + geom_line(size = 0.8) +
-          labs(color = "Similarity") + xlab("N Neighbours") +
-          ylab("Time (seconds)") +
-          ggtitle("Online Phase") + scale_color_manual(labels = labels,
-                                                       limits = limits,
-                                                       values = colors))
+  print(ggplot(s, aes(x = k, y = online, color = predictor)) +
+          geom_line(linewidth = 0.8) + labs(color = "Predictor") +
+          xlab("N Neighbours") + ylab("Time (seconds)") +
+          ggtitle("Online Phase") +
+          scale_color_manual(labels = labels, limits = limits, values = colors))
 }

@@ -103,7 +103,10 @@ mae <- function(pred, true) {
 
 r2 <- function(pred, true) {
   ind <- !is.na(pred)
-  return(cor(pred[ind], true[ind])**2)
+  tss <- sum((true[ind] - mean(true[ind]))**2)
+  rss <- sum((true[ind] - pred[ind])**2)
+
+  return(1 - rss / tss)
 }
 
 cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
@@ -140,9 +143,9 @@ cval <- function(df, t, k_range, metric, pred_func, user = TRUE) {
       r_true <- df$rating[cval_f_i[[i]]]
 
       # error metrics
-      scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true) # nolint
-      scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true) # nolint
-      scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true) # nolint
+      scores$rmse[k] <- scores$rmse[k] + rmse(r_pred, r_true)
+      scores$mae[k] <- scores$mae[k] + mae(r_pred, r_true)
+      scores$r2[k] <- scores$r2[k] + r2(r_pred, r_true)
 
       time <- Sys.time() - t1
       print(time)

@@ -2,11 +2,17 @@ find_knn <- function(ui, sim, k, userid, filmid, user = TRUE) {
   if (user == TRUE) {
     # indices of users who have rated the film
     ind <- which(ui[, filmid] > 0)
+    if (length(ind) == 0) {
+      return(userid)
+    }
     # nearest neighbours
     neighbours <- ind[order(-sim[userid, ][ind])[1:k]]
   } else {
     # indices of films the user has rated
     ind <- which(ui[userid, ] > 0)
+    if (length(ind) == 0) {
+      return(filmid)
+    }
     # nearest neighbours
     neighbours <- ind[order(-sim[filmid, ][ind])[1:k]]
   }
@@ -20,11 +26,13 @@ average <- function(ui, sim, k, userid, filmid, user = TRUE) {
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 
   if (user == TRUE) {
+    ind <- which(sim[userid, neighbours] > 0)
     # compute rating prediction
-    pred <- mean(ui[neighbours, filmid], na.rm = TRUE)
+    pred <- mean(ui[neighbours[ind], filmid])
   } else {
+    ind <- which(sim[filmid, neighbours] > 0)
     # compute rating prediction
-    pred <- mean(ui[userid, neighbours], na.rm = TRUE)
+    pred <- mean(ui[userid, neighbours[ind]])
   }
 
   return(pred)
@@ -137,11 +145,13 @@ discrete <- function(ui, sim, k, userid, filmid, user = TRUE) {
   neighbours <- find_knn(ui, sim, k, userid, filmid, user)
 
   if (user == TRUE) {
+    ind <- which(sim[userid, neighbours] > 0)
     # count ratings of neighbours
-    rating_count <- table(ui[neighbours, filmid])
+    rating_count <- table(ui[neighbours[ind], filmid])
   } else {
+    ind <- which(sim[userid, neighbours] > 0)
     # count ratings of neighbours
-    rating_count <- table(ui[userid, neighbours])
+    rating_count <- table(ui[userid, neighbours[ind]])
   }
 
   # find most common rating

@@ -15,7 +15,7 @@ n <- length(krange)
 
 # evaluate adjusted cosine predictor performance
 mean_u <- cval(ml100k, 10, krange, gen_acos_sim, average)
-wsum_u <- cval(ml100k, 10, krange,  gen_acos_sim, weighted_sum)
+# wsum_u <- cval(ml100k, 10, krange,  gen_acos_sim, weighted_sum)
 mcent_u <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered)
 zscore_u <- cval(ml100k, 10, krange,  gen_acos_sim, z_score)
 disc_u <- cval(ml100k, 10, krange,  gen_acos_sim, discrete)
@@ -33,7 +33,7 @@ write.csv(pred_u,
 
 # evaluate cosine, adjusted cosine, and pcc
 mean_i <- cval(ml100k, 10, krange, gen_acos_sim, average, FALSE)
-wsum_i <- cval(ml100k, 10, krange, gen_acos_sim, weighted_sum, FALSE)
+# wsum_i <- cval(ml100k, 10, krange, gen_acos_sim, weighted_sum, FALSE)
 mcent_i <- cval(ml100k, 10, krange,  gen_acos_sim, mean_centered, FALSE)
 zscore_i <- cval(ml100k, 10, krange,  gen_acos_sim, z_score, FALSE)
 disc_i <- cval(ml100k, 10, krange,  gen_acos_sim, discrete, FALSE)

@@ -56,7 +56,7 @@ gow_i <- cval_mixed_clust(ml100k, ml100k_feat_b, 10, 3, krange, gen_acos_sim,
                           mean_centered, gow_pam, FALSE)
 hl_i <- cval_mixed_clust(ml100k, ml100k_feat_d, 10, 4, krange, gen_acos_sim,
                          mean_centered, hl_pam, FALSE)
-kproto_i <- cval_mixed_clust(ml100k, ml100k_feat_b, 10, 7, krange, gen_acos_sim,
+kproto_i <- cval_mixed_clust(ml100k, ml100k_feat_c, 10, 7, krange, gen_acos_sim,
                              mean_centered, kprototypes, FALSE)
 mk_i <- cval_mixed_clust(ml100k, ml100k_feat_c, 10, 5, krange, gen_acos_sim,
                          mean_centered, mixed_k, FALSE)

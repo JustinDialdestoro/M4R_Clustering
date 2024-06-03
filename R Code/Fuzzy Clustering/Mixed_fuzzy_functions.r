@@ -260,7 +260,7 @@ kproto_dsim <- function(df, v, c, pr, lambda) {
   return(dsim_mat)
 }
 
-fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-2, inits = 2) { # nolint
+fuzzy_kproto <- function(df, c, m, user = TRUE, e = 1e-2, inits = 1) { # nolint
   set.seed(01848521)
 
   # initialise number of data points
@@ -660,7 +660,7 @@ fuzzy_famd <- function(df, c, m, user = TRUE, e = 1e-2, p = max(c - 1, 2),
 }
 
 fuzzy_mrkmeans <- function(df, c, m, user = TRUE, e = 1e-1, p = max(c - 1, 2),
-                           inits = 5) {
+                           inits = 1) {
   set.seed(01848521)
 
   # initialise number of data points

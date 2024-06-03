@@ -24,18 +24,18 @@ best_n_u <- c(5, 5, 6, 4, 5, 5, 6, 7)
 #                                  gen_acos_sim, mean_centered, fuzzy_gow)
 # hl_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
 #                                 gen_acos_sim, mean_centered, fuzzy_hl)
-# kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 1.2, krange,
-#                                     gen_acos_sim, mean_centered, fuzzy_kproto)
+kproto_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 1.2, krange,
+                                    gen_acos_sim, mean_centered, fuzzy_kproto)
 # mk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 4, 2, krange,
 #                                 gen_acos_sim, mean_centered, fuzzy_mixed_k)
 # msk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
 #                                  gen_acos_sim, mean_centered, fuzzy_mskmeans)
 # famd_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 5, 2, krange,
 #                                   gen_acos_sim, mean_centered, fuzzy_famd)
-# mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 2, krange,
-#                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans)
-kam_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 7, 2, krange,
-                                 gen_acos_sim, mean_centered, fuzzy_kamila)
+mrk_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 6, 2, krange,
+                                 gen_acos_sim, mean_centered, fuzzy_mrkmeans)
+# kam_u <- cval_mixed_fclust_split(ml100k, ml100k_dem, 10, 7, 2, krange,
+#                                  gen_acos_sim, mean_centered, fuzzy_kamila)
 
 # write user mixed clustering results into file
 fclust_split_u <- rbind(gow_u, hl_u, kproto_u, mk_u,
@@ -56,21 +56,21 @@ best_n_i <- c(5, 5, 5, 5, 5, 5, 5, 5)
 #                                  gen_acos_sim, mean_centered, fuzzy_gow, FALSE)
 # hl_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
 #                                 gen_acos_sim, mean_centered, fuzzy_hl, FALSE)
-# kproto_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 1.2, krange,
-#                                     gen_acos_sim, mean_centered, fuzzy_kproto,
-#                                     FALSE)
+kproto_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 1.2, krange,
+                                    gen_acos_sim, mean_centered, fuzzy_kproto,
+                                    FALSE)
 # mk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_c, 10, 5, 2, krange,
 #                                 gen_acos_sim, mean_centered, fuzzy_mixed_k,
 #                                 FALSE)
-# msk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
-#                                  gen_acos_sim, mean_centered, fuzzy_mskmeans,
-#                                  FALSE)
-# famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
-#                                   gen_acos_sim, mean_centered, fuzzy_famd,
-#                                   FALSE)
-# mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
-#                                  gen_acos_sim, mean_centered, fuzzy_mrkmeans,
-#                                  FALSE)
+msk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
+                                 gen_acos_sim, mean_centered, fuzzy_mskmeans,
+                                 FALSE)
+famd_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
+                                  gen_acos_sim, mean_centered, fuzzy_famd,
+                                  FALSE)
+mrk_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_d, 10, 5, 2, krange,
+                                 gen_acos_sim, mean_centered, fuzzy_mrkmeans,
+                                 FALSE)
 kam_i <- cval_mixed_fclust_split(ml100k, ml100k_feat_b, 10, 5, 1.2, krange,
                                  gen_acos_sim, mean_centered, fuzzy_kamila,
                                  FALSE)

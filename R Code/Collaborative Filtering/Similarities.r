@@ -132,7 +132,7 @@ gen_euc_sim <- function(ui, user = TRUE) {
   } else {
     sim <- as(dist(t(ui), "euclidean"), "matrix")
   }
-  sim[is.na(sim)] <- 0
+  sim[is.na(sim)] <- Inf
 
   # transform into similarity matrix
   return(1 / (1 + sim))
@@ -144,7 +144,7 @@ gen_mhat_sim <- function(ui, user = TRUE) {
   } else {
     sim <- as(dist(t(ui), "manhattan"), "matrix")
   }
-  sim[is.na(sim)] <- 0
+  sim[is.na(sim)] <- Inf
 
   # transform into similarity matrix
   return(1 / (1 + sim))

@@ -17,10 +17,13 @@ euc_dsim <- function(df, v, c) {
       }
     }
   }
+  dsim_mat[is.na(dsim_mat)] <- max(dsim_mat, na.rm = TRUE)
   return(dsim_mat)
 }
 
-fuzzy_c_means <- function(df, c, m, e = 1e-5) {
+fuzzy_c_means <- function(df, c, m, e = 1e-2) {
+  set.seed(01848521)
+
   # initialise number of data points
   n <- nrow(df)
   p <- ncol(df)
@@ -53,9 +56,12 @@ fuzzy_c_means <- function(df, c, m, e = 1e-5) {
   d <- euc_dsim(df, c_new, c)**(2 / (m - 1))
   w_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
-  count <- 0
+  # initialise losses
+  losses <- c(0, sum(diag(w_new**m %*% t(d**(m - 1)))))
+
+  count <- 1
   # iterate until convergence
-  while (norm(w_old - w_new, type = "F") > e) {
+  while (abs(losses[count] - losses[count + 1]) > e) {
     w_old <- w_new
 
     # update v^(l+1)
@@ -73,15 +79,15 @@ fuzzy_c_means <- function(df, c, m, e = 1e-5) {
     d <- euc_dsim(df, c_new, c)**(2 / (m - 1))
     w_new <- 1 / t(t(d) * colSums(1 / d, na.rm = TRUE))
 
+    losses <- c(losses, sum(diag(w_new**m %*% t(d**(m - 1)))))
+
     count <- count + 1
-    if (count > 50) {
+    if (count > 100) {
       break
     }
   }
 
-  # compute loss
-  loss <- sum(diag(w_new**m %*% t(d**2)))
-  return(list(clusters = w_new, loss = c_new, centroids = loss))
+  return(list(clusters = w_new, centroids = c_new, losses = losses[-1]))
 }
 
 fuzzy_gow <- function(df, c, m, user = TRUE, e = 1e-2, inits = 10) {

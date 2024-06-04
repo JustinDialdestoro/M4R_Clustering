@@ -1,6 +1,7 @@
 # load packages
 library("scales")
 library("ggplot2")
+library("ggpubr")
 
 # read in data
 ml100k_dem <- read.csv("M4R_Clustering/Data/ml100k_dem.csv")
@@ -13,19 +14,23 @@ source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
 user_pcs <- famd(ml100k_dem, 2, TRUE, 22)
 var_u <- data.frame(var = user_pcs$variance[, 2], p = 1:22)
 
-print(ggplot(var_u, aes(x = p, y = var)) +
-        geom_line(color = hue_pal()(10)[8]) +
-        geom_point(color = hue_pal()(10)[8]) +
-        theme(legend.position = "none") + xlab("Principal Components") +
-        ylab("Explained Variance (%)") +
-        ggtitle("FAMD of User Demographic Variables"))
+pca_u <- ggplot(var_u, aes(x = p, y = var)) +
+  geom_line(color = hue_pal()(10)[8], linewidth = 1) +
+  geom_point(color = hue_pal()(10)[8], size = 2.5) +
+  theme(legend.position = "none") + xlab("Principal Components") +
+  ylab("Explained Variance (%)") + theme_bw(base_size = 15) +
+  ggtitle("FAMD of User Demographic Variables")
 
 # find optimal number of principal components to retain for FAMD
 item_pcs <- famd(ml100k_feat_d, 2, FALSE, 21)
 var_i <- data.frame(var = item_pcs$variance[, 2], p = 1:21)
-print(ggplot(var_i, aes(x = p, y = var)) +
-        geom_line(color = hue_pal()(10)[8]) +
-        geom_point(color = hue_pal()(10)[8]) +
-        theme(legend.position = "none") + xlab("Principal Components") +
-        ylab("Explained Variance (%)") +
-        ggtitle("FAMD of Item Feature Variables"))
+pca_i <- ggplot(var_i, aes(x = p, y = var)) +
+  geom_line(color = hue_pal()(10)[8], linewidth = 1) +
+  geom_point(color = hue_pal()(10)[8], size = 2.5) +
+  theme(legend.position = "none") + xlab("Principal Components") +
+  ylab("Explained Variance (%)") + theme_bw(base_size = 15) +
+  ggtitle("FAMD of Item Feature Variables")
+
+# dimensions 15 x 6
+print(ggarrange(pca_u, pca_i, labels = c("(a)", "(b)"),
+                font.label = c(size = 15)))

@@ -46,25 +46,39 @@ names(mclust_i)[1] <- "clustering"
 full_i <- rbind(noclust_i, clust_i, mclust_i)
 full_i$k <- rep(krange, 10)
 
-for (f in list(full_u, full_i)) {
-  print(ggplot(f, aes(x = k, y = rmse, color = clustering)) +
-          geom_line(linewidth = 0.8) + labs(color = "Clustering Method") +
-          xlab("N Neighbours") + ylab("RMSE") + ggtitle("Average RMSE") +
-          scale_color_manual(labels = labels, limits = limits, values = colors))
+mclust_u_mae <- ggplot(full_u, aes(x = k, y = mae, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
 
-  print(ggplot(f, aes(x = k, y = mae, color = clustering)) +
-          geom_line(linewidth = 0.8) + labs(color = "Clustering Method") +
-          xlab("N Neighbours") + ylab("MAE") + ggtitle("Average MAE") +
-          scale_color_manual(labels = labels, limits = limits, values = colors))
+mclust_u_r2 <- ggplot(full_u, aes(x = k, y = r2, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
 
-  print(ggplot(f, aes(x = k, y = r2, color = clustering)) +
-          geom_line(linewidth = 0.8) + labs(color = "Clustering Method") +
-          xlab("N Neighbours") + ylab("R2") + ggtitle("Average R2") +
-          scale_color_manual(labels = labels, limits = limits, values = colors))
+mclust_u_online <- ggplot(full_u, aes(x = k, y = online, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
 
-  print(ggplot(f, aes(x = k, y = online, color = clustering)) +
-          geom_line(linewidth = 0.8) + labs(color = "Clustering Method") +
-          xlab("N Neighbours") + ylab("Time (seconds)") +
-          ggtitle("Online Phase") +
-          scale_color_manual(labels = labels, limits = limits, values = colors))
-}
+mclust_i_mae <- ggplot(full_i, aes(x = k, y = mae, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
+
+mclust_i_r2 <- ggplot(full_i, aes(x = k, y = r2, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
+
+mclust_i_online <- ggplot(full_i, aes(x = k, y = online, color = clustering)) +
+  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
+  scale_color_manual(labels = labels, limits = limits, values = colors)
+
+# dimensions 15 x 9
+print(ggarrange(mclust_u_mae, mclust_u_r2, mclust_u_online,
+                mclust_i_mae, mclust_i_r2, mclust_i_online,
+                labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"),
+                common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3,
+                font.label = c(size = 15)))

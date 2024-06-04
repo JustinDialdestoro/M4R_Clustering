@@ -44,7 +44,7 @@ rating_clust <- function(ui, n, user = TRUE) {
       # assign each point to closest centre
       new_labels <- max.col(dist)
       j <- j + 1
-      if (j > 50) {
+      if (j > 100) {
         break
       }
     }
@@ -88,7 +88,7 @@ rating_clust <- function(ui, n, user = TRUE) {
       # assign each point to closest centre
       new_labels <- max.col(dist)
       j <- j + 1
-      if (j > 50) {
+      if (j > 100) {
         break
       }
     }
@@ -111,7 +111,7 @@ best_n <- function(ui, n_range, user = TRUE) {
       for (j in 1:n_range[i]) {
         # compute within cluster sum of squares
         disim <- 1 / gen_euc_sim(ui[labels == j, ]) - 1 # nolint
-        withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
+        withinss[i] <- withinss[i] + sum(disim[!is.infinite(disim)])
       }
       withinss[i] <- withinss[i] / nrow(ui)
 
@@ -119,7 +119,7 @@ best_n <- function(ui, n_range, user = TRUE) {
       for (j in 1:n_range[i]) {
         # compute within cluster sum of squares
         disim <- 1 / gen_euc_sim(ui[, labels == j], FALSE) - 1 # nolint
-        withinss[i] <- withinss[i] + sum(disim[!is.na(disim)])
+        withinss[i] <- withinss[i] + sum(disim[!is.infinite(disim)])
       }
       withinss[i] <- withinss[i] / ncol(ui)
     }

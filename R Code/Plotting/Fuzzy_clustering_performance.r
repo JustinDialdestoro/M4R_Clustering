@@ -19,7 +19,7 @@ fclust_i <- read.csv(loc)
 
 # initialise plotting variables
 krange <- seq(from = 10, to = 300, by = 10)
-labels <- c("None", "Fuzzy k-Means", "k-Prototypes", "Gower", "Hennig-Liao",
+labels <- c("None", "Fuzzyk-Means", "k-Prototypes", "Gower", "Hennig-Liao",
             "Mixed k-Means", "Modha-Spangler k-Means", "FAMD",
             "Mixed Reduced k-Means", "KAMILA")
 limits <- c("none", "ratings", "kproto", "gow", "hl", "mk", "msk", "famd",
@@ -48,38 +48,54 @@ full_i <- rbind(noclust_i, fclust_i, fmclust_i)
 full_i$k <- rep(krange, 10)
 
 fmclust_u_mae <- ggplot(full_u, aes(x = k, y = mae, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("MAE of User Fuzzy CF") +
+  theme(legend.text = element_text(size = 20))
 
 fmclust_u_r2 <- ggplot(full_u, aes(x = k, y = r2, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle(expression(paste(R^2, " of User Fuzzy CF"))) +
+  theme(legend.text = element_text(size = 20))
 
 fmclust_u_online <- ggplot(full_u, aes(x = k, y = online, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("Online Phase of User Fuzzy CF") +
+  theme(legend.text = element_text(size = 20))
 
 fmclust_i_mae <- ggplot(full_i, aes(x = k, y = mae, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("MAE of Item Fuzzy CF") +
+  theme(legend.text = element_text(size = 20))
 
 fmclust_i_r2 <- ggplot(full_i, aes(x = k, y = r2, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle(expression(paste(R^2, " of User Fuzzy CF"))) +
+  theme(legend.text = element_text(size = 20))
 
 fmclust_i_online <- ggplot(full_i, aes(x = k, y = online, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("Online Phase of Item Fuzzy CF") +
+  theme(legend.text = element_text(size = 20))
 
-# dimensions 15 x 9
+# dimensions 20 x 10
 print(ggarrange(fmclust_u_mae, fmclust_u_r2, fmclust_u_online,
                 fmclust_i_mae, fmclust_i_r2, fmclust_i_online,
-                labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"),
-                common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3,
-                font.label = c(size = 15)))
+                common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3))

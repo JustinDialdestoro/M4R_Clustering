@@ -1,6 +1,7 @@
 # load colour package
 library("scales")
 library("ggplot2")
+library("extrafont")
 
 # read in the data
 loc <- "M4R_Clustering/Results/Mixed clustering/Crisp/mclust_u.csv"
@@ -47,38 +48,54 @@ full_i <- rbind(noclust_i, clust_i, mclust_i)
 full_i$k <- rep(krange, 10)
 
 mclust_u_mae <- ggplot(full_u, aes(x = k, y = mae, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("MAE of User Clustered CF") +
+  theme(legend.text = element_text(size = 20))
 
 mclust_u_r2 <- ggplot(full_u, aes(x = k, y = r2, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle(expression(paste(R^2, " of User Clustered CF"))) +
+  theme(legend.text = element_text(size = 20))
 
 mclust_u_online <- ggplot(full_u, aes(x = k, y = online, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("Online Phase of User Clustered CF") +
+  theme(legend.text = element_text(size = 20))
 
 mclust_i_mae <- ggplot(full_i, aes(x = k, y = mae, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("MAE") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("MAE of Item Clustered CF") +
+  theme(legend.text = element_text(size = 20))
 
 mclust_i_r2 <- ggplot(full_i, aes(x = k, y = r2, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle(expression(paste(R^2, " of User Clustered CF"))) +
+  theme(legend.text = element_text(size = 20))
 
 mclust_i_online <- ggplot(full_i, aes(x = k, y = online, color = clustering)) +
-  geom_line(linewidth = 0.8) + labs(color = "Clustering Method:") +
-  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 15) +
-  scale_color_manual(labels = labels, limits = limits, values = colors)
+  geom_line(linewidth = 1) + labs(color = "Clustering Method:", size = 25) +
+  xlab("N Neighbours") + ylab("Time (seconds)") + theme_bw(base_size = 20) +
+  scale_color_manual(labels = labels, limits = limits, values = colors) +
+  theme(text = element_text(family = "LM Roman 10")) +
+  ggtitle("Online Phase of Item Clustered CF") +
+  theme(legend.text = element_text(size = 20))
 
-# dimensions 15 x 9
+# dimensions 20 x 10
 print(ggarrange(mclust_u_mae, mclust_u_r2, mclust_u_online,
                 mclust_i_mae, mclust_i_r2, mclust_i_online,
-                labels = c("(a)", "(b)", "(c)", "(d)", "(e)", "(f)"),
-                common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3,
-                font.label = c(size = 15)))
+                common.legend = TRUE, legend = "bottom", nrow = 2, ncol = 3))

@@ -3,6 +3,7 @@ library("scales")
 library("Rtsne")
 library("ggplot2")
 library("ggpubr")
+library("extrafont")
 
 # read in the data
 ml100k <- read.csv("M4R_Clustering/Data/ml100k.csv")
@@ -18,8 +19,9 @@ source("M4R_Clustering/R Code/Clustering/Rating_clustering.r")
 source("M4R_Clustering/R Code/Mixed Clustering/Mixed_clustering_functions.r")
 
 # initialise plotting variables
-titles <- c("k-Prototypes", "Gower", "Hennig-Liao", "Mixed k-Means",
-            "Modha-Spangler k-Means", "FAMD", "Mixed Reduced k-Means", "KAMILA")
+titles <- c("k-Prototypes t-SNE", "Gower t-SNE", "Hennig-Liao t-SNE",
+            "Mixed k-Means t-SNE", "Modha-Spangler k-Means t-SNE", "FAMD t-SNE",
+            "Mixed Reduced k-Means t-SNE", "KAMILA t-SNE")
 colors <- c(hue_pal()(7)[1])
 for (i in 2:7) {
   colors <- c(colors, hue_pal()(7)[i])
@@ -37,8 +39,10 @@ sim[is.na(sim)] <- 0
 tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
               is.distance = TRUE)
 tsne_u_clust <- ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
-  geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
-  ylab("Second Dimension") + theme_bw(base_size = 15)
+  geom_point(color = colors[clust_labels], size = 2.2, alpha = 0.4)+
+  xlab("First Dimension") + ylab("Second Dimension") + theme_bw(base_size = 20)+
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[1]) +
+  ggtitle("User Ratings Clustering t-SNE")
 
 # cluster items
 clust_labels <- rating_clust(ui, 5, FALSE)
@@ -49,12 +53,13 @@ sim[is.na(sim)] <- 0
 tsne <- Rtsne(sim, check_duplicates = FALSE, partial_pca = TRUE,
               is.distance = TRUE)
 tsne_i_clust <- ggplot(data.frame(tsne$Y), aes(x = X1, y = X2)) +
-  geom_point(color = colors[clust_labels]) + xlab("First Dimension") +
-  ylab("Second Dimension") + theme_bw(base_size = 15)
+  geom_point(color = colors[clust_labels], size = 2.2, alpha = 0.4) +
+  xlab("First Dimension") + ylab("Second Dimension") + theme_bw(base_size = 20)+
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[1]) +
+  ggtitle("Item Ratings Clustering t-SNE")
 
-# dimensions 15 x 8
-print(ggarrange(tsne_u_clust, tsne_i_clust, labels = c("(a)", "(b)"), ncol = 2,
-                font.label = c(size = 15)))
+# dimensions 13 x 7
+print(ggarrange(tsne_u_clust, tsne_i_clust, ncol = 2))
 
 # cluster users
 clust_labels_u <- rep(c(), 8)
@@ -79,39 +84,46 @@ ml100k_dem$occupation <- NULL
 tsne <- Rtsne(as.matrix(ml100k_dem), check_duplicates = FALSE)
 tsne_u_mclust <- ggplot(data.frame(tsne$Y), aes(x = X1, y = X2))
 
-tsne_u_kproto <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[1]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_gow <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[2]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_hl <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[3]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_mk <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[4]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_msk <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[5]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_famd <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[6]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_mrk <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[7]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_u_kam <- tsne_u_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_u[[8]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
+tsne_u_kproto <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[1]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[1])
+tsne_u_gow <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[2]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[2])
+tsne_u_hl <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[3]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[3])
+tsne_u_mk <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[4]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[4])
+tsne_u_msk <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[5]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[5])
+tsne_u_famd <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[6]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[6])
+tsne_u_mrk <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[7]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[7])
+tsne_u_kam <- tsne_u_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_u[[8]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[8])
 
-# dimensions 15 x 8
+# dimensions 13 x 26
 print(ggarrange(tsne_u_kproto, tsne_u_gow, tsne_u_hl, tsne_u_mk,
-                labels = c("(a)", "(b)", "(c)", "(d)"), nrow = 2, ncol = 2,
-                font.label = c(size = 15)))
-# dimensions 15 x 8
-print(ggarrange(tsne_u_msk, tsne_u_famd, tsne_u_mrk, tsne_u_kam,
-                labels = c("(a)", "(b)", "(c)", "(d)"), nrow = 2, ncol = 2,
-                font.label = c(size = 15)))
+                tsne_u_msk, tsne_u_famd, tsne_u_mrk, tsne_u_kam,
+                nrow = 4, ncol = 2))
+
+# dimensions 13 x 7
+print(ggarrange(tsne_u_msk, tsne_u_famd, ncol = 2))
 
 # cluster items
 clust_labels_i <- rep(c(), 8)
@@ -132,36 +144,43 @@ ml100k_feat_d$runtime <- unit_var_normalise(ml100k_feat_d$runtime)
 tsne <- Rtsne(as.matrix(ml100k_feat_d), check_duplicates = FALSE)
 tsne_i_mclust <- ggplot(data.frame(tsne$Y), aes(x = X1, y = X2))
 
-tsne_i_kproto <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[1]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_gow <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[2]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_hl <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[3]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_mk <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[4]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_msk <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[5]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_famd <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[6]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_mrk <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[7]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
-tsne_i_kam <- tsne_i_mclust + theme_bw(base_size = 15) +
-  geom_point(color = colors[clust_labels_i[[8]]$clusters], alpha = 0.4) +
-  xlab("First Dimension") + ylab("Second Dimension")
+tsne_i_kproto <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[1]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[1])
+tsne_i_gow <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[2]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[2])
+tsne_i_hl <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[3]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[3])
+tsne_i_mk <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[4]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[4])
+tsne_i_msk <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[5]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[5])
+tsne_i_famd <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[6]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[6])
+tsne_i_mrk <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[7]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[7])
+tsne_i_kam <- tsne_i_mclust + theme_bw(base_size = 20) +
+  geom_point(color = colors[clust_labels_i[[8]]$clusters], alpha = 0.4, size = 2.2) +
+  xlab("First Dimension") + ylab("Second Dimension") +
+  theme(text = element_text(family = "LM Roman 10")) + ggtitle(titles[8])
 
-# dimensions 15 x 8
+# dimensions 13 x 26
 print(ggarrange(tsne_i_kproto, tsne_i_gow, tsne_i_hl, tsne_i_mk,
-                labels = c("(a)", "(b)", "(c)", "(d)"), nrow = 2, ncol = 2,
-                font.label = c(size = 15)))
-# dimensions 15 x 8
-print(ggarrange(tsne_i_msk, tsne_i_famd, tsne_i_mrk, tsne_i_kam,
-                labels = c("(a)", "(b)", "(c)", "(d)"), nrow = 2, ncol = 2,
-                font.label = c(size = 15)))
+                tsne_i_msk, tsne_i_famd, tsne_i_mrk, tsne_i_kam,
+                nrow = 4, ncol = 2))
+
+# dimensions 13 x 7
+print(ggarrange(tsne_i_gow, tsne_i_mrk, ncol = 2))

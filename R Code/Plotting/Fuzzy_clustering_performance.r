@@ -2,6 +2,7 @@
 library("scales")
 library("ggplot2")
 library("ggpubr")
+library("extrafont")
 
 # read in the data
 loc <- "M4R_Clustering/Results/Mixed clustering/Fuzzy/fmclust_split_u.csv"

@@ -85,7 +85,7 @@ mclust_i_r2 <- ggplot(full_i, aes(x = k, y = r2, color = clustering)) +
   xlab("N Neighbours") + ylab(expression(R^2)) + theme_bw(base_size = 20) +
   scale_color_manual(labels = labels, limits = limits, values = colors) +
   theme(text = element_text(family = "LM Roman 10")) +
-  ggtitle(expression(paste(R^2, " of User Clustered CF"))) +
+  ggtitle(expression(paste(R^2, " of Item Clustered CF"))) +
   theme(legend.text = element_text(size = 20))
 
 mclust_i_online <- ggplot(full_i, aes(x = k, y = online, color = clustering)) +
